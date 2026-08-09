@@ -145,9 +145,10 @@
 
 <script>
   // ==========================================
-  // URL BẮT BUỘC PHẢI THAY BẰNG WEB APP API CỦA BẠN
+  // CẤU HÌNH API VÀ BẢO MẬT
   // ==========================================
   const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQwA8eI1fVR-8YqwBfymMHf070aU3gm0Zz5IQVsFF2ZDfYRSQt-xd17nmSoysFGEzWEQ3g2V7P2mNsXBhJvXvmVLN2Nl_RPvVlBCnJyBIY213-l1YxRq-IOWfn2r3zzTFv1l86FkXsYvHZXm62fWvX0e6SE8V97OREsDU0UQSHOrsXRc_Jrs_kxUA6Qb8Rw2RkknWuQW3S6L6Ki-4qiuhbu7UpdK3CyR-taWsG0zlckYeBMIXWizOJHoTAGgKqImjRB481Gox6Dlhbo_C4fvxHP4dGz-A&lib=M7AARxN9CZ9h-6zfZag8sRqnrsm1-cehp"; 
+  const SECRET_API_KEY = "MyLePOS-2026-SecureKey";
   
   const NGAN_HANG = "MB"; 
   const STK = "1108199309999"; 
@@ -265,7 +266,8 @@
   // --- KẾT NỐI API THAY THẾ google.script.run ---
   async function taiDuLieuSanPhamTuServer() {
     try {
-      let response = await fetch(API_URL + "?action=layDanhSachSanPham");
+      // Đã tích hợp API Key vào luồng kéo sản phẩm
+      let response = await fetch(API_URL + "?action=layDanhSachSanPham&apiKey=" + SECRET_API_KEY);
       let data = await response.json();
       await localStore.saveProducts(data);
       let dl = document.getElementById('danhSachTenSP');
@@ -284,7 +286,8 @@
     
     for (let order of pendingOrders) {
       try {
-        let payload = { action: "luuDonHang", gioHang: order.gioHang, tongTien: order.tongCong, sdtKhach: order.sdtKhach };
+        // Đã tích hợp API Key vào luồng đẩy đơn hàng offline
+        let payload = { action: "luuDonHang", apiKey: SECRET_API_KEY, gioHang: order.gioHang, tongTien: order.tongCong, sdtKhach: order.sdtKhach };
         await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         await localStore.deleteOfflineOrder(order.id);
       } catch (e) { break; }
@@ -427,7 +430,8 @@
     }
 
     try {
-      let payload = { action: "luuDonHang", gioHang: duLieuIn, tongTien: tongCong, sdtKhach: sdtKhach };
+      // Đã tích hợp API Key vào luồng gửi hóa đơn thực tế
+      let payload = { action: "luuDonHang", apiKey: SECRET_API_KEY, gioHang: duLieuIn, tongTien: tongCong, sdtKhach: sdtKhach };
       let res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
       let json = await res.json();
       
