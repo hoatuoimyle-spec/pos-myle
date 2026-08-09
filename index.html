@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POS Tạp Hóa Mỹ Lệ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body { background-color: #f4f6f9; }
+  </style>
+</head>
+<body>
+<div class="container-fluid py-3">
+  <div class="row mt-2">
+    <!-- KHU VỰC ĐIỀU KHIỂN & CAMERA -->
+    <div class="col-md-4">
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body bg-light rounded">
+          <h5 class="text-success fw-bold border-bottom pb-2 mb-3">THU NGÂN – CHI NHÁNH LONG PHÚ</h5>
+
+          <label class="fw-bold mb-1 text-primary"><i class="bi bi-person-badge"></i> SĐT Khách (Tích điểm):</label>
+          <input type="text" id="sdtKhachInput" class="form-control mb-3 border-primary" placeholder="Bỏ trống nếu là khách vãng lai...">
+
+          <label class="fw-bold mb-2 text-dark">Quét mã vạch hoặc Gõ tên (F2):</label>
+          
+          <div class="d-flex gap-2 mb-2">
+            <input type="text" id="maVachInput" list="danhSachTenSP" class="form-control form-control-lg border-success fw-bold text-center" placeholder="Quét mã hoặc gõ tên..." autocomplete="off">
+            <button class="btn btn-dark fw-bold text-nowrap" id="btnToggleCamera" onclick="toggleCamera()">
+              <i class="bi bi-camera-video-fill"></i> MỞ CAM
+            </button>
+          </div>
+          <datalist id="danhSachTenSP"></datalist>
+
+          <!-- Khung hiển thị Camera -->
+          <div id="camera-container" style="display: none; position: relative; overflow: hidden; border-radius: 8px; border: 2px solid #1e7156; margin-bottom: 15px;">
+            <div id="reader" style="width: 100%;"></div>
+          </div>
+
+          <div class="mt-3">
+            <button type="button" class="btn btn-outline-primary btn-lg w-100 fw-bold shadow-sm mb-2" onclick="moFormSanPhamMo()">
+               <i class="bi bi-plus-circle"></i> HÀNG TỰ DO (F4)
+            </button>
+            <button id="btnThanhToan" class="btn btn-success btn-lg w-100 fw-bold shadow-sm mb-2" onclick="thanhToan()">
+              <i class="bi bi-cash-coin"></i> THANH TOÁN (F12)
+            </button>
+            <button class="btn btn-outline-danger w-100 fw-bold" onclick="huyDon()">
+              <i class="bi bi-trash"></i> HỦY ĐƠN (ESC)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KHU VỰC HIỂN THỊ HÓA ĐƠN -->
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="table-responsive" style="max-height: 65vh; overflow-y: auto;">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-success" style="position: sticky; top: 0; z-index: 1;">
+                <tr>
+                  <th width="5%">#</th>
+                  <th width="38%">Sản phẩm</th>
+                  <th width="15%" class="text-center">Số lượng</th>
+                  <th width="18%" class="text-end">Đơn giá</th>
+                  <th width="18%" class="text-end">Thành tiền</th>
+                  <th width="6%"></th>
+                </tr>
+              </thead>
+              <tbody id="gioHang">
+                <tr>
+                  <td colspan="6" class="text-center text-muted py-4">Chưa có sản phẩm nào trong đơn hàng</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+            <h4 class="text-secondary fw-bold mb-0">TỔNG CỘNG:</h4>
+            <h2 id="tongTien" class="text-danger fw-bold mb-0">0 <small class="text-muted fs-5">VNĐ</small></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Hàng Tự Do -->
+<div class="modal fade" id="modalSanPhamMo" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold">THÊM HÀNG TỰ DO</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="formSanPhamMo" onsubmit="themSanPhamMo(event)">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="fw-bold mb-1">Tên mặt hàng</label>
+            <input type="text" id="spm_ten" class="form-control form-control-lg" required>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <label class="fw-bold mb-1">Đơn giá</label>
+              <input type="number" id="spm_gia" class="form-control form-control-lg text-danger fw-bold" required min="0" step="1000">
+            </div>
+            <div class="col-6">
+              <label class="fw-bold mb-1">Số lượng</label>
+              <input type="number" id="spm_sl" class="form-control form-control-lg text-center fw-bold" required min="1" value="1">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary fw-bold px-4">THÊM VÀO GIỎ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Thanh Toán QR -->
+<div class="modal fade" id="modalThanhToan" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold">XÁC NHẬN THANH TOÁN</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <h2 class="text-danger fw-bold mb-3" id="tt_tongTien">0 đ</h2>
+        <div class="p-3 bg-light rounded d-inline-block border mb-3">
+          <img id="imgVietQR" src="" alt="VietQR" class="img-fluid rounded" style="width: 250px; height: 250px; object-fit: contain;">
+        </div>
+      </div>
+      <div class="modal-footer bg-light d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">QUAY LẠI (ESC)</button>
+        <button type="button" class="btn btn-success fw-bold px-4 fs-5" id="btnChotDon" onclick="chotDonHang()">XÁC NHẬN HOÀN TẤT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==========================================
+  // URL BẮT BUỘC PHẢI THAY BẰNG WEB APP API CỦA BẠN
+  // ==========================================
+  const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQwA8eI1fVR-8YqwBfymMHf070aU3gm0Zz5IQVsFF2ZDfYRSQt-xd17nmSoysFGEzWEQ3g2V7P2mNsXBhJvXvmVLN2Nl_RPvVlBCnJyBIY213-l1YxRq-IOWfn2r3zzTFv1l86FkXsYvHZXm62fWvX0e6SE8V97OREsDU0UQSHOrsXRc_Jrs_kxUA6Qb8Rw2RkknWuQW3S6L6Ki-4qiuhbu7UpdK3CyR-taWsG0zlckYeBMIXWizOJHoTAGgKqImjRB481Gox6Dlhbo_C4fvxHP4dGz-A&lib=M7AARxN9CZ9h-6zfZag8sRqnrsm1-cehp"; 
+  
+  const NGAN_HANG = "MB"; 
+  const STK = "1108199309999"; 
+  const CHU_TAI_KHOAN = "LIEU QUANG THONG"; 
+
+  let gioHangData = [];
+  let html5QrCode = null;
+  let isCameraOn = false;
+  let scanningLocked = false; 
+
+  // --- ÂM THANH BÍP ---
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playBeep() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.1);
+  }
+
+  // --- INDEXEDDB & OFFLINE QUEUE ---
+  class ProductStore {
+    constructor() {
+      this.dbName = 'MyLePOS_DB';
+      this.storeName = 'Products';
+      this.orderStoreName = 'OfflineOrders';
+      this.dbVersion = 2;
+      this.db = null;
+    }
+    async init() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(this.dbName, this.dbVersion);
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(this.storeName)) {
+            const store = db.createObjectStore(this.storeName, { keyPath: 'maSP' });
+            store.createIndex('tenSP', 'tenSP', { unique: false });
+          }
+          if (!db.objectStoreNames.contains(this.orderStoreName)) {
+            db.createObjectStore(this.orderStoreName, { keyPath: 'id' });
+          }
+        };
+        request.onsuccess = (event) => { this.db = event.target.result; resolve(true); };
+        request.onerror = (event) => reject(event.target.error);
+      });
+    }
+    async saveProducts(products) {
+      return new Promise((resolve, reject) => {
+        if (!this.db) return reject(new Error("DB lỗi"));
+        const transaction = this.db.transaction([this.storeName], 'readwrite');
+        const store = transaction.objectStore(this.storeName);
+        store.clear(); 
+        products.forEach(p => store.put(p));
+        transaction.oncomplete = () => resolve(true);
+        transaction.onerror = (e) => reject(e.target.error);
+      });
+    }
+    async getProductByBarcode(barcode) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(null);
+        const req = this.db.transaction([this.storeName], 'readonly').objectStore(this.storeName).get(String(barcode));
+        req.onsuccess = (e) => resolve(e.target.result || null);
+        req.onerror = () => resolve(null);
+      });
+    }
+    async getProductByName(name) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(null);
+        const req = this.db.transaction([this.storeName], 'readonly').objectStore(this.storeName).index('tenSP').get(String(name));
+        req.onsuccess = (e) => resolve(e.target.result || null);
+        req.onerror = () => resolve(null);
+      });
+    }
+    async saveOfflineOrder(order) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(false);
+        const tx = this.db.transaction([this.orderStoreName], 'readwrite');
+        tx.objectStore(this.orderStoreName).put(order);
+        tx.oncomplete = () => resolve(true);
+      });
+    }
+    async getOfflineOrders() {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve([]);
+        const req = this.db.transaction([this.orderStoreName], 'readonly').objectStore(this.orderStoreName).getAll();
+        req.onsuccess = (e) => resolve(e.target.result || []);
+        req.onerror = () => resolve([]);
+      });
+    }
+    async deleteOfflineOrder(id) {
+      return new Promise((resolve) => {
+        if (!this.db) return resolve(false);
+        const tx = this.db.transaction([this.orderStoreName], 'readwrite');
+        tx.objectStore(this.orderStoreName).delete(id);
+        tx.oncomplete = () => resolve(true);
+      });
+    }
+  }
+
+  const localStore = new ProductStore();
+
+  window.addEventListener('load', async function() {
+    let inputEl = document.getElementById('maVachInput');
+    if (inputEl) inputEl.focus();
+    try { await localStore.init(); } catch (e) { console.error(e); }
+    dongBoDonHangOffline();
+    taiDuLieuSanPhamTuServer();
+  });
+
+  // --- KẾT NỐI API THAY THẾ google.script.run ---
+  async function taiDuLieuSanPhamTuServer() {
+    try {
+      let response = await fetch(API_URL + "?action=layDanhSachSanPham");
+      let data = await response.json();
+      await localStore.saveProducts(data);
+      let dl = document.getElementById('danhSachTenSP');
+      let opts = '';
+      data.forEach(sp => { opts += `<option value="${sp.tenSP}">Mã: ${sp.maSP} | Tồn: ${sp.tonKho}</option>`; });
+      dl.innerHTML = opts;
+    } catch (error) {
+      console.error("Lỗi đồng bộ sản phẩm: Cần kiểm tra lại API_URL hoặc CORS", error);
+    }
+  }
+
+  async function dongBoDonHangOffline() {
+    if (!navigator.onLine) return;
+    let pendingOrders = await localStore.getOfflineOrders();
+    if (pendingOrders.length === 0) return;
+    
+    for (let order of pendingOrders) {
+      try {
+        let payload = { action: "luuDonHang", gioHang: order.gioHang, tongTien: order.tongCong, sdtKhach: order.sdtKhach };
+        await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
+        await localStore.deleteOfflineOrder(order.id);
+      } catch (e) { break; }
+    }
+    taiDuLieuSanPhamTuServer();
+  }
+
+  window.addEventListener('online', dongBoDonHangOffline);
+
+  // --- CAMERA ---
+  function toggleCamera() {
+    const btn = document.getElementById('btnToggleCamera');
+    const container = document.getElementById('camera-container');
+    if (isCameraOn) {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          container.style.display = 'none';
+          btn.innerHTML = '<i class="bi bi-camera-video-fill"></i> MỞ CAM';
+          btn.classList.replace('btn-danger', 'btn-dark');
+          isCameraOn = false;
+        });
+      }
+    } else {
+      container.style.display = 'block';
+      btn.innerHTML = '<i class="bi bi-stop-circle-fill"></i> TẮT CAM';
+      btn.classList.replace('btn-dark', 'btn-danger');
+      isCameraOn = true;
+
+      html5QrCode = new Html5Qrcode("reader");
+      const config = { fps: 10, qrbox: { width: 250, height: 100 }, aspectRatio: 1.0 };
+      html5QrCode.start(
+        { facingMode: "environment" }, config,
+        (decodedText) => {
+          if (scanningLocked) return;
+          scanningLocked = true; 
+          playBeep();
+          if (navigator.vibrate) navigator.vibrate(100); 
+          document.getElementById('maVachInput').value = decodedText;
+          xuLyMaVach(decodedText);
+          setTimeout(() => { scanningLocked = false; document.getElementById('maVachInput').value = ''; }, 1500); 
+        },
+        () => {}
+      ).catch(err => { alert("Lỗi Camera: Cần cấp quyền hoặc sử dụng HTTPS. " + err); toggleCamera(); });
+    }
+  }
+
+  // --- XỬ LÝ POS ---
+  document.getElementById('maVachInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      let giaTriNhap = this.value.trim();
+      this.value = '';
+      if (giaTriNhap !== '') xuLyMaVach(giaTriNhap);
+    }
+  });
+
+  async function xuLyMaVach(giaTri) {
+    let sanPham = await localStore.getProductByBarcode(giaTri);
+    if (!sanPham) sanPham = await localStore.getProductByName(giaTri);
+    if (sanPham) {
+      let viTri = gioHangData.findIndex(item => item.maSP === sanPham.maSP);
+      if (viTri !== -1) {
+        gioHangData[viTri].soLuong++;
+        gioHangData[viTri].thanhTien = gioHangData[viTri].soLuong * gioHangData[viTri].donGia;
+      } else {
+        gioHangData.push({ maSP: sanPham.maSP, tenSP: sanPham.tenSP, donGia: sanPham.giaBan, soLuong: 1, thanhTien: sanPham.giaBan });
+      }
+      capNhatGiaoDienGioHang();
+    } else {
+      if(!scanningLocked) alert('Không tìm thấy mặt hàng: ' + giaTri);
+    }
+  }
+
+  function moFormSanPhamMo() { bootstrap.Modal.getOrCreateInstance(document.getElementById('modalSanPhamMo')).show(); }
+  function themSanPhamMo(event) {
+    event.preventDefault();
+    let ten = document.getElementById('spm_ten').value.trim();
+    let gia = parseInt(document.getElementById('spm_gia').value);
+    let sl = parseInt(document.getElementById('spm_sl').value);
+    gioHangData.push({ maSP: "SPM-"+Date.now(), tenSP: "[Tự do] "+ten, donGia: gia, soLuong: sl, thanhTien: gia*sl });
+    capNhatGiaoDienGioHang();
+    bootstrap.Modal.getInstance(document.getElementById('modalSanPhamMo')).hide();
+    document.getElementById('formSanPhamMo').reset();
+  }
+
+  function capNhatGiaoDienGioHang() {
+    let tbody = document.getElementById('gioHang');
+    let tongTienElement = document.getElementById('tongTien');
+    if (gioHangData.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Giỏ hàng trống</td></tr>';
+      tongTienElement.innerHTML = '0 <small class="text-muted fs-5">VNĐ</small>';
+      return;
+    }
+    let html = '', tongCong = 0;
+    [...gioHangData].reverse().forEach((item, revIdx) => {
+      let idx = gioHangData.length - 1 - revIdx;
+      html += `<tr>
+          <td class="fw-bold text-muted">${idx + 1}</td>
+          <td class="fw-bold text-primary">${item.tenSP}</td>
+          <td><input type="number" min="1" class="form-control form-control-sm text-center fw-bold" value="${item.soLuong}" onchange="suaSoLuong(${idx}, this.value)"></td>
+          <td class="text-end">${item.donGia.toLocaleString('vi-VN')}</td>
+          <td class="text-danger fw-bold text-end">${item.thanhTien.toLocaleString('vi-VN')}</td>
+          <td class="text-center"><button class="btn btn-sm btn-outline-danger py-0" onclick="xoaKhoiGioHang(${idx})"><i class="bi bi-x-lg"></i></button></td>
+        </tr>`;
+      tongCong += item.thanhTien;
+    });
+    tbody.innerHTML = html;
+    tongTienElement.innerHTML = tongCong.toLocaleString('vi-VN') + ' <small class="text-muted fs-5">VNĐ</small>';
+  }
+
+  function suaSoLuong(index, slMoi) { let sl = parseInt(slMoi); if (sl > 0) { gioHangData[index].soLuong = sl; gioHangData[index].thanhTien = sl * gioHangData[index].donGia; capNhatGiaoDienGioHang(); } }
+  function xoaKhoiGioHang(index) { gioHangData.splice(index, 1); capNhatGiaoDienGioHang(); }
+  function huyDon() { if (gioHangData.length > 0 && confirm("Hủy đơn?")) { gioHangData = []; capNhatGiaoDienGioHang(); document.getElementById('sdtKhachInput').value = ''; } }
+
+  function thanhToan() {
+    if (gioHangData.length === 0) { alert("Giỏ hàng rỗng!"); return; }
+    let tongCong = gioHangData.reduce((sum, item) => sum + item.thanhTien, 0);
+    document.getElementById('tt_tongTien').innerText = tongCong.toLocaleString('vi-VN') + ' VNĐ';
+    document.getElementById('imgVietQR').src = `https://img.vietqr.io/image/${NGAN_HANG}-${STK}-compact.png?amount=${tongCong}&addInfo=DH-${Date.now()}&accountName=${encodeURIComponent(CHU_TAI_KHOAN)}`;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('modalThanhToan')).show();
+  }
+
+  async function chotDonHang() {
+    let tongCong = gioHangData.reduce((sum, item) => sum + item.thanhTien, 0);
+    let sdtKhach = document.getElementById('sdtKhachInput').value.trim();
+    let btn = document.getElementById('btnChotDon'); 
+    btn.disabled = true; btn.innerHTML = 'ĐANG XỬ LÝ...';
+    let duLieuIn = JSON.parse(JSON.stringify(gioHangData));
+
+    if (!navigator.onLine) {
+      let maDHOffline = "OFF-" + Date.now();
+      await localStore.saveOfflineOrder({ id: maDHOffline, gioHang: duLieuIn, tongCong: tongCong, sdtKhach: sdtKhach });
+      inHoaDon(maDHOffline, duLieuIn, tongCong);
+      resetGiaoDienSauChotDon(btn);
+      alert("LƯU TẠM: Hệ thống sẽ tự đồng bộ khi có mạng.");
+      return;
+    }
+
+    try {
+      let payload = { action: "luuDonHang", gioHang: duLieuIn, tongTien: tongCong, sdtKhach: sdtKhach };
+      let res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
+      let json = await res.json();
+      
+      if (json.status === "success") {
+        let phanTach = json.data.split("\n");
+        if (phanTach.length > 1) alert(phanTach[1]);
+        inHoaDon(phanTach[0].split("Mã hóa đơn: ")[1], duLieuIn, tongCong);
+        resetGiaoDienSauChotDon(btn);
+        taiDuLieuSanPhamTuServer();
+      } else {
+        throw new Error(json.message);
+      }
+    } catch (e) {
+      alert("Lỗi máy chủ: " + e.message);
+      btn.disabled = false; btn.innerHTML = 'XÁC NHẬN HOÀN TẤT';
+    }
+  }
+
+  function resetGiaoDienSauChotDon(btn) {
+    gioHangData = []; capNhatGiaoDienGioHang(); document.getElementById('sdtKhachInput').value = '';
+    btn.disabled = false; btn.innerHTML = 'XÁC NHẬN HOÀN TẤT';
+    bootstrap.Modal.getInstance(document.getElementById('modalThanhToan')).hide();
+  }
+
+  function inHoaDon(maDH, gioHang, tongTien) {
+    let htmlItems = gioHang.map(item => `<tr><td colspan="3" class="fw-bold">${item.tenSP}</td></tr><tr style="border-bottom: 1px dashed #000;"><td>${item.soLuong} x ${item.donGia.toLocaleString('vi-VN')}</td><td class="text-end fw-bold">${item.thanhTien.toLocaleString('vi-VN')}</td></tr>`).join('');
+    let win = window.open('','_blank','width=400,height=600');
+    win.document.write(`<html><body style="font-family:sans-serif; width:76mm; font-size:13px; margin:auto;"><h2 style="text-align:center;">TẠP HÓA MỸ LỆ</h2><p style="text-align:center;font-size:11px;">HĐ: ${maDH}</p><table style="width:100%; border-collapse:collapse;">${htmlItems}</table><h3 style="text-align:right;">TỔNG: ${tongTien.toLocaleString('vi-VN')} đ</h3><p style="text-align:center;">Cảm ơn quý khách!</p></body></html>`);
+    setTimeout(() => { win.print(); win.close(); }, 500);
+  }
+</script>
+</body>
+</html>
