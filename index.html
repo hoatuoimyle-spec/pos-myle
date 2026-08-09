@@ -344,6 +344,7 @@
   async function xuLyMaVach(giaTri) {
     let sanPham = await localStore.getProductByBarcode(giaTri);
     if (!sanPham) sanPham = await localStore.getProductByName(giaTri);
+    
     if (sanPham) {
       let viTri = gioHangData.findIndex(item => item.maSP === sanPham.maSP);
       if (viTri !== -1) {
@@ -354,7 +355,9 @@
       }
       capNhatGiaoDienGioHang();
     } else {
-      if(!scanningLocked) alert('Không tìm thấy mặt hàng: ' + giaTri);
+      // Xóa số ngay lập tức và ném cảnh báo mã lạ
+      document.getElementById('maVachInput').value = '';
+      alert('CHƯA CÓ TRONG KHO: Không tìm thấy sản phẩm mang mã [' + giaTri + ']');
     }
   }
 
