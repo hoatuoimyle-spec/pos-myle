@@ -471,12 +471,86 @@
   }
 
   function inHoaDon(maDH, gioHang, tongTien) {
-    let htmlItems = gioHang.map(item => `<tr><td colspan="3" class="fw-bold">${item.tenSP}</td></tr><tr style="border-bottom: 1px dashed #000;"><td>${item.soLuong} x ${item.donGia.toLocaleString('vi-VN')}</td><td class="text-end fw-bold">${item.thanhTien.toLocaleString('vi-VN')}</td></tr>`).join('');
-    let win = window.open('','_blank','width=400,height=600');
-    win.document.write(`<html><body style="font-family:sans-serif; width:76mm; font-size:13px; margin:auto;"><h2 style="text-align:center;">TẠP HÓA MỸ LỆ</h2><p style="text-align:center;font-size:11px;">HĐ: ${maDH}</p><table style="width:100%; border-collapse:collapse;">${htmlItems}</table><h3 style="text-align:right;">TỔNG: ${tongTien.toLocaleString('vi-VN')} đ</h3><p style="text-align:center;">Cảm ơn quý khách!</p></body></html>`);
-    setTimeout(() => { win.print(); win.close(); }, 500);
+    // 1. Tạo danh sách các món hàng
+    let htmlItems = gioHang.map(item => `
+      <tr><td colspan="3" style="font-weight: bold; padding-top: 6px; text-align: left; font-size: 13px;">${item.tenSP}</td></tr>
+      <tr style="border-bottom: 1px dashed #ccc;">
+        <td style="text-align: left; font-size: 13px;">${item.soLuong}</td>
+        <td style="text-align: center; font-size: 13px;">x ${item.donGia.toLocaleString('vi-VN')}</td>
+        <td style="text-align: right; font-weight: bold; font-size: 13px;">${item.thanhTien.toLocaleString('vi-VN')}</td>
+      </tr>`).join('');
+
+    // 2. Tạo link QR Code tự động điền số tiền và mã đơn
+    let qrUrl = `https://img.vietqr.io/image/${NGAN_HANG}-${STK}-compact.png?amount=${tongTien}&addInfo=${maDH}&accountName=${encodeURIComponent(CHU_TAI_KHOAN)}`;
+    
+    // 3. Lấy thời gian hiện tại
+    let now = new Date();
+    let thoiGian = now.toLocaleTimeString('vi-VN', { hour12: false }) + ' ' + now.toLocaleDateString('vi-VN');
+
+    // 4. Mở luồng kết xuất máy in
+    let win = window.open('', '_blank', 'width=400,height=600');
+    win.document.write(`
+      <html>
+      <head>
+        <style>
+          /* Khống chế margin mặc định của trình duyệt để máy in tự cắt giấy */
+          @page { margin: 0; }
+          body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            width: 76mm; /* Tối ưu cho khổ giấy K80 */
+            margin: 0 auto; 
+            padding: 5mm; 
+            color: #000; 
+            background: #fff;
+          }
+          h2 { text-align: center; margin: 0 0 5px 0; font-size: 18px; text-transform: uppercase; }
+          p { margin: 3px 0; text-align: center; font-size: 12px; }
+          .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+          .tong-tien { text-align: right; font-size: 16px; font-weight: bold; margin: 10px 0; }
+          .qr-container { text-align: center; margin-top: 15px; }
+          .qr-container img { width: 180px; height: 180px; }
+          
+          /* Padding bottom dư ra một chút để dao cắt giấy của máy in không chém vào chữ */
+          .footer { text-align: center; font-size: 12px; margin-top: 10px; padding-bottom: 15mm; }
+        </style>
+      </head>
+      <body>
+        <h2>TẠP HÓA MỸ LỆ</h2>
+        <p>Đ/c: Ấp 3, Xã Long Phú, TP. Cần Thơ</p>
+        <p>SĐT: 0389707994</p>
+        <div class="divider"></div>
+        <p>HĐ: <b>${maDH}</b></p>
+        <p>Ngày: ${thoiGian}</p>
+        <div class="divider"></div>
+        
+        <table>
+          ${htmlItems}
+        </table>
+        
+        <div class="tong-tien">TỔNG TIỀN: ${tongTien.toLocaleString('vi-VN')} đ</div>
+        <div class="divider"></div>
+        
+        <div class="qr-container">
+          <p style="font-weight: bold; font-size: 13px;">QUÉT MÃ THANH TOÁN</p>
+          <!-- Cực kỳ quan trọng: onload đảm bảo ảnh QR tải xong mới ra lệnh in -->
+          <img src="${qrUrl}" alt="QR Thanh Toán" onload="window.print(); window.close();">
+        </div>
+        
+        <div class="footer">Cảm ơn quý khách. Hẹn gặp lại!</div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    
+    // Backup dự phòng: Nếu mạng lag khiến ảnh QR không kích hoạt được onload, ép buộc in sau 3 giây.
+    setTimeout(() => {
+      if (!win.closed) { 
+        win.print(); 
+        win.close(); 
+      }
+    }, 3000);
   }
-</script>
 
 <!-- Tích hợp Service Worker cho PWA -->
 <script>
