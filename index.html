@@ -44,28 +44,18 @@
     .product-option .meta{ font-size:12px; color:#6c757d; }
     .product-option .price{ font-weight:800; color:#dc3545; white-space:nowrap; }
 
-    /* --- MÀN HÌNH KHÓA BẢO MẬT --- */
-    #lock-screen {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(135deg, #0d6b4f, #1e7156);
-      z-index: 9999; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; color: white;
-    }
+    /* --- MÀN HÌNH KHÓA --- */
+    #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0d6b4f, #1e7156); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
     .pin-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; width: 320px; }
     .pin-input { width: 100%; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: bold; border: 2px solid #0d6b4f; border-radius: 8px; padding: 10px; margin-bottom: 20px; }
     .pin-input:focus { outline: none; border-color: #1e7156; box-shadow: 0 0 8px rgba(30, 113, 86, 0.5); }
 
-    @media(max-width:767px){
-      .container-fluid{ padding:8px!important; }
-      .table{ font-size:13px; }
-      .table th:nth-child(1), .table td:nth-child(1){ display:none; }
-      .table th:nth-child(4), .table td:nth-child(4){ display:none; }
-      .bridge-status{ font-size:11px; padding: 5px 8px; }
-    }
+    @media(max-width:767px){ .container-fluid{ padding:8px!important; } .table{ font-size:13px; } .table th:nth-child(1), .table td:nth-child(1){ display:none; } .table th:nth-child(4), .table td:nth-child(4){ display:none; } .bridge-status{ font-size:11px; padding: 5px 8px; } }
   </style>
 </head>
 <body>
 
+<!-- MÀN HÌNH KHÓA BẢO MẬT -->
 <div id="lock-screen" style="display: none;">
   <div class="pin-box">
     <h3 class="text-success fw-bold mb-1">🏪 MỸ LỆ POS</h3>
@@ -95,14 +85,13 @@
   </div>
 
   <div class="row g-3">
+    <!-- CỘT ĐIỀU KHIỂN -->
     <div class="col-lg-4">
       <div class="card border-0 shadow-sm pos-card">
         <div class="card-body">
           <h5 class="text-success fw-bold border-bottom pb-2 mb-3">BẢNG ĐIỀU KHIỂN</h5>
-
           <label class="fw-bold mb-1 text-primary"><i class="bi bi-person-badge"></i> SĐT Khách (Tích điểm)</label>
           <input type="tel" inputmode="numeric" id="sdtKhachInput" class="form-control form-control-lg mb-3 border-primary" placeholder="Bỏ trống nếu khách vãng lai" autocomplete="tel">
-
           <label class="fw-bold mb-2">Quét mã vạch / chọn sản phẩm (F2)</label>
           <div class="search-wrap">
             <div class="d-flex gap-2">
@@ -116,45 +105,30 @@
             </div>
             <div id="productSuggestions"></div>
           </div>
-
           <div id="camera-container"><div id="reader"></div></div>
-
           <div class="mt-3 d-grid gap-2" id="action-buttons">
-            <button type="button" class="btn btn-outline-primary btn-lg fw-bold touch-btn" onclick="APP_POS.moFormSanPhamMo()">
-              <i class="bi bi-plus-circle"></i> HÀNG TỰ DO (F4)
-            </button>
-            <button type="button" class="btn btn-success btn-lg fw-bold touch-btn" id="btnThanhToan" onclick="APP_POS.thanhToan()">
-              <i class="bi bi-cash-coin"></i> THANH TOÁN (F12)
-            </button>
-            <button type="button" class="btn btn-outline-danger fw-bold touch-btn" onclick="APP_POS.huyDon()">
-              <i class="bi bi-trash"></i> HỦY ĐƠN (ESC)
-            </button>
+            <button type="button" class="btn btn-outline-primary btn-lg fw-bold touch-btn" onclick="APP_POS.moFormSanPhamMo()"><i class="bi bi-plus-circle"></i> HÀNG TỰ DO (F4)</button>
+            <button type="button" class="btn btn-success btn-lg fw-bold touch-btn" id="btnThanhToan" onclick="APP_POS.thanhToan()"><i class="bi bi-cash-coin"></i> THANH TOÁN (F12)</button>
+            <button type="button" class="btn btn-outline-danger fw-bold touch-btn" onclick="APP_POS.huyDon()"><i class="bi bi-trash"></i> HỦY ĐƠN (ESC)</button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- CỘT GIỎ HÀNG -->
     <div class="col-lg-8">
       <div class="card border-0 shadow-sm pos-card">
         <div class="card-body">
           <div class="table-responsive" style="max-height:58vh;overflow-y:auto">
             <table class="table table-hover align-middle mb-0">
               <thead class="table-success sticky-head">
-                <tr>
-                  <th>#</th>
-                  <th>Sản phẩm</th>
-                  <th class="text-center">Số lượng</th>
-                  <th class="text-end">Đơn giá</th>
-                  <th class="text-end">Thành tiền</th>
-                  <th></th>
-                </tr>
+                <tr><th>#</th><th>Sản phẩm</th><th class="text-center">Số lượng</th><th class="text-end">Đơn giá</th><th class="text-end">Thành tiền</th><th></th></tr>
               </thead>
               <tbody id="gioHang">
                 <tr><td colspan="6" class="text-center text-muted py-5">Chưa có sản phẩm nào trong đơn hàng</td></tr>
               </tbody>
             </table>
           </div>
-
           <div class="mt-3 pt-3 border-top">
             <div class="row g-3 align-items-end">
               <div class="col-md-6">
@@ -166,7 +140,6 @@
                   <input type="number" id="inputGiamGiaVND" class="form-control text-end fw-bold text-danger fs-5" min="0" value="0" inputmode="numeric" oninput="APP_POS.tinhGiamGia('VND')">
                 </div>
               </div>
-
               <div class="col-md-6 text-end">
                 <div class="text-muted fw-bold">Tạm tính: <span id="txtTamTinh">0</span> đ</div>
                 <div id="divHienThiGiamGia" class="text-danger fw-bold" style="display:none">Giảm giá: -<span id="txtTienGiam">0</span> đ</div>
@@ -181,63 +154,13 @@
   </div>
 </div>
 
+<!-- CÁC MODAL ẨN... -->
 <div class="modal fade" id="modalSanPhamMo" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title fw-bold"><i class="bi bi-box-seam"></i> THÊM HÀNG TỰ DO</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <form id="formSanPhamMo" onsubmit="APP_POS.themSanPhamMo(event)">
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="fw-bold">Tên mặt hàng / Dịch vụ</label>
-            <input id="spm_ten" class="form-control form-control-lg" required>
-          </div>
-          <div class="row g-2">
-            <div class="col-6">
-              <label class="fw-bold">Đơn giá (VNĐ)</label>
-              <input id="spm_gia" type="number" class="form-control form-control-lg fw-bold" required min="0" step="1000" inputmode="numeric">
-            </div>
-            <div class="col-6">
-              <label class="fw-bold">Số lượng</label>
-              <input id="spm_sl" type="number" class="form-control form-control-lg fw-bold text-center" required min="1" value="1" inputmode="numeric">
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer bg-light">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-          <button type="submit" class="btn btn-primary fw-bold">THÊM VÀO GIỎ</button>
-        </div>
-      </form>
-    </div>
-  </div>
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow"><div class="modal-header bg-primary text-white"><h5 class="modal-title fw-bold"><i class="bi bi-box-seam"></i> THÊM HÀNG TỰ DO</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formSanPhamMo" onsubmit="APP_POS.themSanPhamMo(event)"><div class="modal-body"><div class="mb-3"><label class="fw-bold">Tên mặt hàng / Dịch vụ</label><input id="spm_ten" class="form-control form-control-lg" required></div><div class="row g-2"><div class="col-6"><label class="fw-bold">Đơn giá (VNĐ)</label><input id="spm_gia" type="number" class="form-control form-control-lg fw-bold" required min="0" step="1000" inputmode="numeric"></div><div class="col-6"><label class="fw-bold">Số lượng</label><input id="spm_sl" type="number" class="form-control form-control-lg fw-bold text-center" required min="1" value="1" inputmode="numeric"></div></div></div><div class="modal-footer bg-light"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button><button type="submit" class="btn btn-primary fw-bold">THÊM VÀO GIỎ</button></div></form></div></div>
 </div>
 
 <div class="modal fade" id="modalThanhToan" tabindex="-1" data-bs-backdrop="static">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title fw-bold"><i class="bi bi-qr-code-scan"></i> XÁC NHẬN THANH TOÁN</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body text-center py-4">
-        <div class="text-muted fw-bold">KHÁCH TRẢ</div>
-        <h2 class="text-danger fw-bold mb-3" id="tt_tongTien">0 đ</h2>
-        <div class="small text-muted mb-2">
-          Tạm tính: <b id="tt_tamTinh">0</b> đ
-          <span id="tt_giamWrap" style="display:none">&nbsp;•&nbsp; Giảm: <b class="text-danger">-<span id="tt_giam">0</span></b> đ</span>
-        </div>
-        <div class="p-2 bg-light rounded d-inline-block border">
-          <img id="imgVietQR" src="" alt="VietQR" class="img-fluid rounded" style="width:250px; height:250px; object-fit:contain">
-        </div>
-      </div>
-      <div class="modal-footer bg-light d-flex justify-content-between">
-        <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">QUAY LẠI (ESC)</button>
-        <button type="button" class="btn btn-success fw-bold px-4 fs-5" id="btnChotDon" onclick="APP_POS.chotDonHang()">XÁC NHẬN HOÀN TẤT</button>
-      </div>
-    </div>
-  </div>
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-success text-white"><h5 class="modal-title fw-bold"><i class="bi bi-qr-code-scan"></i> XÁC NHẬN THANH TOÁN</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-4"><div class="text-muted fw-bold">KHÁCH TRẢ</div><h2 class="text-danger fw-bold mb-3" id="tt_tongTien">0 đ</h2><div class="small text-muted mb-2">Tạm tính: <b id="tt_tamTinh">0</b> đ <span id="tt_giamWrap" style="display:none">&nbsp;•&nbsp; Giảm: <b class="text-danger">-<span id="tt_giam">0</span></b> đ</span></div><div class="p-2 bg-light rounded d-inline-block border"><img id="imgVietQR" src="" alt="VietQR" class="img-fluid rounded" style="width:250px; height:250px; object-fit:contain"></div></div><div class="modal-footer bg-light d-flex justify-content-between"><button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">QUAY LẠI (ESC)</button><button type="button" class="btn btn-success fw-bold px-4 fs-5" id="btnChotDon" onclick="APP_POS.chotDonHang()">XÁC NHẬN HOÀN TẤT</button></div></div></div>
 </div>
 
 <script>
@@ -245,7 +168,7 @@ window.APP_POS = (function() {
   'use strict';
 
   // ========================================================
-  // BẢO MẬT & API (ĐÃ MÃ HÓA LUỒNG)
+  // BẢO MẬT & API (XÁC THỰC CỤC BỘ)
   // ========================================================
   const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec"; 
   const ENCRYPTED_PAYLOAD = [124, 72, 124, 93, 105, 108, 114, 92, 2, 24, 11, 5, 92, 114, 85, 91, 84, 81, 84, 90, 85, 65];
@@ -261,7 +184,6 @@ window.APP_POS = (function() {
   let gioHangData = [], products = [], scanner = null, isCamOn = false, scanLocked = false;
   let printing = false, tamTinh = 0, giamGia = 0, tongTienThanhToan = 0, audioCtx = null;
 
- // Giải mã tuyệt đối từ Mảng số nguyên
   function xorDecrypt(arr, pin) {
     let result = '';
     for (let i = 0; i < arr.length; i++) {
@@ -276,22 +198,17 @@ window.APP_POS = (function() {
     const err = document.getElementById('pinError');
     if (!pin) return;
 
-    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ĐANG KIỂM TRA...';
+    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ĐANG MỞ KHÓA...';
     err.style.display = 'none';
 
     const attemptKey = xorDecrypt(ENCRYPTED_PAYLOAD, pin);
 
-    try {
-      const res = await fetch(API_URL + "?action=layThongTinNganHang&apiKey=" + attemptKey);
-      const data = await res.json();
-
-      if (data && data.status !== 'error') {
-        sessionStorage.setItem("MYLE_SESSION_KEY", attemptKey);
-        SECRET_API_KEY = attemptKey;
-        document.getElementById('lock-screen').style.display = 'none';
-        taiDuLieuTuServer(); // Bắt đầu tải dữ liệu sau khi mở khóa
-      } else { throw new Error("Sai khóa"); }
-    } catch (error) {
+    if (attemptKey.startsWith("MyLePOS")) {
+      sessionStorage.setItem("MYLE_SESSION_KEY", attemptKey);
+      SECRET_API_KEY = attemptKey;
+      document.getElementById('lock-screen').style.display = 'none';
+      taiDuLieuTuServer(); 
+    } else {
       err.style.display = 'block';
       document.getElementById('pinCode').value = '';
       btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill"></i> MỞ KHÓA';
@@ -299,16 +216,15 @@ window.APP_POS = (function() {
   }
 
   function checkSecurityLock() {
-    if (SECRET_API_KEY) {
+    if (SECRET_API_KEY && SECRET_API_KEY.startsWith("MyLePOS")) {
       document.getElementById('lock-screen').style.display = 'none';
-      taiDuLieuTuServer(); // Đã có session thì tải data luôn
+      taiDuLieuTuServer();
     } else {
       document.getElementById('lock-screen').style.display = 'flex';
       setTimeout(() => document.getElementById('pinCode').focus(), 100);
     }
   }
 
-  // Helpers
   function num(val) { const n = Number(val); return isNaN(n) ? 0 : n; }
   function money(val) { return Math.round(num(val)).toLocaleString('vi-VN'); }
   function esc(val) { return String(val || '').replace(/[&<>'"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'}[c])); }
@@ -328,13 +244,15 @@ window.APP_POS = (function() {
     const netEl = document.getElementById('networkStatus');
     if (navigator.onLine) {
       netEl.style.display = 'none';
-      dongBoDonHangOffline();
+      dongBoDonHangOffline_Fallback();
     } else {
       netEl.style.display = 'inline-flex';
     }
   }
 
-  // INDEXED DB
+  // ========================================================
+  // QUẢN LÝ DỮ LIỆU NGOẠI TUYẾN (Cập nhật lưu gói Payload hoàn chỉnh cho SW)
+  // ========================================================
   class ProductStore {
     constructor(){ this.dbName = 'MyLePOS_DB'; this.sProd = 'Products'; this.sOrder = 'OfflineOrders'; this.dbVersion=2; this.db=null; }
     async init(){
@@ -409,14 +327,14 @@ window.APP_POS = (function() {
     } catch (e) { console.error("Lỗi đồng bộ API:", e); }
   }
 
-  async function dongBoDonHangOffline() {
-    if (!navigator.onLine || !SECRET_API_KEY) return;
+  // Backup Sync trong trường hợp trình duyệt không hỗ trợ Background Sync
+  async function dongBoDonHangOffline_Fallback() {
+    if (!navigator.onLine) return;
     let pending = await localDb.getOfflineOrders();
     if (pending.length === 0) return;
     for (let order of pending) {
       try {
-        let payload = { action: "luuDonHang", apiKey: SECRET_API_KEY, gioHang: order.gioHang, tongTien: order.tongCong, sdtKhach: order.sdtKhach };
-        await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
+        await fetch(API_URL, { method: "POST", body: JSON.stringify(order.payload) });
         await localDb.deleteOfflineOrder(order.id);
       } catch (e) { break; }
     }
@@ -440,10 +358,7 @@ window.APP_POS = (function() {
     vf: (tag, val) => { const s = String(val||''); return tag + String(s.length).padStart(2,'0') + s; },
     crc: (text) => {
       let crc=0xFFFF;
-      for(let i=0; i<text.length; i++){
-        crc ^= text.charCodeAt(i) << 8;
-        for(let b=0; b<8; b++){ crc = (crc & 0x8000) ? ((crc<<1) ^0x1021) : (crc<<1); crc &= 0xFFFF; }
-      }
+      for(let i=0; i<text.length; i++){ crc ^= text.charCodeAt(i) << 8; for(let b=0; b<8; b++){ crc = (crc & 0x8000) ? ((crc<<1) ^0x1021) : (crc<<1); crc &= 0xFFFF; } }
       return crc.toString(16).toUpperCase().padStart(4, '0');
     },
     buildQR: (amount, info) => {
@@ -470,21 +385,15 @@ window.APP_POS = (function() {
     }
   };
 
+  // Các hàm POS logic thuần túy...
   function renderSuggestions(query) {
     const box = document.getElementById('productSuggestions'), q = String(query||'').trim().toLowerCase();
     if(!q){ box.style.display='none'; return; }
     const matches = products.filter(p => String(p.tenSP||'').toLowerCase().includes(q) || String(p.maSP||'').toLowerCase().includes(q)).slice(0,30);
     if(!matches.length){ box.innerHTML = '<div class="p-3 text-muted">Không tìm thấy</div>'; box.style.display='block'; return; }
-    
-    box.innerHTML = matches.map((p,i) => `
-      <div class="product-option" onpointerdown="APP_POS.chonGoiY(${i}, event)">
-        <div><div class="name">${esc(p.tenSP)}</div><div class="meta">Mã: ${esc(p.maSP)} • Tồn: ${num(p.tonKho)}</div></div>
-        <div class="price">${money(p.giaBan)} đ</div>
-      </div>
-    `).join('');
+    box.innerHTML = matches.map((p,i) => `<div class="product-option" onpointerdown="APP_POS.chonGoiY(${i}, event)"><div><div class="name">${esc(p.tenSP)}</div><div class="meta">Mã: ${esc(p.maSP)} • Tồn: ${num(p.tonKho)}</div></div><div class="price">${money(p.giaBan)} đ</div></div>`).join('');
     box.style.display = 'block';
   }
-
   function hideSuggestions() { document.getElementById('productSuggestions').style.display = 'none'; }
   function chonGoiY(index, event) {
     event.preventDefault();
@@ -493,7 +402,6 @@ window.APP_POS = (function() {
     if(matches[index]) addProduct(matches[index]);
     document.getElementById('maVachInput').value = ''; hideSuggestions(); focusInput();
   }
-
   function addProduct(product) {
     beep();
     const idx = gioHangData.findIndex(item => String(item.maSP) === String(product.maSP));
@@ -501,7 +409,6 @@ window.APP_POS = (function() {
     else { gioHangData.push({ maSP: product.maSP, tenSP: product.tenSP, donGia: num(product.giaBan), soLuong: 1, thanhTien: num(product.giaBan) }); }
     capNhatUI();
   }
-
   async function xuLyMaVach(val) {
     const v = String(val||'').trim(); if(!v) return;
     document.getElementById('maVachInput').value = ''; hideSuggestions(); focusInput();
@@ -509,70 +416,49 @@ window.APP_POS = (function() {
     if(!found) found = await localDb.getByName(v);
     if(found){ addProduct(found); } else { if(!scanLocked) alert('Không tìm thấy: ' + v); }
   }
-
   function capNhatUI() {
     const tbody = document.getElementById('gioHang');
     tamTinh = gioHangData.reduce((sum, item) => sum + num(item.thanhTien), 0);
-    
-    if(!gioHangData.length){
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Giỏ hàng trống</td></tr>';
-      tinhGiamGia('UPDATE'); return;
-    }
-    
+    if(!gioHangData.length){ tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Giỏ hàng trống</td></tr>'; tinhGiamGia('UPDATE'); return; }
     tbody.innerHTML = [...gioHangData].reverse().map((item, revIdx) => {
       const idx = gioHangData.length - 1 - revIdx;
-      return `<tr>
-        <td>${idx+1}</td><td class="cart-name">${esc(item.tenSP)}</td>
-        <td><input type="number" min="1" value="${num(item.soLuong)}" class="form-control form-control-sm text-center fw-bold qty-input" onchange="APP_POS.suaSL(${idx}, this.value)"></td>
-        <td class="text-end money">${money(item.donGia)}</td><td class="text-danger fw-bold text-end money">${money(item.thanhTien)}</td>
-        <td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="APP_POS.xoaSP(${idx})"><i class="bi bi-x-lg"></i></button></td>
-      </tr>`;
+      return `<tr><td>${idx+1}</td><td class="cart-name">${esc(item.tenSP)}</td><td><input type="number" min="1" value="${num(item.soLuong)}" class="form-control form-control-sm text-center fw-bold qty-input" onchange="APP_POS.suaSL(${idx}, this.value)"></td><td class="text-end money">${money(item.donGia)}</td><td class="text-danger fw-bold text-end money">${money(item.thanhTien)}</td><td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="APP_POS.xoaSP(${idx})"><i class="bi bi-x-lg"></i></button></td></tr>`;
     }).join('');
     tinhGiamGia('UPDATE');
   }
-
   function suaSL(idx, val) { const q = Math.floor(num(val)); if(q>0){ gioHangData[idx].soLuong = q; gioHangData[idx].thanhTien = q * gioHangData[idx].donGia; capNhatUI(); } }
   function xoaSP(idx) { gioHangData.splice(idx, 1); capNhatUI(); }
   function huyDon() { if(gioHangData.length && confirm('Xác nhận hủy?')){ gioHangData=[]; document.getElementById('sdtKhachInput').value=''; document.getElementById('inputGiamGiaPT').value=0; document.getElementById('inputGiamGiaVND').value=0; capNhatUI(); focusInput(); } }
-
   function tinhGiamGia(mode) {
     const ptEl = document.getElementById('inputGiamGiaPT'), vndEl = document.getElementById('inputGiamGiaVND');
     let pt = num(ptEl.value), vnd = Math.floor(num(vndEl.value));
-    
     if(!gioHangData.length){ ptEl.value=0; vndEl.value=0; giamGia=0; tongTienThanhToan=0; renderTong(); return; }
     if(mode === 'PT'){ pt = Math.min(100, Math.max(0, pt)); vnd = Math.round(tamTinh * pt / 100); vndEl.value = vnd; } 
     else { vnd = Math.min(tamTinh, Math.max(0, vnd)); pt = tamTinh ? (vnd / tamTinh * 100) : 0; ptEl.value = Number.isInteger(pt) ? pt : pt.toFixed(2); }
-    
     giamGia = vnd; tongTienThanhToan = Math.max(0, tamTinh - giamGia); renderTong();
   }
-
   function renderTong() {
-    document.getElementById('txtTamTinh').textContent = money(tamTinh);
-    document.getElementById('txtTongTien').textContent = money(tongTienThanhToan);
-    document.getElementById('txtTienGiam').textContent = money(giamGia);
-    document.getElementById('divHienThiGiamGia').style.display = giamGia > 0 ? 'block' : 'none';
+    document.getElementById('txtTamTinh').textContent = money(tamTinh); document.getElementById('txtTongTien').textContent = money(tongTienThanhToan); document.getElementById('txtTienGiam').textContent = money(giamGia); document.getElementById('divHienThiGiamGia').style.display = giamGia > 0 ? 'block' : 'none';
   }
-
   function moFormSanPhamMo() { bootstrap.Modal.getOrCreateInstance(document.getElementById('modalSanPhamMo')).show(); }
   function themSanPhamMo(event) {
     event.preventDefault();
     const ten = document.getElementById('spm_ten').value.trim(), gia = Math.max(0, Math.floor(num(document.getElementById('spm_gia').value))), sl = Math.max(1, Math.floor(num(document.getElementById('spm_sl').value)));
-    if(!ten) return;
-    gioHangData.push({ maSP: 'SPM-' + Date.now(), tenSP: '[Tự do] ' + ten, donGia: gia, soLuong: sl, thanhTien: gia * sl });
+    if(!ten) return; gioHangData.push({ maSP: 'SPM-' + Date.now(), tenSP: '[Tự do] ' + ten, donGia: gia, soLuong: sl, thanhTien: gia * sl });
     capNhatUI(); bootstrap.Modal.getInstance(document.getElementById('modalSanPhamMo'))?.hide(); event.target.reset(); focusInput();
   }
-
   function thanhToan() {
     if(!gioHangData.length){ alert('Giỏ hàng rỗng!'); return; }
     const addInfo = 'DH-' + Date.now();
     document.getElementById('tt_tongTien').textContent = money(tongTienThanhToan) + ' VNĐ';
-    document.getElementById('tt_tamTinh').textContent = money(tamTinh);
-    document.getElementById('tt_giam').textContent = money(giamGia);
-    document.getElementById('tt_giamWrap').style.display = giamGia > 0 ? 'inline' : 'none';
+    document.getElementById('tt_tamTinh').textContent = money(tamTinh); document.getElementById('tt_giam').textContent = money(giamGia); document.getElementById('tt_giamWrap').style.display = giamGia > 0 ? 'inline' : 'none';
     document.getElementById('imgVietQR').src = `https://img.vietqr.io/image/${CONFIG.NGAN_HANG}-${CONFIG.STK}-compact.png?amount=${tongTienThanhToan}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(CONFIG.CHU_TAI_KHOAN)}`;
     bootstrap.Modal.getOrCreateInstance(document.getElementById('modalThanhToan')).show();
   }
 
+  // ========================================================
+  // CHỐT ĐƠN & GỌI BACKGROUND SYNC API
+  // ========================================================
   async function chotDonHang() {
     if(printing || !gioHangData.length) return;
     const sdt = document.getElementById('sdtKhachInput').value.trim(), btn = document.getElementById('btnChotDon');
@@ -582,9 +468,20 @@ window.APP_POS = (function() {
     
     if (!navigator.onLine) {
       const maDHOffline = "OFF-" + Date.now();
-      await localDb.saveOfflineOrder({ id: maDHOffline, gioHang: snapshot, tongCong: total, sdtKhach: sdt });
+      // LƯU CẢ API KEY VÀO PAYLOAD ĐỂ SERVICE WORKER CÓ THỂ DÙNG LÚC CHẠY NGẦM DƯỚI HỆ ĐIỀU HÀNH
+      const payload = { action: "luuDonHang", apiKey: SECRET_API_KEY, gioHang: snapshot, tongTien: total, sdtKhach: sdt };
+      await localDb.saveOfflineOrder({ id: maDHOffline, payload: payload });
+      
       try { await Printer.print(maDHOffline, snapshot, sdt); } catch(e){}
-      resetSauIn(btn); alert("LƯU TẠM NGOẠI TUYẾN: Sẽ đồng bộ khi có mạng.");
+      resetSauIn(btn); 
+      alert("LƯU TẠM NGOẠI TUYẾN: Trình duyệt sẽ tự động gửi đi dưới nền ngay khi có sóng.");
+      
+      // Yêu cầu Background Sync từ Service Worker
+      if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(dongBoDonHangOffline_Fallback);
+      } else {
+        dongBoDonHangOffline_Fallback();
+      }
       return;
     }
 
@@ -635,19 +532,22 @@ window.APP_POS = (function() {
   }
 
   function init() {
-    checkSecurityLock(); // Kích hoạt chặn bảo mật
+    checkSecurityLock(); 
     focusInput(); kiemTraBridge(); updateNetworkStatus();
-    
     if(/Android/i.test(navigator.userAgent) || window.innerWidth < 992) {
       const btnBlock = document.getElementById('action-buttons'), tContainer = document.getElementById('mobile-button-container');
       if(btnBlock && tContainer) tContainer.appendChild(btnBlock);
     }
-    
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
-
     localDb.init().then(() => {
-      localDb.getOfflineOrders().then(o => { if(o.length) dongBoDonHangOffline(); });
+      localDb.getOfflineOrders().then(o => { 
+        if(o.length) {
+          if ('serviceWorker' in navigator && 'SyncManager' in window) {
+            navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(dongBoDonHangOffline_Fallback);
+          } else dongBoDonHangOffline_Fallback();
+        }
+      });
     }).catch(console.error);
   }
 
@@ -665,14 +565,8 @@ window.addEventListener('load', () => {
     if(e.key === 'F12'){ e.preventDefault(); APP_POS.thanhToan(); }
     else if(e.key === 'F2'){ e.preventDefault(); const i=document.getElementById('maVachInput'); if(i){ i.focus(); i.select(); } }
     else if(e.key === 'F4'){ e.preventDefault(); APP_POS.moFormSanPhamMo(); }
-    else if(e.key === 'Escape'){
-      const m = document.getElementById('modalThanhToan');
-      if(m && m.classList.contains('show')){ bootstrap.Modal.getInstance(m)?.hide(); } else { APP_POS.huyDon(); }
-    }
-    else if(e.key === 'Enter'){
-      const mt = document.getElementById('modalThanhToan');
-      if(mt && mt.classList.contains('show')){ e.preventDefault(); APP_POS.chotDonHang(); }
-    }
+    else if(e.key === 'Escape'){ const m = document.getElementById('modalThanhToan'); if(m && m.classList.contains('show')){ bootstrap.Modal.getInstance(m)?.hide(); } else { APP_POS.huyDon(); } }
+    else if(e.key === 'Enter'){ const mt = document.getElementById('modalThanhToan'); if(mt && mt.classList.contains('show')){ e.preventDefault(); APP_POS.chotDonHang(); } }
   });
 
   if ('serviceWorker' in navigator) {
