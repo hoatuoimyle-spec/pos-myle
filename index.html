@@ -10,6 +10,9 @@
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0d6b4f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -168,10 +171,12 @@ window.APP_POS = (function() {
   'use strict';
 
   // ========================================================
-  // BẢO MẬT & API (XÁC THỰC CỤC BỘ)
+  // API + PIN (PIN chỉ là lớp khóa giao diện; API key vẫn cần được backend xác thực)
   // ========================================================
   const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec"; 
-  const ENCRYPTED_PAYLOAD = [124, 72, 124, 93, 105, 124, 114, 92, 2, 24, 11, 5, 92, 114, 85, 91, 84, 81, 84, 90, 85, 65];
+  // PIN 110893 -> MyLePOS-2026-SecureKey (XOR).
+  // LƯU Ý: đây chỉ là obfuscation phía client, KHÔNG phải cơ chế giữ bí mật API key.
+  const ENCRYPTED_PAYLOAD = [124,72,124,93,105,124,98,28,2,8,11,5,28,98,85,91,76,65,84,122,85,65];
   let SECRET_API_KEY = sessionStorage.getItem("MYLE_SESSION_KEY") || "";
 
   const CONFIG = {
@@ -203,7 +208,7 @@ window.APP_POS = (function() {
 
     const attemptKey = xorDecrypt(ENCRYPTED_PAYLOAD, pin);
 
-    if (attemptKey.startsWith("MyLePOS")) {
+    if (attemptKey === "MyLePOS-2026-SecureKey") {
       sessionStorage.setItem("MYLE_SESSION_KEY", attemptKey);
       SECRET_API_KEY = attemptKey;
       document.getElementById('lock-screen').style.display = 'none';
@@ -216,7 +221,7 @@ window.APP_POS = (function() {
   }
 
   function checkSecurityLock() {
-    if (SECRET_API_KEY && SECRET_API_KEY.startsWith("MyLePOS")) {
+    if (SECRET_API_KEY === "MyLePOS-2026-SecureKey") {
       document.getElementById('lock-screen').style.display = 'none';
       taiDuLieuTuServer();
     } else {
@@ -284,9 +289,39 @@ window.APP_POS = (function() {
     }
     async getByName(name){
       if(!this.db)return null;
+      const target = String(name || '').trim().toLowerCase();
+      if(!target) return null;
       return new Promise(res => {
-        const r = this.db.transaction([this.sProd], 'readonly').objectStore(this.sProd).index('tenSP').get(String(name));
-        r.onsuccess = e => res(e.target.result || null); r.onerror = () => res(null);
+        const tx = this.db.transaction([this.sProd], 'readonly');
+        const req = tx.objectStore(this.sProd).getAll();
+        req.onsuccess = e => {
+          const list = e.target.result || [];
+          const exact = list.find(p => String(p.tenSP || '').trim().toLowerCase() === target);
+          res(exact || null);
+        };
+        req.onerror = () => res(null);
+      });
+    }
+    async searchProducts(query, limit=30){
+      if(!this.db) return [];
+      const q = String(query || '').trim().toLowerCase();
+      if(!q) return [];
+      return new Promise(res => {
+        const tx = this.db.transaction([this.sProd], 'readonly');
+        const req = tx.objectStore(this.sProd).getAll();
+        req.onsuccess = e => {
+          const list = e.target.result || [];
+          res(list.filter(p => String(p.tenSP||'').toLowerCase().includes(q) || String(p.maSP||'').toLowerCase().includes(q)).slice(0, limit));
+        };
+        req.onerror = () => res([]);
+      });
+    }
+    async getAllProducts(){
+      if(!this.db) return [];
+      return new Promise(res => {
+        const r = this.db.transaction([this.sProd], 'readonly').objectStore(this.sProd).getAll();
+        r.onsuccess = e => res(e.target.result || []);
+        r.onerror = () => res([]);
       });
     }
     async saveOfflineOrder(order) {
@@ -313,32 +348,61 @@ window.APP_POS = (function() {
   }
   const localDb = new ProductStore();
 
+  async function fetchJson(url, options = {}) {
+    const res = await fetch(url, { cache: 'no-store', ...options });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if(data && data.status === 'error') throw new Error(data.message || 'API error');
+    return data;
+  }
+
   async function taiDuLieuTuServer() {
-    if (!navigator.onLine || !SECRET_API_KEY) return;
+    if (!SECRET_API_KEY) return;
+    // Luôn cố dùng dữ liệu cache trước để POS không trắng khi mạng chập chờn.
     try {
-      let resBank = await fetch(API_URL + "?action=layThongTinNganHang&apiKey=" + SECRET_API_KEY);
-      let dataBank = await resBank.json();
+      const cached = await localDb.getAllProducts();
+      if(cached.length) products = cached;
+    } catch(e) {}
+
+    if (!navigator.onLine) return;
+    try {
+      const dataBank = await fetchJson(API_URL + '?action=layThongTinNganHang&apiKey=' + encodeURIComponent(SECRET_API_KEY));
       if(dataBank && dataBank.stk) {
-        CONFIG.NGAN_HANG = dataBank.nganHang; CONFIG.STK = dataBank.stk; CONFIG.CHU_TAI_KHOAN = dataBank.chuTaiKhoan;
+        CONFIG.NGAN_HANG = dataBank.nganHang || CONFIG.NGAN_HANG;
+        CONFIG.STK = dataBank.stk || CONFIG.STK;
+        CONFIG.CHU_TAI_KHOAN = dataBank.chuTaiKhoan || CONFIG.CHU_TAI_KHOAN;
       }
-      let resProd = await fetch(API_URL + "?action=layDanhSachSanPham&apiKey=" + SECRET_API_KEY);
-      products = await resProd.json();
+      const dataProd = await fetchJson(API_URL + '?action=layDanhSachSanPham&apiKey=' + encodeURIComponent(SECRET_API_KEY));
+      if(!Array.isArray(dataProd)) throw new Error('API sản phẩm không trả về mảng');
+      products = dataProd;
       await localDb.saveProducts(products);
-    } catch (e) { console.error("Lỗi đồng bộ API:", e); }
+      console.info('MyLePOS: đồng bộ', products.length, 'sản phẩm');
+    } catch (e) {
+      console.warn('MyLePOS: dùng dữ liệu offline/cache:', e.message || e);
+    }
   }
 
   // Backup Sync trong trường hợp trình duyệt không hỗ trợ Background Sync
   async function dongBoDonHangOffline_Fallback() {
-    if (!navigator.onLine) return;
-    let pending = await localDb.getOfflineOrders();
-    if (pending.length === 0) return;
-    for (let order of pending) {
+    if (!navigator.onLine) return false;
+    const pending = await localDb.getOfflineOrders();
+    if (!pending.length) return true;
+    for (const order of pending) {
       try {
-        await fetch(API_URL, { method: "POST", body: JSON.stringify(order.payload) });
+        const json = await fetchJson(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: JSON.stringify(order.payload)
+        });
+        if(json.status !== 'success') throw new Error(json.message || 'Server từ chối đơn');
         await localDb.deleteOfflineOrder(order.id);
-      } catch (e) { break; }
+      } catch(e) {
+        console.warn('MyLePOS: chưa đồng bộ được đơn', order.id, e.message || e);
+        return false;
+      }
     }
-    taiDuLieuTuServer();
+    await taiDuLieuTuServer();
+    return true;
   }
 
   function kiemTraBridge() {
@@ -413,7 +477,7 @@ window.APP_POS = (function() {
     const v = String(val||'').trim(); if(!v) return;
     document.getElementById('maVachInput').value = ''; hideSuggestions(); focusInput();
     let found = await localDb.getByBarcode(v);
-    if(!found) found = await localDb.getByName(v);
+    if(!found) found = products.find(p => String(p.tenSP || '').trim().toLowerCase() === v.toLowerCase()) || null;
     if(found){ addProduct(found); } else { if(!scanLocked) alert('Không tìm thấy: ' + v); }
   }
   function capNhatUI() {
@@ -461,51 +525,69 @@ window.APP_POS = (function() {
   // ========================================================
   async function chotDonHang() {
     if(printing || !gioHangData.length) return;
-    const sdt = document.getElementById('sdtKhachInput').value.trim(), btn = document.getElementById('btnChotDon');
+    const sdt = document.getElementById('sdtKhachInput').value.trim();
+    const btn = document.getElementById('btnChotDon');
     printing = true; btn.disabled = true; btn.innerHTML = 'ĐANG XỬ LÝ...';
-    
-    const snapshot = JSON.parse(JSON.stringify(gioHangData)), total = tongTienThanhToan;
-    
+    const snapshot = JSON.parse(JSON.stringify(gioHangData));
+    const total = tongTienThanhToan;
+    const payload = { action:'luuDonHang', apiKey:SECRET_API_KEY, gioHang:snapshot, tongTien:total, sdtKhach:sdt };
+
     if (!navigator.onLine) {
-      const maDHOffline = "OFF-" + Date.now();
-      // LƯU CẢ API KEY VÀO PAYLOAD ĐỂ SERVICE WORKER CÓ THỂ DÙNG LÚC CHẠY NGẦM DƯỚI HỆ ĐIỀU HÀNH
-      const payload = { action: "luuDonHang", apiKey: SECRET_API_KEY, gioHang: snapshot, tongTien: total, sdtKhach: sdt };
-      await localDb.saveOfflineOrder({ id: maDHOffline, payload: payload });
-      
-      try { await Printer.print(maDHOffline, snapshot, sdt); } catch(e){}
-      resetSauIn(btn); 
-      alert("LƯU TẠM NGOẠI TUYẾN: Trình duyệt sẽ tự động gửi đi dưới nền ngay khi có sóng.");
-      
-      // Yêu cầu Background Sync từ Service Worker
-      if ('serviceWorker' in navigator && 'SyncManager' in window) {
-        navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(dongBoDonHangOffline_Fallback);
-      } else {
-        dongBoDonHangOffline_Fallback();
-      }
+      await saveOfflineAndPrint(payload, snapshot, sdt, 'OFF');
+      resetSauIn(btn);
+      alert('LƯU TẠM NGOẠI TUYẾN. Đơn sẽ tự đồng bộ khi có mạng.');
       return;
     }
 
     try {
-      const payload = { action: "luuDonHang", apiKey: SECRET_API_KEY, gioHang: snapshot, tongTien: total, sdtKhach: sdt };
-      const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-      const json = await res.json();
-      
-      if (json.status === "success") {
-        const parts = String(json.data || '').split('\n');
-        const maDH = parts[0].split('Mã hóa đơn: ')[1] || parts[0].trim();
-        
-        try {
-          const pr = await Printer.print(maDH, snapshot, sdt);
-          if(pr.mode === 'ANDROID') alert('Đã gửi tới ứng dụng in MylePrint.');
-          else if(parts.length > 1 && parts[1]) alert(parts[1]);
-        } catch(err) { alert('Lưu thành công, nhưng in thất bại: ' + err); }
+      const json = await fetchJson(API_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
+        body:JSON.stringify(payload)
+      });
+      if(json.status !== 'success') throw new Error(json.message || 'Server từ chối đơn hàng');
 
-        resetSauIn(btn);
-        taiDuLieuTuServer();
-      } else { throw new Error(json.message); }
+      const parts = String(json.data || '').split('\n');
+      const maDH = parts[0].split('Mã hóa đơn: ')[1] || parts[0].trim();
+      try {
+        const pr = await Printer.print(maDH, snapshot, sdt);
+        if(pr.mode === 'ANDROID') alert('Đã gửi tới ứng dụng in MylePrint.');
+        else if(parts.length > 1 && parts[1]) alert(parts[1]);
+      } catch(err) {
+        alert('Lưu thành công, nhưng in thất bại: ' + (err.message || err));
+      }
+      resetSauIn(btn);
+      await taiDuLieuTuServer();
     } catch (e) {
-      alert("Lỗi máy chủ: " + e.message);
-      printing = false; btn.disabled = false; btn.innerHTML = 'XÁC NHẬN HOÀN TẤT';
+      // Chỉ đưa vào hàng đợi khi request thất bại do mạng. Không queue lại khi server đã trả lỗi.
+      if(!navigator.onLine || /Failed to fetch|NetworkError|Load failed|network/i.test(String(e.message || e))) {
+        try {
+          await saveOfflineAndPrint(payload, snapshot, sdt, 'NET');
+          resetSauIn(btn);
+          alert('Mạng không ổn định. Đơn đã được lưu tạm và sẽ tự đồng bộ.');
+          if('serviceWorker' in navigator && 'SyncManager' in window) {
+            navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(()=>{});
+          }
+        } catch(saveErr) {
+          printing = false; btn.disabled=false; btn.innerHTML='XÁC NHẬN HOÀN TẤT';
+          alert('Không thể lưu đơn offline: ' + (saveErr.message || saveErr));
+        }
+      } else {
+        printing = false; btn.disabled=false; btn.innerHTML='XÁC NHẬN HOÀN TẤT';
+        alert('Lỗi máy chủ: ' + (e.message || e));
+      }
+    }
+  }
+
+  async function saveOfflineAndPrint(payload, snapshot, sdt, prefix) {
+    const id = prefix + '-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
+    await localDb.saveOfflineOrder({ id, payload });
+    try { await Printer.print(id, snapshot, sdt); } catch(e) { console.warn('In offline thất bại:', e); }
+    if('serviceWorker' in navigator && 'SyncManager' in window) {
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        await reg.sync.register('sync-orders');
+      } catch(e) {}
     }
   }
 
@@ -516,23 +598,60 @@ window.APP_POS = (function() {
     printing = false; btn.disabled = false; btn.innerHTML = 'XÁC NHẬN HOÀN TẤT'; focusInput();
   }
 
-  function toggleCamera() {
+  async function toggleCamera() {
     if(typeof Html5Qrcode === 'undefined'){ alert('Thư viện quét mã vạch chưa tải xong!'); return; }
-    const btn = document.getElementById('btnToggleCamera'), box = document.getElementById('camera-container');
+    if(!window.isSecureContext){ alert('Camera yêu cầu HTTPS. Hãy mở POS bằng địa chỉ GitHub Pages https://...'); return; }
+    const btn = document.getElementById('btnToggleCamera');
+    const box = document.getElementById('camera-container');
+
     if(isCamOn){
-      if(scanner) scanner.stop().then(() => { box.style.display='none'; btn.className='btn btn-dark fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM'; isCamOn=false; focusInput(); }).catch(()=>{});
+      try { if(scanner) await scanner.stop(); } catch(e) {}
+      try { if(scanner) scanner.clear(); } catch(e) {}
+      scanner = null; isCamOn = false;
+      box.style.display='none';
+      btn.className='btn btn-dark fw-bold touch-btn text-nowrap';
+      btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM';
+      focusInput();
       return;
     }
-    box.style.display='block'; btn.className='btn btn-danger fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT CAM'; isCamOn=true;
-    scanner = new Html5Qrcode('reader');
-    scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 250, height: 100 }, aspectRatio: 1 }, text => {
-      if(scanLocked) return; scanLocked = true; beep(); if(navigator.vibrate) navigator.vibrate(100);
-      xuLyMaVach(text); setTimeout(() => { scanLocked = false; }, 1200);
-    }, () => {}).catch(err => { isCamOn=false; box.style.display='none'; btn.className='btn btn-dark fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM'; alert('Lỗi Camera: Cần cấp quyền truy cập'); });
+
+    box.style.display='block';
+    btn.disabled = true;
+    btn.innerHTML='<span class="spinner-border spinner-border-sm"></span> ĐANG MỞ CAM...';
+    try {
+      scanner = new Html5Qrcode('reader');
+      await scanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: (viewfinderWidth, viewfinderHeight) => ({ width: Math.min(300, Math.floor(viewfinderWidth * 0.82)), height: Math.min(120, Math.floor(viewfinderHeight * 0.30)) }), aspectRatio: 1.777 },
+        text => {
+          if(scanLocked) return;
+          scanLocked = true;
+          beep();
+          if(navigator.vibrate) navigator.vibrate(80);
+          xuLyMaVach(text);
+          setTimeout(() => { scanLocked = false; }, 900);
+        },
+        () => {}
+      );
+      isCamOn = true;
+      btn.disabled = false;
+      btn.className='btn btn-danger fw-bold touch-btn text-nowrap';
+      btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT CAM';
+    } catch(err) {
+      try { if(scanner) scanner.clear(); } catch(e) {}
+      scanner = null; isCamOn = false; box.style.display='none';
+      btn.disabled = false;
+      btn.className='btn btn-dark fw-bold touch-btn text-nowrap';
+      btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM';
+      const msg = String(err?.message || err || 'Không xác định');
+      if(/permission|denied|notallowed/i.test(msg)) alert('Camera bị từ chối. Hãy vào quyền của Chrome → Camera → cho phép trang GitHub này.');
+      else alert('Không mở được camera: ' + msg);
+    }
   }
 
-  function init() {
-    checkSecurityLock(); 
+  async function init() {
+    try { await localDb.init(); } catch(e) { console.error('IndexedDB init error:', e); }
+    checkSecurityLock();
     focusInput(); kiemTraBridge(); updateNetworkStatus();
     if(/Android/i.test(navigator.userAgent) || window.innerWidth < 992) {
       const btnBlock = document.getElementById('action-buttons'), tContainer = document.getElementById('mobile-button-container');
@@ -540,14 +659,12 @@ window.APP_POS = (function() {
     }
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
-    localDb.init().then(() => {
-      localDb.getOfflineOrders().then(o => { 
-        if(o.length) {
-          if ('serviceWorker' in navigator && 'SyncManager' in window) {
-            navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(dongBoDonHangOffline_Fallback);
-          } else dongBoDonHangOffline_Fallback();
-        }
-      });
+    localDb.getOfflineOrders().then(o => {
+      if(o.length) {
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+          navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(dongBoDonHangOffline_Fallback);
+        } else dongBoDonHangOffline_Fallback();
+      }
     }).catch(console.error);
   }
 
@@ -570,7 +687,7 @@ window.addEventListener('load', () => {
   });
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(err => console.error('SW Error:', err));
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).then(reg => reg.update()).catch(err => console.error('SW Error:', err));
   }
 });
 </script>
