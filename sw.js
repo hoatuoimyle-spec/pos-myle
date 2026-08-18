@@ -1,18 +1,25 @@
-const CACHE_NAME = 'myle-pos-cache-v2';
+const CACHE_NAME = 'myle-pos-cache-v3'; // Cập nhật phiên bản Cache
 const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec";
 
 // Cài đặt Service Worker
 self.addEventListener('install', event => {
-  self.skipWaiting();
+  self.skipWaiting(); // Ép kích hoạt ngay lập tức bản V3
 });
 
+// Xóa bộ nhớ đệm cũ khi kích hoạt bản mới
 self.addEventListener('activate', event => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
-// Cache tài nguyên cơ bản (PWA Shell)
+// Cache tài nguyên cơ bản (Bỏ qua API)
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET' || event.request.url.includes(API_URL)) return;
+  if (event.request.method !== 'GET' || event.request.url.includes('script.google.com')) return;
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request).then(fetchRes => {
@@ -32,7 +39,7 @@ self.addEventListener('sync', event => {
   }
 });
 
-// Hàm kết nối thẳng với IndexedDB từ Service Worker
+// Kết nối IndexedDB
 function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('MyLePOS_DB', 2);
@@ -41,12 +48,11 @@ function openDatabase() {
   });
 }
 
-// Hàm đẩy dữ liệu ngầm lên Google Apps Script
+// Hàm đồng bộ ngầm
 async function syncOfflineOrders() {
   try {
     const db = await openDatabase();
     
-    // Lấy toàn bộ đơn hàng bị kẹt
     const orders = await new Promise((resolve, reject) => {
       const tx = db.transaction('OfflineOrders', 'readonly');
       const store = tx.objectStore('OfflineOrders');
@@ -59,17 +65,16 @@ async function syncOfflineOrders() {
 
     for (let order of orders) {
       try {
-        // Gửi POST request sử dụng payload đã đóng gói sẵn apiKey từ lúc rớt mạng
         const response = await fetch(API_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
           body: JSON.stringify(order.payload)
         });
         
         const result = await response.json();
         
-        // Chỉ xóa khi Google Apps Script trả về trạng thái "success"
-        if (result && result.status === "success") {
+        if (result && result.status === 'success') {
+          // Xóa đơn khi máy chủ xác nhận thành công
           await new Promise((resolve, reject) => {
             const tx = db.transaction('OfflineOrders', 'readwrite');
             const store = tx.objectStore('OfflineOrders');
@@ -77,14 +82,20 @@ async function syncOfflineOrders() {
             req.onsuccess = resolve;
             req.onerror = reject;
           });
+        } else if (result && result.status === 'error') {
+          const msg = result.message || '';
+          // CÔNG TẮC AN TOÀN: Phát hiện Token hết hạn
+          if (msg.includes('401') || msg.includes('hết hạn') || msg.includes('SESSION_EXPIRED')) {
+            console.warn('[SW] CẢNH BÁO: Token hết hạn. Khóa luồng đồng bộ ngầm để bảo toàn đơn hàng.');
+            break; // Lập tức đóng băng toàn bộ tiến trình
+          }
         }
       } catch (e) {
-        // Vẫn bị lỗi mạng (chưa ổn định), dừng lại để chờ lần kích hoạt Background Sync tiếp theo
-        console.error("Lỗi đồng bộ ngầm: ", e);
+        // Lỗi mạng hoặc Timeout: Dừng lại chờ đợt sóng sau
         break; 
       }
     }
   } catch (err) {
-    console.error("Lỗi mở IndexedDB từ SW:", err);
+    console.error("[SW] Lỗi hệ thống cơ sở dữ liệu:", err);
   }
 }
