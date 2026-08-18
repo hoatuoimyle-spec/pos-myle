@@ -171,13 +171,10 @@ window.APP_POS = (function() {
   'use strict';
 
   // ========================================================
-  // API + PIN (PIN chỉ là lớp khóa giao diện; API key vẫn cần được backend xác thực)
+  // BẢO MẬT & API V2 (ZERO-TRUST CLIENT & TOKEN-BASED)
   // ========================================================
   const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec"; 
-  // PIN 110893 -> MyLePOS-2026-SecureKey (XOR).
-  // LƯU Ý: đây chỉ là obfuscation phía client, KHÔNG phải cơ chế giữ bí mật API key.
-  const ENCRYPTED_PAYLOAD = [124,72,124,93,105,124,98,28,2,8,11,5,28,98,85,91,76,65,84,122,85,65];
-  let SECRET_API_KEY = sessionStorage.getItem("MYLE_SESSION_KEY") || "";
+  let SESSION_TOKEN = sessionStorage.getItem("MYLE_SESSION_TOKEN") || "";
 
   const CONFIG = {
     NGAN_HANG: 'MB', STK: '1108199309999', CHU_TAI_KHOAN: 'LIEU QUANG THONG',
@@ -189,12 +186,33 @@ window.APP_POS = (function() {
   let gioHangData = [], products = [], scanner = null, isCamOn = false, scanLocked = false;
   let printing = false, tamTinh = 0, giamGia = 0, tongTienThanhToan = 0, audioCtx = null;
 
-  function xorDecrypt(arr, pin) {
-    let result = '';
-    for (let i = 0; i < arr.length; i++) {
-      result += String.fromCharCode(arr[i] ^ pin.charCodeAt(i % pin.length));
+  // ========================================================
+  // XỬ LÝ LỖI HẾT HẠN PHIÊN (401 UNAUTHORIZED)
+  // ========================================================
+  function lockSystemExp() {
+    SESSION_TOKEN = "";
+    sessionStorage.removeItem("MYLE_SESSION_TOKEN");
+    document.getElementById('lock-screen').style.display = 'flex';
+    const err = document.getElementById('pinError');
+    err.style.display = 'block';
+    err.innerText = 'Phiên đăng nhập hết hạn. Vui lòng nhập lại PIN!';
+    document.getElementById('pinCode').value = '';
+    setTimeout(() => document.getElementById('pinCode').focus(), 100);
+  }
+
+  async function fetchJson(url, options = {}) {
+    const res = await fetch(url, { cache: 'no-store', ...options });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if(data && data.status === 'error') {
+      const msg = data.message || '';
+      if (msg.includes('401') || msg.includes('hết hạn')) {
+        lockSystemExp();
+        throw new Error('SESSION_EXPIRED'); // Bắn cờ đặc biệt để ngừng xóa dữ liệu
+      }
+      throw new Error(msg || 'API error');
     }
-    return result;
+    return data;
   }
 
   async function unlockSystem() {
@@ -203,25 +221,36 @@ window.APP_POS = (function() {
     const err = document.getElementById('pinError');
     if (!pin) return;
 
-    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ĐANG MỞ KHÓA...';
+    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ĐANG XÁC THỰC...';
     err.style.display = 'none';
 
-    const attemptKey = xorDecrypt(ENCRYPTED_PAYLOAD, pin);
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: JSON.stringify({ action: 'xacThucPIN', pin: pin })
+      });
+      const result = await res.json();
 
-    if (attemptKey === "MyLePOS-2026-SecureKey") {
-      sessionStorage.setItem("MYLE_SESSION_KEY", attemptKey);
-      SECRET_API_KEY = attemptKey;
-      document.getElementById('lock-screen').style.display = 'none';
-      taiDuLieuTuServer(); 
-    } else {
+      if (result.status === 'success' && result.data && result.data.token) {
+        SESSION_TOKEN = result.data.token;
+        sessionStorage.setItem("MYLE_SESSION_TOKEN", SESSION_TOKEN);
+        
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('pinCode').value = '';
+        taiDuLieuTuServer(); 
+      } else { throw new Error(result.message || 'Xác thực thất bại'); }
+    } catch (error) {
       err.style.display = 'block';
+      err.innerText = "Lỗi: " + error.message;
       document.getElementById('pinCode').value = '';
+    } finally {
       btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill"></i> MỞ KHÓA';
     }
   }
 
   function checkSecurityLock() {
-    if (SECRET_API_KEY === "MyLePOS-2026-SecureKey") {
+    if (SESSION_TOKEN) {
       document.getElementById('lock-screen').style.display = 'none';
       taiDuLieuTuServer();
     } else {
@@ -255,9 +284,6 @@ window.APP_POS = (function() {
     }
   }
 
-  // ========================================================
-  // QUẢN LÝ DỮ LIỆU NGOẠI TUYẾN (Cập nhật lưu gói Payload hoàn chỉnh cho SW)
-  // ========================================================
   class ProductStore {
     constructor(){ this.dbName = 'MyLePOS_DB'; this.sProd = 'Products'; this.sOrder = 'OfflineOrders'; this.dbVersion=2; this.db=null; }
     async init(){
@@ -348,17 +374,8 @@ window.APP_POS = (function() {
   }
   const localDb = new ProductStore();
 
-  async function fetchJson(url, options = {}) {
-    const res = await fetch(url, { cache: 'no-store', ...options });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if(data && data.status === 'error') throw new Error(data.message || 'API error');
-    return data;
-  }
-
   async function taiDuLieuTuServer() {
-    if (!SECRET_API_KEY) return;
-    // Luôn cố dùng dữ liệu cache trước để POS không trắng khi mạng chập chờn.
+    if (!SESSION_TOKEN) return;
     try {
       const cached = await localDb.getAllProducts();
       if(cached.length) products = cached;
@@ -366,23 +383,22 @@ window.APP_POS = (function() {
 
     if (!navigator.onLine) return;
     try {
-      const dataBank = await fetchJson(API_URL + '?action=layThongTinNganHang&apiKey=' + encodeURIComponent(SECRET_API_KEY));
+      const dataBank = await fetchJson(API_URL + '?action=layThongTinNganHang&token=' + encodeURIComponent(SESSION_TOKEN));
       if(dataBank && dataBank.stk) {
         CONFIG.NGAN_HANG = dataBank.nganHang || CONFIG.NGAN_HANG;
         CONFIG.STK = dataBank.stk || CONFIG.STK;
         CONFIG.CHU_TAI_KHOAN = dataBank.chuTaiKhoan || CONFIG.CHU_TAI_KHOAN;
       }
-      const dataProd = await fetchJson(API_URL + '?action=layDanhSachSanPham&apiKey=' + encodeURIComponent(SECRET_API_KEY));
+      const dataProd = await fetchJson(API_URL + '?action=layDanhSachSanPham&token=' + encodeURIComponent(SESSION_TOKEN));
       if(!Array.isArray(dataProd)) throw new Error('API sản phẩm không trả về mảng');
       products = dataProd;
       await localDb.saveProducts(products);
       console.info('MyLePOS: đồng bộ', products.length, 'sản phẩm');
     } catch (e) {
-      console.warn('MyLePOS: dùng dữ liệu offline/cache:', e.message || e);
+      if (e.message !== 'SESSION_EXPIRED') console.warn('MyLePOS: dùng dữ liệu offline/cache:', e.message || e);
     }
   }
 
-  // Backup Sync trong trường hợp trình duyệt không hỗ trợ Background Sync
   async function dongBoDonHangOffline_Fallback() {
     if (!navigator.onLine) return false;
     const pending = await localDb.getOfflineOrders();
@@ -397,6 +413,10 @@ window.APP_POS = (function() {
         if(json.status !== 'success') throw new Error(json.message || 'Server từ chối đơn');
         await localDb.deleteOfflineOrder(order.id);
       } catch(e) {
+        if (e.message === 'SESSION_EXPIRED') {
+          console.warn('MyLePOS: Token hết hạn, tạm dừng đồng bộ đơn ' + order.id);
+          return false; 
+        }
         console.warn('MyLePOS: chưa đồng bộ được đơn', order.id, e.message || e);
         return false;
       }
@@ -449,7 +469,6 @@ window.APP_POS = (function() {
     }
   };
 
-  // Các hàm POS logic thuần túy...
   function renderSuggestions(query) {
     const box = document.getElementById('productSuggestions'), q = String(query||'').trim().toLowerCase();
     if(!q){ box.style.display='none'; return; }
@@ -520,17 +539,15 @@ window.APP_POS = (function() {
     bootstrap.Modal.getOrCreateInstance(document.getElementById('modalThanhToan')).show();
   }
 
-  // ========================================================
-  // CHỐT ĐƠN & GỌI BACKGROUND SYNC API
-  // ========================================================
   async function chotDonHang() {
     if(printing || !gioHangData.length) return;
     const sdt = document.getElementById('sdtKhachInput').value.trim();
     const btn = document.getElementById('btnChotDon');
     printing = true; btn.disabled = true; btn.innerHTML = 'ĐANG XỬ LÝ...';
+    
     const snapshot = JSON.parse(JSON.stringify(gioHangData));
     const total = tongTienThanhToan;
-    const payload = { action:'luuDonHang', apiKey:SECRET_API_KEY, gioHang:snapshot, tongTien:total, sdtKhach:sdt };
+    const payload = { action:'luuDonHang', token:SESSION_TOKEN, gioHang:snapshot, tongTien:total, sdtKhach:sdt };
 
     if (!navigator.onLine) {
       await saveOfflineAndPrint(payload, snapshot, sdt, 'OFF');
@@ -545,10 +562,10 @@ window.APP_POS = (function() {
         headers:{ 'Content-Type':'text/plain;charset=UTF-8' },
         body:JSON.stringify(payload)
       });
-      if(json.status !== 'success') throw new Error(json.message || 'Server từ chối đơn hàng');
-
+      
       const parts = String(json.data || '').split('\n');
       const maDH = parts[0].split('Mã hóa đơn: ')[1] || parts[0].trim();
+      
       try {
         const pr = await Printer.print(maDH, snapshot, sdt);
         if(pr.mode === 'ANDROID') alert('Đã gửi tới ứng dụng in MylePrint.');
@@ -559,7 +576,12 @@ window.APP_POS = (function() {
       resetSauIn(btn);
       await taiDuLieuTuServer();
     } catch (e) {
-      // Chỉ đưa vào hàng đợi khi request thất bại do mạng. Không queue lại khi server đã trả lỗi.
+      if (e.message === 'SESSION_EXPIRED') {
+        printing = false; btn.disabled = false; btn.innerHTML = 'XÁC NHẬN HOÀN TẤT';
+        bootstrap.Modal.getInstance(document.getElementById('modalThanhToan'))?.hide();
+        return; 
+      }
+      
       if(!navigator.onLine || /Failed to fetch|NetworkError|Load failed|network/i.test(String(e.message || e))) {
         try {
           await saveOfflineAndPrint(payload, snapshot, sdt, 'NET');
