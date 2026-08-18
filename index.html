@@ -248,7 +248,7 @@ window.APP_POS = (function() {
   // BẢO MẬT & API (ĐÃ MÃ HÓA LUỒNG)
   // ========================================================
   const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec"; 
-  const ENCRYPTED_PAYLOAD = "fkh8TWlsYhwCCAsFHGJVW1hQVnpVQQA=";
+  const ENCRYPTED_PAYLOAD = [124, 72, 124, 93, 105, 108, 114, 92, 2, 24, 11, 5, 92, 114, 85, 91, 84, 81, 84, 90, 85, 65];
   let SECRET_API_KEY = sessionStorage.getItem("MYLE_SESSION_KEY") || "";
 
   const CONFIG = {
@@ -261,16 +261,13 @@ window.APP_POS = (function() {
   let gioHangData = [], products = [], scanner = null, isCamOn = false, scanLocked = false;
   let printing = false, tamTinh = 0, giamGia = 0, tongTienThanhToan = 0, audioCtx = null;
 
-  // Thuật toán XOR Giải mã thời gian thực
-  function xorDecrypt(b64Data, pin) {
-    try {
-      const data = atob(b64Data);
-      let result = '';
-      for (let i = 0; i < data.length; i++) {
-        result += String.fromCharCode(data.charCodeAt(i) ^ pin.charCodeAt(i % pin.length));
-      }
-      return result;
-    } catch (e) { return ""; }
+ // Giải mã tuyệt đối từ Mảng số nguyên
+  function xorDecrypt(arr, pin) {
+    let result = '';
+    for (let i = 0; i < arr.length; i++) {
+      result += String.fromCharCode(arr[i] ^ pin.charCodeAt(i % pin.length));
+    }
+    return result;
   }
 
   async function unlockSystem() {
