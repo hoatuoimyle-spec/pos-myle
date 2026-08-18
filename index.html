@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <!-- Thẻ Meta chống lưu đệm trình duyệt -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -45,6 +44,17 @@
     .product-option .meta{ font-size:12px; color:#6c757d; }
     .product-option .price{ font-weight:800; color:#dc3545; white-space:nowrap; }
 
+    /* --- MÀN HÌNH KHÓA BẢO MẬT --- */
+    #lock-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #0d6b4f, #1e7156);
+      z-index: 9999; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; color: white;
+    }
+    .pin-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; width: 320px; }
+    .pin-input { width: 100%; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: bold; border: 2px solid #0d6b4f; border-radius: 8px; padding: 10px; margin-bottom: 20px; }
+    .pin-input:focus { outline: none; border-color: #1e7156; box-shadow: 0 0 8px rgba(30, 113, 86, 0.5); }
+
     @media(max-width:767px){
       .container-fluid{ padding:8px!important; }
       .table{ font-size:13px; }
@@ -56,8 +66,19 @@
 </head>
 <body>
 
+<div id="lock-screen" style="display: none;">
+  <div class="pin-box">
+    <h3 class="text-success fw-bold mb-1">🏪 MỸ LỆ POS</h3>
+    <p class="text-muted small fw-bold mb-4">Vui lòng nhập mã PIN bảo mật</p>
+    <input type="password" id="pinCode" class="pin-input" inputmode="numeric" maxlength="6" placeholder="******" onkeydown="if(event.key === 'Enter') APP_POS.unlockSystem()">
+    <button class="btn btn-success w-100 fw-bold py-2 fs-5" id="btnUnlock" onclick="APP_POS.unlockSystem()">
+      <i class="bi bi-unlock-fill"></i> MỞ KHÓA
+    </button>
+    <div id="pinError" class="text-danger small fw-bold mt-3" style="display: none;">Mã PIN không hợp lệ!</div>
+  </div>
+</div>
+
 <div class="container-fluid py-3">
-  <!-- HEADER -->
   <div class="card border-0 shadow-sm mb-3 pos-card">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center gap-2">
@@ -73,9 +94,7 @@
     </div>
   </div>
 
-  <!-- MAIN -->
   <div class="row g-3">
-    <!-- CỘT ĐIỀU KHIỂN -->
     <div class="col-lg-4">
       <div class="card border-0 shadow-sm pos-card">
         <div class="card-body">
@@ -100,7 +119,6 @@
 
           <div id="camera-container"><div id="reader"></div></div>
 
-          <!-- NÚT CHỨC NĂNG -->
           <div class="mt-3 d-grid gap-2" id="action-buttons">
             <button type="button" class="btn btn-outline-primary btn-lg fw-bold touch-btn" onclick="APP_POS.moFormSanPhamMo()">
               <i class="bi bi-plus-circle"></i> HÀNG TỰ DO (F4)
@@ -116,7 +134,6 @@
       </div>
     </div>
 
-    <!-- CỘT GIỎ HÀNG -->
     <div class="col-lg-8">
       <div class="card border-0 shadow-sm pos-card">
         <div class="card-body">
@@ -138,7 +155,6 @@
             </table>
           </div>
 
-          <!-- CHIẾT KHẤU & TỔNG TIỀN -->
           <div class="mt-3 pt-3 border-top">
             <div class="row g-3 align-items-end">
               <div class="col-md-6">
@@ -158,7 +174,6 @@
               </div>
             </div>
           </div>
-          <!-- Block di chuyển nút cho Android -->
           <div id="mobile-button-container" class="mt-3"></div>
         </div>
       </div>
@@ -166,7 +181,6 @@
   </div>
 </div>
 
-<!-- MODAL HÀNG TỰ DO -->
 <div class="modal fade" id="modalSanPhamMo" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
@@ -200,7 +214,6 @@
   </div>
 </div>
 
-<!-- MODAL THANH TOÁN -->
 <div class="modal fade" id="modalThanhToan" tabindex="-1" data-bs-backdrop="static">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg">
@@ -231,8 +244,12 @@
 window.APP_POS = (function() {
   'use strict';
 
+  // ========================================================
+  // BẢO MẬT & API (ĐÃ MÃ HÓA LUỒNG)
+  // ========================================================
   const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec"; 
-  const SECRET_API_KEY = "MyLePOS-2026-SecureKey";
+  const ENCRYPTED_PAYLOAD = "fXlWfEBEV0BweU1Bcnl0fnlwW11dREBX";
+  let SECRET_API_KEY = sessionStorage.getItem("MYLE_SESSION_KEY") || "";
 
   const CONFIG = {
     NGAN_HANG: 'MB', STK: '1108199309999', CHU_TAI_KHOAN: 'LIEU QUANG THONG',
@@ -244,6 +261,57 @@ window.APP_POS = (function() {
   let gioHangData = [], products = [], scanner = null, isCamOn = false, scanLocked = false;
   let printing = false, tamTinh = 0, giamGia = 0, tongTienThanhToan = 0, audioCtx = null;
 
+  // Thuật toán XOR Giải mã thời gian thực
+  function xorDecrypt(b64Data, pin) {
+    try {
+      const data = atob(b64Data);
+      let result = '';
+      for (let i = 0; i < data.length; i++) {
+        result += String.fromCharCode(data.charCodeAt(i) ^ pin.charCodeAt(i % pin.length));
+      }
+      return result;
+    } catch (e) { return ""; }
+  }
+
+  async function unlockSystem() {
+    const pin = document.getElementById('pinCode').value.trim();
+    const btn = document.getElementById('btnUnlock');
+    const err = document.getElementById('pinError');
+    if (!pin) return;
+
+    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ĐANG KIỂM TRA...';
+    err.style.display = 'none';
+
+    const attemptKey = xorDecrypt(ENCRYPTED_PAYLOAD, pin);
+
+    try {
+      const res = await fetch(API_URL + "?action=layThongTinNganHang&apiKey=" + attemptKey);
+      const data = await res.json();
+
+      if (data && data.status !== 'error') {
+        sessionStorage.setItem("MYLE_SESSION_KEY", attemptKey);
+        SECRET_API_KEY = attemptKey;
+        document.getElementById('lock-screen').style.display = 'none';
+        taiDuLieuTuServer(); // Bắt đầu tải dữ liệu sau khi mở khóa
+      } else { throw new Error("Sai khóa"); }
+    } catch (error) {
+      err.style.display = 'block';
+      document.getElementById('pinCode').value = '';
+      btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill"></i> MỞ KHÓA';
+    }
+  }
+
+  function checkSecurityLock() {
+    if (SECRET_API_KEY) {
+      document.getElementById('lock-screen').style.display = 'none';
+      taiDuLieuTuServer(); // Đã có session thì tải data luôn
+    } else {
+      document.getElementById('lock-screen').style.display = 'flex';
+      setTimeout(() => document.getElementById('pinCode').focus(), 100);
+    }
+  }
+
+  // Helpers
   function num(val) { const n = Number(val); return isNaN(n) ? 0 : n; }
   function money(val) { return Math.round(num(val)).toLocaleString('vi-VN'); }
   function esc(val) { return String(val || '').replace(/[&<>'"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'}[c])); }
@@ -331,7 +399,7 @@ window.APP_POS = (function() {
   const localDb = new ProductStore();
 
   async function taiDuLieuTuServer() {
-    if (!navigator.onLine) return;
+    if (!navigator.onLine || !SECRET_API_KEY) return;
     try {
       let resBank = await fetch(API_URL + "?action=layThongTinNganHang&apiKey=" + SECRET_API_KEY);
       let dataBank = await resBank.json();
@@ -345,7 +413,7 @@ window.APP_POS = (function() {
   }
 
   async function dongBoDonHangOffline() {
-    if (!navigator.onLine) return;
+    if (!navigator.onLine || !SECRET_API_KEY) return;
     let pending = await localDb.getOfflineOrders();
     if (pending.length === 0) return;
     for (let order of pending) {
@@ -393,7 +461,6 @@ window.APP_POS = (function() {
         subtotal: tamTinh, discount: giamGia, total: tongTienThanhToan, qrData: Printer.buildQR(tongTienThanhToan, maDH), footer: CONFIG.FOOTER
       });
 
-      // Tích hợp Android Bridge Native (Đã sửa lỗi window.open trên điện thoại)
       if(/Android/i.test(navigator.userAgent)){
         const b64 = btoa(unescape(encodeURIComponent(payload))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
         window.location.assign(CONFIG.ANDROID_URI + '/?payload=' + encodeURIComponent(b64));
@@ -427,8 +494,6 @@ window.APP_POS = (function() {
     const q = document.getElementById('maVachInput').value.trim().toLowerCase();
     const matches = products.filter(p => String(p.tenSP||'').toLowerCase().includes(q) || String(p.maSP||'').toLowerCase().includes(q));
     if(matches[index]) addProduct(matches[index]);
-    
-    // Tự động làm sạch ô tìm kiếm để đón mã quét tiếp theo
     document.getElementById('maVachInput').value = ''; hideSuggestions(); focusInput();
   }
 
@@ -442,16 +507,10 @@ window.APP_POS = (function() {
 
   async function xuLyMaVach(val) {
     const v = String(val||'').trim(); if(!v) return;
-    
-    // Ép xóa ô nhập ngay lập tức để không bị kẹt khi quét mã liên tục
-    document.getElementById('maVachInput').value = ''; 
-    hideSuggestions(); 
-    focusInput();
-
+    document.getElementById('maVachInput').value = ''; hideSuggestions(); focusInput();
     let found = await localDb.getByBarcode(v);
     if(!found) found = await localDb.getByName(v);
-    
-    if(found){ addProduct(found); } else { if(!scanLocked) alert('Không tìm thấy mặt hàng mang mã: ' + v); }
+    if(found){ addProduct(found); } else { if(!scanLocked) alert('Không tìm thấy: ' + v); }
   }
 
   function capNhatUI() {
@@ -528,7 +587,7 @@ window.APP_POS = (function() {
       const maDHOffline = "OFF-" + Date.now();
       await localDb.saveOfflineOrder({ id: maDHOffline, gioHang: snapshot, tongCong: total, sdtKhach: sdt });
       try { await Printer.print(maDHOffline, snapshot, sdt); } catch(e){}
-      resetSauIn(btn); alert("LƯU TẠM NGOẠI TUYẾN: Sẽ tự đồng bộ đẩy lên hệ thống khi có mạng.");
+      resetSauIn(btn); alert("LƯU TẠM NGOẠI TUYẾN: Sẽ đồng bộ khi có mạng.");
       return;
     }
 
@@ -543,9 +602,9 @@ window.APP_POS = (function() {
         
         try {
           const pr = await Printer.print(maDH, snapshot, sdt);
-          if(pr.mode === 'ANDROID') alert('Đã chuyển lệnh in tới MylePrint Bridge trên điện thoại.');
+          if(pr.mode === 'ANDROID') alert('Đã gửi tới ứng dụng in MylePrint.');
           else if(parts.length > 1 && parts[1]) alert(parts[1]);
-        } catch(err) { alert('Hệ thống lưu thành công nhưng máy in gặp lỗi: ' + err); }
+        } catch(err) { alert('Lưu thành công, nhưng in thất bại: ' + err); }
 
         resetSauIn(btn);
         taiDuLieuTuServer();
@@ -567,33 +626,38 @@ window.APP_POS = (function() {
     if(typeof Html5Qrcode === 'undefined'){ alert('Thư viện quét mã vạch chưa tải xong!'); return; }
     const btn = document.getElementById('btnToggleCamera'), box = document.getElementById('camera-container');
     if(isCamOn){
-      if(scanner) scanner.stop().then(() => { box.style.display='none'; btn.className='btn btn-dark fw-bold touch-btn'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM'; isCamOn=false; focusInput(); }).catch(()=>{});
+      if(scanner) scanner.stop().then(() => { box.style.display='none'; btn.className='btn btn-dark fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM'; isCamOn=false; focusInput(); }).catch(()=>{});
       return;
     }
-    box.style.display='block'; btn.className='btn btn-danger fw-bold touch-btn'; btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT CAM'; isCamOn=true;
+    box.style.display='block'; btn.className='btn btn-danger fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT CAM'; isCamOn=true;
     scanner = new Html5Qrcode('reader');
     scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 250, height: 100 }, aspectRatio: 1 }, text => {
       if(scanLocked) return; scanLocked = true; beep(); if(navigator.vibrate) navigator.vibrate(100);
       xuLyMaVach(text); setTimeout(() => { scanLocked = false; }, 1200);
-    }, () => {}).catch(err => { isCamOn=false; box.style.display='none'; btn.className='btn btn-dark fw-bold touch-btn'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM'; alert('Lỗi Camera di động: Hãy đảm bảo bạn đã cấp quyền sử dụng máy ảnh cho trình duyệt.'); });
+    }, () => {}).catch(err => { isCamOn=false; box.style.display='none'; btn.className='btn btn-dark fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM'; alert('Lỗi Camera: Cần cấp quyền truy cập'); });
   }
 
   function init() {
+    checkSecurityLock(); // Kích hoạt chặn bảo mật
     focusInput(); kiemTraBridge(); updateNetworkStatus();
+    
     if(/Android/i.test(navigator.userAgent) || window.innerWidth < 992) {
       const btnBlock = document.getElementById('action-buttons'), tContainer = document.getElementById('mobile-button-container');
       if(btnBlock && tContainer) tContainer.appendChild(btnBlock);
     }
+    
     window.addEventListener('online', updateNetworkStatus);
     window.addEventListener('offline', updateNetworkStatus);
 
     localDb.init().then(() => {
       localDb.getOfflineOrders().then(o => { if(o.length) dongBoDonHangOffline(); });
-      taiDuLieuTuServer();
     }).catch(console.error);
   }
 
-  return { init, renderSuggestions, hideSuggestions, chonGoiY, xuLyMaVach, toggleCamera, moFormSanPhamMo, themSanPhamMo, thanhToan, huyDon, chotDonHang, tinhGiamGia, suaSL, xoaSP };
+  return {
+    init, unlockSystem, renderSuggestions, hideSuggestions, chonGoiY, xuLyMaVach, toggleCamera, moFormSanPhamMo, 
+    themSanPhamMo, thanhToan, huyDon, chotDonHang, tinhGiamGia, suaSL, xoaSP
+  };
 })();
 
 window.addEventListener('load', () => {
@@ -614,7 +678,6 @@ window.addEventListener('load', () => {
     }
   });
 
-  // Tích hợp Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(err => console.error('SW Error:', err));
   }
