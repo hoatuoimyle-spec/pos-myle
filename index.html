@@ -21,16 +21,13 @@
 
   <style>
     :root{ --green:#0d6b4f; --bg:#f4f6f9; }
-    body{ background:var(--bg); font-family: system-ui, -apple-system, sans-serif; overflow-x: hidden; }
+    body{ background:var(--bg); font-family: system-ui, -apple-system, sans-serif; overflow-x: hidden; padding-bottom: 20px; }
     .pos-card{ border-radius:14px; }
     .sticky-head{ position:sticky; top:0; z-index:10; }
     .touch-btn{ min-height:48px; }
     .money{ font-variant-numeric:tabular-nums; }
     .cart-name{ font-weight:700; color:#155e4a; }
     .qty-input{ min-width:70px; }
-    
-    #camera-container{ display:none; position:relative; overflow:hidden; border-radius:10px; border:2px solid var(--green); margin:10px 0; background:#000; }
-    #reader{ width:100%; }
     
     .bridge-status{ font-size:13px; font-weight:700; padding:7px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px; }
     .status-checking{ background:#e9ecef; color:#6c757d; }
@@ -49,9 +46,15 @@
 
     /* --- MÀN HÌNH KHÓA --- */
     #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0d6b4f, #1e7156); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-    .pin-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; width: 320px; }
+    .pin-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; width: 320px; max-width: 90%; }
     .pin-input { width: 100%; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: bold; border: 2px solid #0d6b4f; border-radius: 8px; padding: 10px; margin-bottom: 20px; }
     .pin-input:focus { outline: none; border-color: #1e7156; box-shadow: 0 0 8px rgba(30, 113, 86, 0.5); }
+
+    /* --- GIAO DIỆN QUÉT MÃ TRÊN MOBILE --- */
+    #camera-wrapper { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9000; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 50px; }
+    #camera-container { position: relative; width: 92%; max-width: 450px; background: #000; border-radius: 12px; border: 3px solid var(--green); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+    #reader { width: 100%; }
+    .cam-close-btn { position: absolute; top: 10px; right: 10px; z-index: 9050; background: #dc3545; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
     @media(max-width:767px){ .container-fluid{ padding:8px!important; } .table{ font-size:13px; } .table th:nth-child(1), .table td:nth-child(1){ display:none; } .table th:nth-child(4), .table td:nth-child(4){ display:none; } .bridge-status{ font-size:11px; padding: 5px 8px; } }
   </style>
@@ -68,6 +71,15 @@
       <i class="bi bi-unlock-fill"></i> MỞ KHÓA
     </button>
     <div id="pinError" class="text-danger small fw-bold mt-3" style="display: none;">Mã PIN không hợp lệ!</div>
+  </div>
+</div>
+
+<!-- LỚP PHỦ CAMERA TỐI ƯU MOBILE -->
+<div id="camera-wrapper">
+  <div id="camera-container">
+    <button class="cam-close-btn" onclick="APP_POS.toggleCamera()"><i class="bi bi-x"></i></button>
+    <div id="reader"></div>
+    <div class="text-center text-warning py-2 fw-bold small bg-dark" style="letter-spacing: 1px;">ĐƯA MÃ VẠCH VÀO KHE NGẮM</div>
   </div>
 </div>
 
@@ -98,7 +110,7 @@
           <label class="fw-bold mb-2">Quét mã vạch / chọn sản phẩm (F2)</label>
           <div class="search-wrap">
             <div class="d-flex gap-2">
-              <input type="text" id="maVachInput" class="form-control form-control-lg border-success fw-bold" placeholder="Quét mã hoặc gõ tên..." autocomplete="off" autocapitalize="off" spellcheck="false"
+              <input type="text" id="maVachInput" class="form-control form-control-lg border-success fw-bold" placeholder="Quét hoặc gõ tên..." autocomplete="off" autocapitalize="off" spellcheck="false"
                      oninput="APP_POS.renderSuggestions(this.value)"
                      onfocus="if(this.value.trim().length > 0) APP_POS.renderSuggestions(this.value.trim())"
                      onkeydown="if(event.key === 'Enter'){ event.preventDefault(); var val=this.value.trim(); APP_POS.hideSuggestions(); if(val) APP_POS.xuLyMaVach(val); }">
@@ -108,7 +120,7 @@
             </div>
             <div id="productSuggestions"></div>
           </div>
-          <div id="camera-container"><div id="reader"></div></div>
+          
           <div class="mt-3 d-grid gap-2" id="action-buttons">
             <button type="button" class="btn btn-outline-primary btn-lg fw-bold touch-btn" onclick="APP_POS.moFormSanPhamMo()"><i class="bi bi-plus-circle"></i> HÀNG TỰ DO (F4)</button>
             <button type="button" class="btn btn-success btn-lg fw-bold touch-btn" id="btnThanhToan" onclick="APP_POS.thanhToan()"><i class="bi bi-cash-coin"></i> THANH TOÁN (F12)</button>
@@ -170,9 +182,6 @@
 window.APP_POS = (function() {
   'use strict';
 
-  // ========================================================
-  // BẢO MẬT & API V2 (ZERO-TRUST CLIENT & TOKEN-BASED)
-  // ========================================================
   const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec"; 
   let SESSION_TOKEN = sessionStorage.getItem("MYLE_SESSION_TOKEN") || "";
 
@@ -186,9 +195,6 @@ window.APP_POS = (function() {
   let gioHangData = [], products = [], scanner = null, isCamOn = false, scanLocked = false;
   let printing = false, tamTinh = 0, giamGia = 0, tongTienThanhToan = 0, audioCtx = null;
 
-  // ========================================================
-  // XỬ LÝ LỖI HẾT HẠN PHIÊN (401 UNAUTHORIZED)
-  // ========================================================
   function lockSystemExp() {
     SESSION_TOKEN = "";
     sessionStorage.removeItem("MYLE_SESSION_TOKEN");
@@ -208,7 +214,7 @@ window.APP_POS = (function() {
       const msg = data.message || '';
       if (msg.includes('401') || msg.includes('hết hạn')) {
         lockSystemExp();
-        throw new Error('SESSION_EXPIRED'); // Bắn cờ đặc biệt để ngừng xóa dữ liệu
+        throw new Error('SESSION_EXPIRED'); 
       }
       throw new Error(msg || 'API error');
     }
@@ -505,7 +511,7 @@ window.APP_POS = (function() {
     if(!gioHangData.length){ tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-5">Giỏ hàng trống</td></tr>'; tinhGiamGia('UPDATE'); return; }
     tbody.innerHTML = [...gioHangData].reverse().map((item, revIdx) => {
       const idx = gioHangData.length - 1 - revIdx;
-      return `<tr><td>${idx+1}</td><td class="cart-name">${esc(item.tenSP)}</td><td><input type="number" min="1" value="${num(item.soLuong)}" class="form-control form-control-sm text-center fw-bold qty-input" onchange="APP_POS.suaSL(${idx}, this.value)"></td><td class="text-end money">${money(item.donGia)}</td><td class="text-danger fw-bold text-end money">${money(item.thanhTien)}</td><td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="APP_POS.xoaSP(${idx})"><i class="bi bi-x-lg"></i></button></td></tr>`;
+      return `<tr><td>${idx+1}</td><td class="cart-name">${esc(item.tenSP)}</td><td><input type="number" min="1" value="${num(item.soLuong)}" inputmode="numeric" class="form-control form-control-sm text-center fw-bold qty-input" onchange="APP_POS.suaSL(${idx}, this.value)"></td><td class="text-end money">${money(item.donGia)}</td><td class="text-danger fw-bold text-end money">${money(item.thanhTien)}</td><td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="APP_POS.xoaSP(${idx})"><i class="bi bi-x-lg"></i></button></td></tr>`;
     }).join('');
     tinhGiamGia('UPDATE');
   }
@@ -620,38 +626,47 @@ window.APP_POS = (function() {
     printing = false; btn.disabled = false; btn.innerHTML = 'XÁC NHẬN HOÀN TẤT'; focusInput();
   }
 
+  // --- CẬP NHẬT LOGIC CAMERA ĐỂ HIỂN THỊ DẠNG OVERLAY NỔI TRÊN CÙNG ---
   async function toggleCamera() {
     if(typeof Html5Qrcode === 'undefined'){ alert('Thư viện quét mã vạch chưa tải xong!'); return; }
     if(!window.isSecureContext){ alert('Camera yêu cầu HTTPS. Hãy mở POS bằng địa chỉ GitHub Pages https://...'); return; }
     const btn = document.getElementById('btnToggleCamera');
-    const box = document.getElementById('camera-container');
+    const wrapper = document.getElementById('camera-wrapper');
 
     if(isCamOn){
       try { if(scanner) await scanner.stop(); } catch(e) {}
       try { if(scanner) scanner.clear(); } catch(e) {}
       scanner = null; isCamOn = false;
-      box.style.display='none';
+      wrapper.style.display='none';
+      btn.disabled = false;
       btn.className='btn btn-dark fw-bold touch-btn text-nowrap';
       btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM';
       focusInput();
       return;
     }
 
-    box.style.display='block';
+    wrapper.style.display='flex';
     btn.disabled = true;
-    btn.innerHTML='<span class="spinner-border spinner-border-sm"></span> ĐANG MỞ CAM...';
+    btn.innerHTML='<span class="spinner-border spinner-border-sm"></span>...';
     try {
       scanner = new Html5Qrcode('reader');
       await scanner.start(
         { facingMode: 'environment' },
-        { fps: 10, qrbox: (viewfinderWidth, viewfinderHeight) => ({ width: Math.min(300, Math.floor(viewfinderWidth * 0.82)), height: Math.min(120, Math.floor(viewfinderHeight * 0.30)) }), aspectRatio: 1.777 },
+        { 
+          fps: 10, 
+          // Thiết lập khung ngắm hình chữ nhật dẹt (120px) vừa đủ để quét mã vạch
+          qrbox: (viewfinderWidth, viewfinderHeight) => {
+             return { width: Math.min(viewfinderWidth * 0.85, 300), height: 120 };
+          }, 
+          aspectRatio: 1.0 // Ép tỷ lệ 1:1 chống giãn toàn bộ chiều dọc màn hình điện thoại
+        },
         text => {
           if(scanLocked) return;
           scanLocked = true;
           beep();
           if(navigator.vibrate) navigator.vibrate(80);
           xuLyMaVach(text);
-          setTimeout(() => { scanLocked = false; }, 900);
+          setTimeout(() => { scanLocked = false; }, 1200); // Ngăn quét đúp
         },
         () => {}
       );
@@ -661,12 +676,12 @@ window.APP_POS = (function() {
       btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT CAM';
     } catch(err) {
       try { if(scanner) scanner.clear(); } catch(e) {}
-      scanner = null; isCamOn = false; box.style.display='none';
+      scanner = null; isCamOn = false; wrapper.style.display='none';
       btn.disabled = false;
       btn.className='btn btn-dark fw-bold touch-btn text-nowrap';
       btn.innerHTML='<i class="bi bi-camera-video-fill"></i> MỞ CAM';
       const msg = String(err?.message || err || 'Không xác định');
-      if(/permission|denied|notallowed/i.test(msg)) alert('Camera bị từ chối. Hãy vào quyền của Chrome → Camera → cho phép trang GitHub này.');
+      if(/permission|denied|notallowed/i.test(msg)) alert('Camera bị từ chối. Hãy vào quyền của trình duyệt → cho phép truy cập Camera.');
       else alert('Không mở được camera: ' + msg);
     }
   }
