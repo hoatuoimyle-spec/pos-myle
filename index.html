@@ -602,21 +602,38 @@ function POS_showPriceModal(sp) {
 
 async function POS_xuLyTaoMaNhanh(e) {
   e.preventDefault();
-  var giaVonNum = POS_num(document.getElementById('tmn_von').value), giaBanNum = POS_num(document.getElementById('tmn_ban').value);
+  var giaVonNum = POS_num(document.getElementById('tmn_von').value);
+  var giaBanNum = POS_num(document.getElementById('tmn_ban').value);
+  
   if (giaVonNum <= 0) { if (!confirm('Giá vốn = 0 sẽ khiến báo cáo lợi nhuận bị SAI.\nTiếp tục?')) return; } 
   else if (giaVonNum >= giaBanNum) { if (!confirm('⚠️ Giá vốn đang lớn hơn hoặc bằng giá bán — sẽ bán LỖ.\nTiếp tục?')) return; }
 
-  var btn = document.getElementById('btnLuuMaNhanh'); btn.disabled = true; btn.innerHTML = 'ĐANG LƯU...';
-  var payload = { maVach: document.getElementById('tmn_ma').value, tenSP: document.getElementById('tmn_ten').value.trim(), soLuong: document.getElementById('tmn_sl').value, giaVon: giaVonNum, giaBan: giaBanNum, ncc: 'Tạo Nhanh Tại Quầy POS' };
+  var btn = document.getElementById('btnLuuMaNhanh'); 
+  btn.disabled = true; btn.innerHTML = 'ĐANG LƯU...';
+
+  // Chuyển đổi thành Flat Object đồng nhất với luồng luuDonHang
+  var payload = { 
+    action: 'luuPhieuNhapKho',
+    token: SESSION_TOKEN,
+    maVach: document.getElementById('tmn_ma').value, 
+    tenSP: document.getElementById('tmn_ten').value.trim(), 
+    soLuong: document.getElementById('tmn_sl').value, 
+    giaVon: giaVonNum, 
+    giaBan: giaBanNum, 
+    ncc: 'Tạo Nhanh Tại Quầy POS' 
+  };
 
   try {
-    const res = await POS_fetchJson(API_URL, { method: 'POST', body: JSON.stringify({ action: 'luuPhieuNhapKho', token: SESSION_TOKEN, payload: payload }) });
+    const res = await POS_fetchJson(API_URL, { method: 'POST', body: JSON.stringify(payload) });
     var spMoi = { maSP: payload.maVach, tenSP: payload.tenSP, giaBan: giaBanNum, tonKho: POS_num(payload.soLuong) };
     POS_products.push(spMoi); POS_addProduct(spMoi);
     if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(document.getElementById('modalTaoMaNhanh')).hide();
     e.target.reset(); POS_focus();
-  } catch(err) { alert('Lỗi tạo mã (Hãy chắc chắn Mã.gs đã mở cổng luuPhieuNhapKho): ' + err.message); } 
-  finally { btn.disabled = false; btn.innerHTML = 'LƯU KHO & BÁN'; }
+  } catch(err) { 
+    alert('Lỗi tạo mã: ' + err.message); 
+  } finally { 
+    btn.disabled = false; btn.innerHTML = 'LƯU KHO & BÁN'; 
+  }
 }
 
 // ============================================================
@@ -740,8 +757,9 @@ async function POS_chotDonHang(coInBill) {
   var actionPayload = { action: 'luuDonHang', clientOrderId: POS_currentOrderId, token: SESSION_TOKEN, gioHang: snapshot, tongTien: total, sdtKhach: thongTinKhach_Luu, phuongThuc: pt, khachDua: khachDua, tienNo: tienNo };
 
   if (!navigator.onLine) {
-    await POS_saveOfflineOrder(actionPayload);
-    if(coInBill) await POS_executePrint(POS_buildReceiptPayload('OFF-' + Date.now(), snapshot, thongTinKhach_Goc, pt, khachDua, tienNo));
+    const offId = 'OFF-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
+    await localDb.saveOfflineOrder({ id: offId, payload: actionPayload });
+    if(coInBill) await POS_executePrint(POS_buildReceiptPayload(offId, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo));
     if('serviceWorker' in navigator && 'SyncManager' in window) { try { const reg = await navigator.serviceWorker.ready; await reg.sync.register('sync-orders'); } catch(e) {} }
     hoanTatGiaoDien('ĐÃ LƯU NGOẠI TUYẾN.' + (coInBill ? '' : ' (Không in bill)'));
     return;
@@ -760,17 +778,39 @@ async function POS_chotDonHang(coInBill) {
       hoanTatGiaoDien(parts.length > 1 && parts[1] ? parts[1] + '\n(Không in bill)' : 'Chốt đơn thành công (Không in bill)');
     }
   } catch (err) {
-    if (err.message === 'SESSION_EXPIRED') { POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; bootstrap.Modal.getInstance(document.getElementById('modalThanhToan'))?.hide(); return; }
-    if(!navigator.onLine || /Failed to fetch|NetworkError|Load failed|network/i.test(String(err.message || err))) {
-      await POS_saveOfflineOrder(actionPayload);
-      if(coInBill) await POS_executePrint(POS_buildReceiptPayload('OFF-' + Date.now(), snapshot, thongTinKhach_Goc, pt, khachDua, tienNo));
-      if('serviceWorker' in navigator && 'SyncManager' in window) navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(()=>{});
-      hoanTatGiaoDien('Mạng lỗi. Đã lưu tạm offline.');
-    } else {
-      POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; alert('Lỗi máy chủ: ' + err.message);
+    // 1. Xử lý hết hạn phiên
+    if (err.message === 'SESSION_EXPIRED') { 
+      POS_printing = false; 
+      if(btnIn){ btnIn.disabled = false; btnIn.innerHTML = 'CHỐT & IN ↵'; } 
+      if(btnKhongIn) btnKhongIn.disabled = false; 
+      bootstrap.Modal.getInstance(document.getElementById('modalThanhToan'))?.hide(); 
+      return; 
+    }
+    
+    // 2. Xử lý đứt cáp / Lỗi mạng -> Chuyển sang Offline
+    if (!navigator.onLine || /Failed to fetch|NetworkError|Load failed|network/i.test(String(err.message || err))) {
+      try {
+        const offId = 'OFF-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
+        await localDb.saveOfflineOrder({ id: offId, payload: actionPayload });
+        if(coInBill) await POS_executePrint(POS_buildReceiptPayload(offId, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo));
+        if('serviceWorker' in navigator && 'SyncManager' in window) navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(()=>{});
+        hoanTatGiaoDien('Mạng lỗi. Đã lưu tạm offline.');
+      } catch(saveErr) {
+        POS_printing = false; 
+        if(btnIn){ btnIn.disabled = false; btnIn.innerHTML = 'CHỐT & IN ↵'; } 
+        if(btnKhongIn) btnKhongIn.disabled = false;
+        alert('Không thể lưu đơn offline: ' + saveErr.message);
+      }
+    } 
+    // 3. (THÊM MỚI) Xử lý Lỗi Logic từ Backend (Server trả về mã lỗi cụ thể)
+    else {
+      POS_printing = false; 
+      if(btnIn){ btnIn.disabled = false; btnIn.innerHTML = 'CHỐT & IN ↵'; } 
+      if(btnKhongIn) btnKhongIn.disabled = false;
+      alert('Lỗi hệ thống máy chủ: ' + err.message);
     }
   }
-}
+} // Kết thúc hàm POS_chotDonHang
 
 // ============================================================
 // 7. CAMERA OVERLAY & KHỞI ĐỘNG
