@@ -475,7 +475,7 @@ function POS_renderSuggestions(query) {
   if(q.length === 0){ POS_hideSuggestions(); return; }
   var matches = POS_products.filter(p => String(p.tenSP || '').toLowerCase().includes(q) || String(p.maSP || '').toLowerCase().includes(q)).slice(0, 30);
   if(matches.length === 0){ box.innerHTML = '<div class="p-3 text-muted">Không tìm thấy sản phẩm</div>'; box.style.display = 'block'; return; }
-  box.innerHTML = matches.map((p,i) => `<div class="product-option" onpointerdown="POS_chonGoiY(${i}, event)"><div><div class="name">${POS_esc(p.tenSP)}</div><div class="meta">Mã: ${POS_esc(p.maSP)} • Tồn: ${POS_num(p.tonKho)}</div></div><div class="price">${POS_money(p.giaBan)} đ</div></div>`).join('');
+  box.innerHTML = matches.map((p,i) => `<div class="product-option" onclick="POS_chonGoiY(${i}, event)"><div><div class="name">${POS_esc(p.tenSP)}</div><div class="meta">Mã: ${POS_esc(p.maSP)} • Tồn: ${POS_num(p.tonKho)}</div></div><div class="price">${POS_money(p.giaBan)} đ</div></div>`).join('');
   box.style.display = 'block';
 }
 function POS_hideSuggestions() { var box = document.getElementById('productSuggestions'); if(box){ box.style.display = 'none'; box.innerHTML = ''; } }
