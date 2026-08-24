@@ -119,10 +119,10 @@
       .total-box { display: none; }
     }
     @media (max-width: 767px) {
-      #modalThanhToan .modal-dialog { margin: 0; max-width: 100%; min-height: 100dvh; display: flex; align-items: flex-end; }
-      #modalThanhToan .modal-content { width: 100%; border-radius: 18px 18px 0 0 !important; max-height: 92dvh; overflow-y: auto; }
-      #modalThanhToan.modal.fade .modal-dialog { transform: translateY(30px); }
-      #modalThanhToan.modal.show .modal-dialog { transform: translateY(0); }
+      #modalThanhToan .modal-dialog, #modalDichVuTien .modal-dialog, #modalSanPhamMo .modal-dialog, #modalTaoMaNhanh .modal-dialog { margin: 0; max-width: 100%; min-height: 100dvh; display: flex; align-items: flex-end; }
+      #modalThanhToan .modal-content, #modalDichVuTien .modal-content, #modalSanPhamMo .modal-content, #modalTaoMaNhanh .modal-content { width: 100%; border-radius: 18px 18px 0 0 !important; max-height: 92dvh; overflow-y: auto; }
+      .modal.fade .modal-dialog { transform: translateY(30px); }
+      .modal.show .modal-dialog { transform: translateY(0); }
     }
 
     /* BẢN VÁ: Tái cấu trúc Layout Giỏ Hàng cho Mobile bằng CSS Grid siêu gọn */
@@ -188,7 +188,7 @@
       <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div class="brand-lockup">
           <div class="brand-mark">✦</div>
-          <div class="brand-title"><div class="brand-main">TẠP HÓA MỸ LỆ</div><div class="brand-sub">MYLE RETAIL POS · LONG PHÚ</div></div>
+          <div class="brand-title"><div class="brand-main">TẠP HÓA MỸ LỆ</div><div class="brand-sub">THÔNG ĐẸP TRAI NHẤT LONG PHÚ</div></div>
         </div>
         <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
           <div class="retail-code">RETAIL SYSTEM // 01</div>
@@ -277,7 +277,6 @@
       </div>
     </div>
   </div>
-
   <!-- THANH THANH TOÁN DÍNH ĐÁY — chỉ hiện trên mobile qua CSS -->
   <div class="sticky-checkout-bar d-lg-none">
     <div class="mini-total">
@@ -295,8 +294,14 @@
 <div class="modal fade" id="modalDichVuTien" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-bank"></i> DỊCH VỤ LUÂN CHUYỂN TIỀN</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex gap-2 mb-3"><input type="radio" class="btn-check" name="loaiDV" id="dv_chuyenKhoan" value="CHUYEN_KHOAN_HO" checked onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_chuyenKhoan"><i class="bi bi-send"></i> CHUYỂN KHOẢN HỘ</label><input type="radio" class="btn-check" name="loaiDV" id="dv_rutTien" value="RUT_TIEN" onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_rutTien"><i class="bi bi-cash-stack"></i> RÚT TIỀN MẶT</label></div><div class="mb-3"><label class="fw-bold mb-1">Số tiền GỐC (VNĐ)</label><input type="number" id="dv_tienGoc" class="form-control form-control-lg fw-bold fs-4 text-end" style="color:var(--myle-cobalt)" placeholder="0" min="0" oninput="POS_tinhPhiDichVu()"></div><div class="card bg-light border-0 mb-3"><div class="card-body p-3"><div class="d-flex justify-content-between mb-2"><span class="text-muted fw-bold">Phí dịch vụ tự động:</span> <span id="dv_tienPhi" class="text-danger fw-bold fs-5">0 đ</span></div><hr class="my-2"><div class="d-flex justify-content-between align-items-center"><span id="dv_txtHanhDong" class="fw-bold fs-5">Tổng thu khách:</span> <span id="dv_thucGiaoNhan" class="fw-bold fs-2 text-success">0 đ</span></div></div></div><div class="mb-2"><label class="fw-bold mb-1">Thông tin TK / Ghi chú</label><input type="text" id="dv_thongTin" class="form-control" placeholder="Tên NH, Số TK, Người nhận..."></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY</button><button type="button" class="btn primary-btn px-4" id="btnChotDichVu" onclick="POS_chotDichVuTien()">CHỐT & IN BILL</button></div></div></div></div>
 <!-- MODAL TRA CỨU GIÁ -->
 <div class="modal fade" id="modalTraGia" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-search"></i> KẾT QUẢ TRA GIÁ</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-5"><div class="section-kicker mb-2">PRODUCT LOOKUP</div><h3 class="fw-bold mb-3" id="tg_tenSP">Tên sản phẩm</h3><div class="display-3 fw-bold mb-4" style="color:var(--myle-cobalt)" id="tg_giaBan">0 đ</div><div class="text-muted fw-bold fs-5">Tồn kho hiện tại: <span id="tg_tonKho" class="text-dark">0</span></div></div></div></div></div>
-<!-- MODAL TẠO MÃ -->
-<div class="modal fade" id="modalTaoMaNhanh" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head orange"><h5 class="modal-title fw-bold"><i class="bi bi-upc-scan"></i> TẠO MÃ SẢN PHẨM MỚI</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formTaoMaNhanh" onsubmit="POS_xuLyTaoMaNhanh(event)"><div class="modal-body"><div class="alert alert-warning py-2 mb-3 fw-bold small">Mã chưa tồn tại! Phải tạo dữ liệu kho trước khi bán.</div><div class="mb-2"><label class="fw-bold text-muted small">MÃ VẠCH GỐC</label><div class="input-group"><input id="tmn_ma" class="form-control fw-bold bg-light" readonly><button class="btn tool-btn fw-bold" type="button" onclick="document.getElementById('tmn_ma').value = 'ML' + Date.now().toString().slice(-9);"><i class="bi bi-magic"></i> AUTO</button></div></div><div class="mb-3"><label class="fw-bold">Tên sản phẩm <span class="text-danger">*</span></label><input id="tmn_ten" class="form-control" required autocomplete="off"></div><div class="row g-2"><div class="col-4"><label class="fw-bold">SL <span class="text-danger">*</span></label><input id="tmn_sl" type="number" class="form-control fw-bold text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div><div class="col-4"><label class="fw-bold">Giá vốn <span class="text-danger">*</span></label><input id="tmn_von" type="number" class="form-control fw-bold" required min="0" step="100"></div><div class="col-4"><label class="fw-bold">Giá bán <span class="text-danger">*</span></label><input id="tmn_ban" type="number" class="form-control fw-bold" required min="0" step="100"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY BỎ</button><button type="submit" class="btn warning-btn" id="btnLuuMaNhanh">LƯU KHO & BÁN</button></div></form></div></div></div>
+<!-- MODAL TẠO MÃ BẢN VÁ -->
+<div class="modal fade" id="modalTaoMaNhanh" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head orange"><h5 class="modal-title fw-bold"><i class="bi bi-upc-scan"></i> TẠO MÃ SẢN PHẨM MỚI</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formTaoMaNhanh" onsubmit="POS_xuLyTaoMaNhanh(event)"><div class="modal-body"><div class="alert alert-warning py-2 mb-3 fw-bold small">Mã chưa tồn tại! Phải tạo dữ liệu kho trước khi bán.</div><div class="mb-2"><label class="fw-bold text-muted small">MÃ VẠCH GỐC</label>
+<div class="input-group">
+  <input id="tmn_ma" class="form-control fw-bold" placeholder="Nhập hoặc quét mã...">
+  <button class="btn btn-dark fw-bold px-3" type="button" onclick="POS_toggleCamera('tmn_ma')" style="z-index: 10;"><i class="bi bi-camera-video-fill"></i> CAM</button>
+  <button class="btn tool-btn fw-bold" type="button" onclick="document.getElementById('tmn_ma').value = 'ML' + Date.now().toString().slice(-9);"><i class="bi bi-magic"></i> AUTO</button>
+</div>
+</div><div class="mb-3"><label class="fw-bold">Tên sản phẩm <span class="text-danger">*</span></label><input id="tmn_ten" class="form-control" required autocomplete="off"></div><div class="row g-2"><div class="col-4"><label class="fw-bold">SL <span class="text-danger">*</span></label><input id="tmn_sl" type="number" class="form-control fw-bold text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div><div class="col-4"><label class="fw-bold">Giá vốn <span class="text-danger">*</span></label><input id="tmn_von" type="number" class="form-control fw-bold" required min="0" step="100"></div><div class="col-4"><label class="fw-bold">Giá bán <span class="text-danger">*</span></label><input id="tmn_ban" type="number" class="form-control fw-bold" required min="0" step="100"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY BỎ</button><button type="submit" class="btn warning-btn" id="btnLuuMaNhanh">LƯU KHO & BÁN</button></div></form></div></div></div>
 <!-- MODAL HÀNG TỰ DO -->
 <div class="modal fade" id="modalSanPhamMo" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-box-seam"></i> THÊM HÀNG TỰ DO</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formSanPhamMo" onsubmit="POS_themSanPhamMo(event)"><div class="modal-body"><div class="mb-3"><label class="fw-bold">Tên mặt hàng / Dịch vụ</label><input id="spm_ten" class="form-control form-control-lg" required></div><div class="row g-2"><div class="col-6"><label class="fw-bold">Đơn giá (VNĐ)</label><input id="spm_gia" type="number" class="form-control form-control-lg fw-bold" required min="0" step="100" inputmode="numeric"></div><div class="col-6"><label class="fw-bold">Số lượng</label><input id="spm_sl" type="number" class="form-control form-control-lg fw-bold text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY</button><button type="submit" class="btn primary-btn fw-bold">THÊM VÀO GIỎ</button></div></form></div></div></div>
 <!-- MODAL THANH TOÁN -->
@@ -319,6 +324,7 @@ var POS_lastReceiptPayload = null, POS_isPriceCheckMode = false;
 var POS_scanner = null, POS_isCamOn = false, POS_scanLocked = false, POS_printing = false;
 var POS_tamTinh = 0, POS_giamGia = 0, POS_tongTienThanhToan = 0;
 var POS_audioCtx = null, POS_currentOrderId = null;
+
 function POS_newOrderId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('MYLE-' + Date.now() + '-' + Math.random().toString(16).slice(2)); }
 function POS_num(val) { var n = Number(val); return isNaN(n) ? 0 : n; }
 function POS_money(val) { return Math.round(POS_num(val)).toLocaleString('vi-VN'); }
@@ -334,6 +340,7 @@ function POS_beep() {
     osc.start(); osc.stop(POS_audioCtx.currentTime + 0.08);
   } catch(e){}
 }
+
 // ============================================================
 // 2. BẢO MẬT ZERO-TRUST & MẠNG LƯỚI
 // ============================================================
@@ -379,6 +386,7 @@ function POS_updateNetworkStatus() {
   if (navigator.onLine) { netEl.style.display = 'none'; POS_dongBoDonHangOffline_Fallback(); } 
   else netEl.style.display = 'inline-flex';
 }
+
 // ============================================================
 // 3. INDEXED_DB (OFFLINE STORAGE)
 // ============================================================
@@ -443,6 +451,7 @@ class ProductStore {
   }
 }
 const localDb = new ProductStore();
+
 async function POS_checkOfflineOrders() {
   const pending = await localDb.getOfflineOrders();
   const btn = document.getElementById('offlineBadge');
@@ -493,6 +502,7 @@ async function POS_dongBoDonHangOffline_Fallback() {
   }
   await POS_loadProducts(); return true;
 }
+
 // ============================================================
 // 4. HỆ THỐNG GIỮ ĐƠN (TABS)
 // ============================================================
@@ -518,6 +528,7 @@ function POS_removeCart(index, event) {
   if (index < POS_activeCartIndex) POS_activeCartIndex--; else if (index === POS_activeCartIndex) POS_activeCartIndex = Math.min(POS_activeCartIndex, POS_carts.length - 1);
   POS_switchCart(POS_activeCartIndex);
 }
+
 // ============================================================
 // 5. NGHIỆP VỤ QUÉT MÃ & GIỎ HÀNG
 // ============================================================
@@ -529,7 +540,7 @@ function POS_renderSuggestions(query) {
   
   var matches = POS_products.filter(p => String(p.tenSP || '').toLowerCase().includes(q) || String(p.maSP || '').toLowerCase().includes(q)).slice(0, 30);
   
-  // BẢN VÁ: Gắn trực tiếp nút "Tạo mới" vào bảng dropdown nếu không tìm thấy
+  // Nút hành động trực tiếp nếu chưa có mã
   if(matches.length === 0){ 
     box.innerHTML = `
       <div class="p-3 text-center">
@@ -553,6 +564,7 @@ function POS_chonGoiY(index, event) {
   if(matches[index]) { if (POS_isPriceCheckMode) POS_showPriceModal(matches[index]); else POS_addProduct(matches[index]); }
   document.getElementById('maVachInput').value = ''; if(!POS_isPriceCheckMode) POS_focus();
 }
+
 async function POS_xuLyMaVach(val) {
   var v = String(val || '').trim(); if(!v) return;
   POS_hideSuggestions(); 
@@ -575,6 +587,7 @@ async function POS_xuLyMaVach(val) {
   document.getElementById('maVachInput').value = ''; 
   if (found) { if (!POS_isPriceCheckMode) POS_focus(); } else if (POS_isPriceCheckMode) POS_focus();
 }
+
 function POS_addProduct(product) {
   if(!product) return;
   var idx = POS_gioHang.findIndex(item => String(item.maSP) === String(product.maSP));
@@ -585,6 +598,7 @@ function POS_addProduct(product) {
   else { POS_gioHang.push({ maSP: product.maSP, tenSP: product.tenSP, donGia: POS_num(product.giaBan), donGiaGoc: POS_num(product.giaBan), soLuong: 1, thanhTien: POS_num(product.giaBan), tonKhoGoc: product.tonKho }); }
   POS_capNhatUI(); POS_renderTabs();
 }
+
 function POS_suaSL(index, value) {
   var qty = parseFloat(POS_num(value)); 
   if(qty > 0){
@@ -593,6 +607,7 @@ function POS_suaSL(index, value) {
     item.soLuong = qty; item.thanhTien = qty * item.donGia; POS_capNhatUI(); POS_renderTabs();
   }
 }
+
 function POS_suaGia(index, value) {
   var item = POS_gioHang[index]; var newPrice = Math.max(0, Math.round(POS_num(value)));
   if (item.donGiaGoc === undefined) item.donGiaGoc = item.donGia;
@@ -601,7 +616,9 @@ function POS_suaGia(index, value) {
   if (lyDo === null || !lyDo.trim()) { alert('Đã hủy thay đổi giá.'); POS_capNhatUI(); return; }
   item.donGia = newPrice; item.thanhTien = item.soLuong * newPrice; item.giaDaSua = true; item.lyDoSuaGia = lyDo.trim(); POS_capNhatUI();
 }
+
 function POS_xoaSP(index) { POS_gioHang.splice(index, 1); POS_capNhatUI(); POS_renderTabs(); }
+
 function POS_capNhatUI() {
   var tbody = document.getElementById('gioHang'); POS_tamTinh = 0;
   for(var i=0; i<POS_gioHang.length; i++) POS_tamTinh += POS_num(POS_gioHang[i].thanhTien); 
@@ -619,6 +636,7 @@ function POS_capNhatUI() {
   }).join('');
   POS_tinhGiamGia('UPDATE');
 }
+
 function POS_tinhGiamGia(mode) {
   var ptEl = document.getElementById('inputGiamGiaPT'), vndEl = document.getElementById('inputGiamGiaVND');
   var pt = POS_num(ptEl.value), vnd = Math.floor(POS_num(vndEl.value));
@@ -627,9 +645,18 @@ function POS_tinhGiamGia(mode) {
   } else { vnd = Math.min(POS_tamTinh, Math.max(0, vnd)); pt = POS_tamTinh ? (vnd / POS_tamTinh * 100) : 0; ptEl.value = Number.isInteger(pt) ? pt : pt.toFixed(2); }
   POS_giamGia = vnd; POS_tongTienThanhToan = Math.max(0, POS_tamTinh - POS_giamGia); POS_renderTong();
 }
+
+// Gắn đè hàm render để xử lý nút dính đáy của mobile
+const _origRenderTong = POS_renderTong || function(){};
 function POS_renderTong() {
-  document.getElementById('txtTamTinh').textContent = POS_money(POS_tamTinh); document.getElementById('txtTongTien').textContent = POS_money(POS_tongTienThanhToan); document.getElementById('txtTienGiam').textContent = POS_money(POS_giamGia); document.getElementById('divHienThiGiamGia').style.display = POS_giamGia > 0 ? 'block' : 'none';
+  document.getElementById('txtTamTinh').textContent = POS_money(POS_tamTinh); 
+  document.getElementById('txtTongTien').textContent = POS_money(POS_tongTienThanhToan); 
+  document.getElementById('txtTienGiam').textContent = POS_money(POS_giamGia); 
+  document.getElementById('divHienThiGiamGia').style.display = POS_giamGia > 0 ? 'block' : 'none';
+  const mt = document.getElementById('mtTongTien');
+  if (mt) mt.textContent = POS_money(POS_tongTienThanhToan);
 }
+
 function POS_moFormSanPhamMo() { if(typeof bootstrap !== 'undefined') bootstrap.Modal.getOrCreateInstance(document.getElementById('modalSanPhamMo')).show(); }
 function POS_themSanPhamMo(event) {
   event.preventDefault();
@@ -637,12 +664,14 @@ function POS_themSanPhamMo(event) {
   if(!ten) return; POS_gioHang.push({ maSP: 'SPM-' + Date.now(), tenSP: '[Tự do] ' + ten, donGia: gia, donGiaGoc: gia, soLuong: sl, thanhTien: gia * sl });
   POS_capNhatUI(); POS_renderTabs(); if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(document.getElementById('modalSanPhamMo'))?.hide(); event.target.reset(); POS_focus();
 }
+
 function POS_huyDon() {
   if(POS_gioHang.length === 0) return; if(!confirm('Xác nhận hủy đơn hiện tại?')) return;
   POS_carts[POS_activeCartIndex] = []; POS_gioHang = POS_carts[POS_activeCartIndex];
   document.getElementById('sdtKhachInput').value = ''; document.getElementById('inputGiamGiaPT').value = 0; document.getElementById('inputGiamGiaVND').value = 0;
   POS_capNhatUI(); POS_renderTabs(); POS_focus();
 }
+
 function POS_togglePriceCheck() {
   POS_isPriceCheckMode = !POS_isPriceCheckMode;
   var btn = document.getElementById('btnTraGia'), inp = document.getElementById('maVachInput');
@@ -650,10 +679,12 @@ function POS_togglePriceCheck() {
   else { btn.classList.remove('price-check-active'); btn.classList.add('btn-outline-info'); btn.innerHTML = '<i class="bi bi-search"></i> TRA GIÁ <small>F3</small>'; inp.classList.remove('bg-warning', 'bg-opacity-10'); }
   POS_focus();
 }
+
 function POS_showPriceModal(sp) {
   POS_beep(); document.getElementById('tg_tenSP').innerText = sp.tenSP; document.getElementById('tg_giaBan').innerText = POS_money(sp.giaBan) + ' đ'; document.getElementById('tg_tonKho').innerText = sp.tonKho !== undefined ? sp.tonKho : 'Không rõ';
   if(typeof bootstrap !== 'undefined') { var mEl = document.getElementById('modalTraGia'); bootstrap.Modal.getOrCreateInstance(mEl).show(); mEl.addEventListener('hidden.bs.modal', function () { POS_focus(); }, {once: true}); }
 }
+
 async function POS_xuLyTaoMaNhanh(e) {
   e.preventDefault();
   var giaVonNum = POS_num(document.getElementById('tmn_von').value), giaBanNum = POS_num(document.getElementById('tmn_ban').value);
@@ -670,6 +701,7 @@ async function POS_xuLyTaoMaNhanh(e) {
   } catch(err) { alert('Lỗi tạo mã: ' + err.message); } 
   finally { btn.disabled = false; btn.innerHTML = 'LƯU KHO & BÁN'; }
 }
+
 // ============================================================
 // DỊCH VỤ LUÂN CHUYỂN TIỀN
 // ============================================================
@@ -725,6 +757,7 @@ async function POS_chotDichVuTien() {
     alert('Thành công! Giao dịch: ' + res.data.maGD);
   } catch (err) { alert('Lỗi: ' + err.message); } finally { btn.disabled = false; btn.innerHTML = 'CHỐT & IN BILL'; }
 }
+
 // ============================================================
 // 6. THANH TOÁN & IN ẤN (REST API FETCH)
 // ============================================================
@@ -737,6 +770,7 @@ function POS_togglePhuongThuc() {
 }
 function POS_quickCash(amount) { document.getElementById('inputKhachDua').value = (amount === 'ALL') ? POS_tongTienThanhToan : amount; POS_tinhTienThoi(); }
 function POS_tinhTienThoi() { var khachDua = POS_num(document.getElementById('inputKhachDua').value); document.getElementById('txtTienThoi').textContent = POS_money(Math.max(0, khachDua - POS_tongTienThanhToan)) + ' đ'; }
+
 function POS_thanhToan() {
   if (POS_gioHang.length === 0) { alert('Giỏ hàng rỗng!'); return; }
   var addInfo = 'DH-' + Date.now();
@@ -746,6 +780,7 @@ function POS_thanhToan() {
   document.getElementById('pt_tienMat').checked = true; document.getElementById('inputKhachDua').value = POS_tongTienThanhToan; POS_togglePhuongThuc(); POS_tinhTienThoi();
   if(typeof bootstrap !== 'undefined') bootstrap.Modal.getOrCreateInstance(document.getElementById('modalThanhToan')).show();
 }
+
 function POS_vf(tag, val) { var s = String(val || ''), len = String(s.length); if(len.length < 2) len = '0' + len; return tag + len + s; }
 function POS_crc(text) {
   var crc = 0xFFFF;
@@ -796,6 +831,7 @@ function POS_inLaiHoaDonQuay() {
   if (!POS_lastReceiptPayload) { alert('Chưa có hóa đơn nào được chốt trong phiên này!'); return; }
   POS_executePrint(POS_lastReceiptPayload);
 }
+
 async function POS_chotDonHang(coInBill) {
   if (typeof coInBill === 'undefined') coInBill = true;
   if (POS_printing || POS_gioHang.length === 0) return;
@@ -810,6 +846,7 @@ async function POS_chotDonHang(coInBill) {
   if (pt === 'TIEN_MAT' && khachDua < total) { tienNo = total - khachDua; if (!thongTinKhach_Goc) { alert('⚠️ YÊU CẦU: Khách thanh toán thiếu. Bắt buộc nhập Tên!'); document.getElementById('sdtKhachInput').focus(); return; } pt = 'TIEN_MAT_GHI_NO'; }
   var btnIn = document.getElementById('btnChotDon'), btnKhongIn = document.getElementById('btnChotKhongIn');
   POS_printing = true; if(btnIn){btnIn.disabled=true; btnIn.innerHTML='ĐANG XỬ LÝ...';} if(btnKhongIn) btnKhongIn.disabled=true;
+  
   var snapshot = JSON.parse(JSON.stringify(POS_gioHang));
   var auditLog = [];
   for (var i = 0; i < snapshot.length; i++) {
@@ -828,7 +865,9 @@ async function POS_chotDonHang(coInBill) {
     if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false;
     POS_focus(); if (msg) alert(msg);
   }
+  
   var actionPayload = { action: 'luuDonHang', clientOrderId: POS_currentOrderId, token: SESSION_TOKEN, gioHang: snapshot, tongTien: total, sdtKhach: thongTinKhach_Luu, phuongThuc: pt, khachDua: khachDua, tienNo: tienNo };
+  
   if (!navigator.onLine) {
     const offId = 'OFF-' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
     await localDb.saveOfflineOrder({ id: offId, payload: actionPayload });
@@ -837,6 +876,7 @@ async function POS_chotDonHang(coInBill) {
     hoanTatGiaoDien('ĐÃ LƯU NGOẠI TUYẾN.' + (coInBill ? '' : ' (Không in bill)'));
     return;
   }
+  
   try {
     const json = await POS_fetchJson(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body:JSON.stringify(actionPayload) });
     const parts = String(json.data || '').split('\n');
@@ -869,21 +909,30 @@ async function POS_chotDonHang(coInBill) {
     }
   }
 }
+
 // ============================================================
-// 7. CAMERA OVERLAY & KHỞI ĐỘNG
+// 7. CAMERA OVERLAY & KHỞI ĐỘNG (NÂNG CẤP ĐA MỤC TIÊU)
 // ============================================================
-async function POS_toggleCamera() {
+let POS_camTarget = null;
+async function POS_toggleCamera(targetInputId) {
   if(typeof Html5Qrcode === 'undefined'){ alert('Thư viện chưa tải xong!'); return; }
   if(!window.isSecureContext){ alert('Camera yêu cầu HTTPS. Hãy mở POS bằng địa chỉ GitHub Pages https://...'); return; }
   var btn = document.getElementById('btnToggleCamera'), wrapper = document.getElementById('camera-wrapper');
+  
+  POS_camTarget = (typeof targetInputId === 'string') ? targetInputId : null;
+
   if(POS_isCamOn){
     try { if(POS_scanner) await POS_scanner.stop(); } catch(e) {}
     try { if(POS_scanner) POS_scanner.clear(); } catch(e) {}
     POS_scanner = null; POS_isCamOn = false; wrapper.style.display = 'none';
-    btn.className='btn scan-action touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM'; btn.disabled=false;
-    POS_focus(); return;
+    if(btn) { btn.className='btn scan-action touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM'; btn.disabled=false; }
+    if(!POS_camTarget) POS_focus(); 
+    return;
   }
-  wrapper.style.display='flex'; btn.disabled = true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span>...';
+  
+  wrapper.style.display='flex'; 
+  if(!POS_camTarget && btn) { btn.disabled = true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span>...'; }
+  
   try {
     POS_scanner = new Html5Qrcode('reader');
     await POS_scanner.start(
@@ -891,24 +940,34 @@ async function POS_toggleCamera() {
       { fps: 10, qrbox: (viewfinderWidth, viewfinderHeight) => ({ width: Math.min(viewfinderWidth * 0.85, 300), height: 120 }), aspectRatio: 1.0 },
       text => {
         if(POS_scanLocked) return; POS_scanLocked = true; POS_beep(); if(navigator.vibrate) navigator.vibrate(80);
-        POS_xuLyMaVach(text); setTimeout(() => { POS_scanLocked = false; }, 1200);
+        
+        if(POS_camTarget) {
+           document.getElementById(POS_camTarget).value = text;
+           POS_toggleCamera(); // Tự động tắt cam
+           POS_scanLocked = false;
+        } else {
+           POS_xuLyMaVach(text); setTimeout(() => { POS_scanLocked = false; }, 1200);
+        }
       }, () => {}
     );
-    POS_isCamOn = true; btn.disabled = false; btn.className='btn btn-danger fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT';
+    POS_isCamOn = true; 
+    if(!POS_camTarget && btn) { btn.disabled = false; btn.className='btn btn-danger fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT'; }
   } catch(err) {
     try { if(POS_scanner) POS_scanner.clear(); } catch(e) {}
-    POS_scanner = null; POS_isCamOn = false; wrapper.style.display='none'; btn.disabled=false;
-    btn.className='btn scan-action touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM';
+    POS_scanner = null; POS_isCamOn = false; wrapper.style.display='none'; 
+    if(!POS_camTarget && btn) { btn.disabled=false; btn.className='btn scan-action touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM'; }
     const msg = String(err?.message || err || '');
     if(/permission|denied|notallowed/i.test(msg)) alert('Camera bị từ chối. Hãy cấp quyền cho trình duyệt.'); else alert('Lỗi Camera: ' + msg);
   }
 }
+
 function POS_kiemTraBridge() {
   var el = document.getElementById('bridgeStatus'); if(!el) return;
   if(/Android/i.test(navigator.userAgent)){ el.className = 'bridge-status status-android'; el.innerHTML = '<i class="bi bi-phone"></i> ANDROID BRIDGE'; return; }
   fetch(POS_CONFIG.PC_HEALTH_URL, { method:'GET', cache:'no-store' }).then(res => { if(res.ok){ el.className = 'bridge-status status-pc-online'; el.innerHTML = '<i class="bi bi-printer-fill"></i> PC BRIDGE: ONLINE'; } else throw new Error(); })
   .catch(() => { el.className = 'bridge-status status-pc-offline'; el.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> PC BRIDGE: OFFLINE'; });
 }
+
 window.addEventListener('load', async () => {
   try { await localDb.init(); } catch(e) { console.error('IndexedDB init error:', e); }
   POS_checkSecurityLock(); POS_focus(); POS_kiemTraBridge(); POS_updateNetworkStatus();
@@ -931,19 +990,11 @@ window.addEventListener('load', async () => {
 });
 
 // ══════════════════════════════════════════════════
-// ANDROID UX PATCH — JS bổ sung
+// ANDROID UX PATCH — Lắng nghe sự kiện hệ thống
 // ══════════════════════════════════════════════════
-const _origRenderTong = POS_renderTong;
-POS_renderTong = function() {
-  _origRenderTong();
-  const mt = document.getElementById('mtTongTien');
-  if (mt) mt.textContent = POS_money(POS_tongTienThanhToan);
-};
-
 (function() {
   let modalOpenState = false;
   const modalIds = ['modalThanhToan', 'modalSanPhamMo', 'modalTaoMaNhanh', 'modalTraGia', 'modalDichVuTien'];
-
   modalIds.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -954,7 +1005,6 @@ POS_renderTong = function() {
       if (modalOpenState) { modalOpenState = false; if (history.state && history.state.myleModal) history.back(); }
     });
   });
-
   window.addEventListener('popstate', () => {
     if (modalOpenState) {
       modalIds.forEach(id => {
@@ -967,9 +1017,7 @@ POS_renderTong = function() {
 
 document.addEventListener('focusin', (e) => {
   if (e.target.matches('input, textarea')) {
-    setTimeout(() => {
-      e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 300);
+    setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
   }
 });
 </script>
