@@ -1,9 +1,9 @@
-const CACHE_NAME = 'myle-pos-cache-v7'; // Cập nhật phiên bản Cache
+const CACHE_NAME = 'myle-pos-cache-v8'; // Đã tăng phiên bản để ép trình duyệt cập nhật
 const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec";
 
 // Cài đặt Service Worker
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Ép kích hoạt ngay lập tức bản V3
+  self.skipWaiting(); // Ép kích hoạt ngay lập tức bản mới
 });
 
 // Xóa bộ nhớ đệm cũ khi kích hoạt bản mới
@@ -23,12 +23,19 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request).then(fetchRes => {
+        // Chỉ lưu cache nếu request thành công hợp lệ
+        if (!fetchRes || fetchRes.status !== 200 || fetchRes.type !== 'basic') {
+          return fetchRes;
+        }
         return caches.open(CACHE_NAME).then(cache => {
           cache.put(event.request, fetchRes.clone());
           return fetchRes;
         });
       });
-    }).catch(() => new Response("Network error"))
+    }).catch(() => {
+      // Trả về phản hồi rỗng để không làm hỏng cấu trúc UI
+      return new Response('', { status: 503, statusText: 'Service Unavailable' });
+    })
   );
 });
 
@@ -68,10 +75,26 @@ async function syncOfflineOrders() {
         const response = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=UTF-8" },
-          body: JSON.stringify(order.payload)
+          body: JSON.stringify(order.payload),
+          redirect: "follow" // BẮT BUỘC ĐỐI VỚI GOOGLE APPS SCRIPT
         });
         
-        const result = await response.json();
+        // Kiểm tra HTTP Status trước khi parse
+        if (!response.ok) {
+          console.error(`[SW] Máy chủ phản hồi mã lỗi: ${response.status}`);
+          break; // Dừng lại chờ đợt đồng bộ sau
+        }
+
+        // Đọc dưới dạng text trước để phòng tránh lỗi parse JSON
+        const textResult = await response.text();
+        let result;
+        
+        try {
+          result = JSON.parse(textResult);
+        } catch (jsonErr) {
+          console.error("[SW] Lỗi Parse JSON (GAS không trả về JSON):", textResult);
+          break; // Lỗi từ phía GAS trả về HTML, ngắt luồng
+        }
         
         if (result && result.status === 'success') {
           // Xóa đơn khi máy chủ xác nhận thành công
@@ -92,6 +115,7 @@ async function syncOfflineOrders() {
         }
       } catch (e) {
         // Lỗi mạng hoặc Timeout: Dừng lại chờ đợt sóng sau
+        console.error(`[SW] Lỗi kết nối mạng khi đồng bộ đơn ${order.id}:`, e);
         break; 
       }
     }
