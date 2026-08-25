@@ -380,8 +380,36 @@
     </div>
   </div>
 </div>
-<!-- MODAL DỊCH VỤ TIỀN -->
-<div class="modal fade" id="modalDichVuTien" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-bank"></i> DỊCH VỤ LUÂN CHUYỂN TIỀN</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex gap-2 mb-3"><input type="radio" class="btn-check" name="loaiDV" id="dv_chuyenKhoan" value="CHUYEN_KHOAN_HO" checked onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_chuyenKhoan"><i class="bi bi-send"></i> CHUYỂN KHOẢN HỘ</label><input type="radio" class="btn-check" name="loaiDV" id="dv_rutTien" value="RUT_TIEN" onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_rutTien"><i class="bi bi-cash-stack"></i> RÚT TIỀN MẶT</label></div><div class="mb-3"><label class="fw-bold mb-1">Số tiền GỐC (VNĐ)</label><input type="number" id="dv_tienGoc" class="form-control form-control-lg fw-bold fs-4 text-end" style="color:var(--myle-cobalt); border:2px solid var(--myle-chrome); border-radius:12px;" placeholder="0" min="0" oninput="POS_tinhPhiDichVu()"></div><div class="card bg-light border-0 mb-3" style="background:rgba(255,255,255,0.5)!important; backdrop-filter:blur(5px); border-radius:12px;"><div class="card-body p-3"><div class="d-flex justify-content-between mb-2"><span class="text-muted fw-bold">Phí dịch vụ tự động:</span> <span id="dv_tienPhi" class="text-danger fw-bold fs-5">0 đ</span></div><hr class="my-2" style="border-color:rgba(0,0,0,0.1)"><div class="d-flex justify-content-between align-items-center"><span id="dv_txtHanhDong" class="fw-bold fs-5">Tổng thu khách:</span> <span id="dv_thucGiaoNhan" class="fw-bold fs-2 text-success">0 đ</span></div></div></div><div class="mb-2"><label class="fw-bold mb-1">Thông tin TK / Ghi chú</label><input type="text" id="dv_thongTin" class="form-control client-input" placeholder="Tên NH, Số TK, Người nhận..."></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY</button><button type="button" class="btn primary-btn px-4" id="btnChotDichVu" onclick="POS_chotDichVuTien()">CHỐT & IN BILL</button></div></div></div></div>
+<!-- MODAL DỊCH VỤ TIỀN (MINI-CART VERSION) -->
+<div class="modal fade" id="modalDichVuTien" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt py-3"><h6 class="modal-title fw-bold"><i class="bi bi-bank"></i> DỊCH VỤ LUÂN CHUYỂN TIỀN</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body p-3">
+   <div class="p-3 mb-3 rounded" style="background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6);">
+      <div class="d-flex gap-2 mb-3">
+         <input type="radio" class="btn-check" name="loaiDV" id="dv_chuyenKhoan" value="CHUYEN_KHOAN_HO" checked onchange="POS_tinhPhiDichVu()">
+         <label class="btn payment-method w-100 touch-btn" for="dv_chuyenKhoan"><i class="bi bi-send"></i> CHUYỂN ĐI</label>
+         <input type="radio" class="btn-check" name="loaiDV" id="dv_rutTien" value="RUT_TIEN" onchange="POS_tinhPhiDichVu()">
+         <label class="btn payment-method w-100 touch-btn" for="dv_rutTien"><i class="bi bi-cash-stack"></i> RÚT TIỀN</label>
+      </div>
+      <div class="mb-2"><input type="number" id="dv_tienGoc" class="form-control fw-bold fs-4 text-end client-input" placeholder="Số tiền gốc (VNĐ)" min="0" oninput="POS_tinhPhiDichVu()"></div>
+      <div class="mb-2"><input type="text" id="dv_thongTin" class="form-control client-input" placeholder="Tên NH, Số TK, Tên khách..."></div>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+         <span class="text-muted fw-bold small">Phí dự kiến: <span id="dv_tienPhi" class="text-danger fs-6">0 đ</span></span>
+         <button class="btn btn-sm btn-dark fw-bold px-3 touch-btn" onclick="POS_themDichVuTien()"><i class="bi bi-plus-lg"></i> THÊM VÀO LƯỢT</button>
+      </div>
+   </div>
+   <div class="fw-bold mb-2 text-primary px-1" style="font-size:13px">DANH SÁCH LƯỢT GIAO DỊCH:</div>
+   <div id="dv_cart_body" class="mb-3" style="max-height: 180px; overflow-y: auto;">
+      <div class="text-center text-muted small py-3">Chưa có giao dịch nào</div>
+   </div>
+   <div class="card bg-light border-0" style="background:rgba(255,255,255,0.6)!important; border-radius:12px;">
+      <div class="card-body p-3">
+         <div class="d-flex justify-content-between mb-1"><span class="fw-bold text-muted">Tổng THU tiền mặt:</span><span id="dv_tongThu" class="fw-bold fs-5" style="color:var(--myle-cobalt)">0 đ</span></div>
+         <div class="d-flex justify-content-between"><span class="fw-bold text-muted">Tổng ĐƯA tiền mặt:</span><span id="dv_tongChi" class="fw-bold fs-5 text-danger">0 đ</span></div>
+      </div>
+   </div>
+</div>
+<div class="modal-footer"><button type="button" class="btn secondary-btn touch-btn" data-bs-dismiss="modal">HỦY</button><button type="button" class="btn primary-btn px-4 touch-btn" id="btnChotDichVu" onclick="POS_chotDichVuTien()">CHỐT TỔNG & IN BILL</button></div>
+</div></div></div>
 <!-- MODAL TRA CỨU GIÁ -->
 <div class="modal fade" id="modalTraGia" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-search"></i> KẾT QUẢ TRA GIÁ</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-5"><div class="section-kicker mb-2">PRODUCT LOOKUP</div><h3 class="fw-bold mb-3" id="tg_tenSP">Tên sản phẩm</h3><div class="display-3 fw-bold mb-4" style="color:var(--myle-cobalt)" id="tg_giaBan">0 đ</div><div class="text-muted fw-bold fs-5">Tồn kho hiện tại: <span id="tg_tonKho" class="text-dark">0</span></div></div></div></div></div>
 <!-- MODAL TẠO MÃ -->
@@ -862,59 +890,132 @@ async function POS_xuLyTaoMaNhanh(e) {
 }
 
 // ============================================================
-// DỊCH VỤ LUÂN CHUYỂN TIỀN
+// DỊCH VỤ LUÂN CHUYỂN TIỀN (BATCH PROCESSING)
 // ============================================================
+let POS_dvCart = [];
+
 function POS_moDichVuTien() {
+  POS_dvCart = []; 
+  POS_renderDvCart();
   document.getElementById('dv_tienGoc').value = '';
   document.getElementById('dv_thongTin').value = '';
   POS_tinhPhiDichVu();
   if(typeof bootstrap !== 'undefined') bootstrap.Modal.getOrCreateInstance(document.getElementById('modalDichVuTien')).show();
   setTimeout(() => document.getElementById('dv_tienGoc').focus(), 300);
 }
+
 function POS_tinhPhiDichVu() {
   const goc = parseFloat(POS_num(document.getElementById('dv_tienGoc').value));
   let phi = 0;
   if (goc > 0) {
-    if (goc < 500000) phi = 5000;
+    if (goc < 50000) phi = 3000; // MỨC PHÍ MỚI: < 50k thu 3k
+    else if (goc < 500000) phi = 5000;
     else if (goc <= 1000000) phi = 10000;
     else if (goc <= 5000000) phi = 15000;
     else if (goc < 10000000) phi = 20000;
     else phi = Math.round(goc * 0.002);
   }
-  
-  const loai = document.querySelector('input[name="loaiDV"]:checked').value;
-  const thucGiao = loai === 'CHUYEN_KHOAN_HO' ? (goc + phi) : Math.max(0, goc - phi);
-  
   document.getElementById('dv_tienPhi').textContent = POS_money(phi) + ' đ';
-  document.getElementById('dv_thucGiaoNhan').textContent = POS_money(thucGiao) + ' đ';
-  document.getElementById('dv_txtHanhDong').textContent = loai === 'CHUYEN_KHOAN_HO' ? 'Tổng THU tiền mặt:' : 'Phải ĐƯA tiền mặt:';
 }
-async function POS_chotDichVuTien() {
+
+function POS_themDichVuTien() {
   const goc = parseFloat(POS_num(document.getElementById('dv_tienGoc').value));
-  if (goc <= 0) { alert('Số tiền gốc không hợp lệ!'); return; }
-  
+  if (goc <= 0) return; 
   const loai = document.querySelector('input[name="loaiDV"]:checked').value;
-  const thongTin = document.getElementById('dv_thongTin').value.trim();
-  const btn = document.getElementById('btnChotDichVu');
+  const thongTin = document.getElementById('dv_thongTin').value.trim() || 'Không có ghi chú';
   
   let phi = 0;
-  if (goc < 500000) phi = 5000; else if (goc <= 1000000) phi = 10000; else if (goc <= 5000000) phi = 15000; else if (goc < 10000000) phi = 20000; else phi = Math.round(goc * 0.002);
-  
+  if (goc < 50000) phi = 3000;
+  else if (goc < 500000) phi = 5000;
+  else if (goc <= 1000000) phi = 10000;
+  else if (goc <= 5000000) phi = 15000;
+  else if (goc < 10000000) phi = 20000;
+  else phi = Math.round(goc * 0.002);
+
+  POS_dvCart.push({ loai, goc, phi, thongTin });
+
+  document.getElementById('dv_tienGoc').value = '';
+  document.getElementById('dv_thongTin').value = '';
+  POS_tinhPhiDichVu();
+  POS_renderDvCart();
+  document.getElementById('dv_tienGoc').focus();
+}
+
+function POS_xoaDichVuTien(idx) {
+  POS_dvCart.splice(idx, 1);
+  POS_renderDvCart();
+}
+
+function POS_renderDvCart() {
+  let html = '';
+  let tongThu = 0;
+  let tongChi = 0;
+  if (POS_dvCart.length === 0) {
+    html = '<div class="text-center text-muted small py-3">Chưa có giao dịch nào</div>';
+  } else {
+    POS_dvCart.forEach((item, idx) => {
+       let thuc = item.loai === 'CHUYEN_KHOAN_HO' ? item.goc + item.phi : item.goc - item.phi;
+       if (item.loai === 'CHUYEN_KHOAN_HO') tongThu += thuc;
+       else tongChi += thuc;
+
+       html += `<div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded" style="background:rgba(255,255,255,0.8)">
+          <div>
+             <div class="fw-bold text-dark">${item.loai === 'CHUYEN_KHOAN_HO' ? 'Chuyển đi' : 'Rút tiền'} - ${POS_money(item.goc)}đ</div>
+             <div class="small text-muted">Phí: ${POS_money(item.phi)}đ | Lời nhắn: ${POS_esc(item.thongTin)}</div>
+          </div>
+          <button class="btn btn-sm btn-outline-danger touch-btn" onclick="POS_xoaDichVuTien(${idx})"><i class="bi bi-x-lg"></i></button>
+       </div>`;
+    });
+  }
+  document.getElementById('dv_cart_body').innerHTML = html;
+  document.getElementById('dv_tongThu').innerText = POS_money(tongThu) + ' đ';
+  document.getElementById('dv_tongChi').innerText = POS_money(tongChi) + ' đ';
+}
+
+async function POS_chotDichVuTien() {
+  // Lớp bảo vệ: Tự động gom lệnh nếu thu ngân đang nhập dở nhưng bấm thẳng nút Chốt
+  const gocInput = parseFloat(POS_num(document.getElementById('dv_tienGoc').value));
+  if (gocInput > 0) POS_themDichVuTien();
+
+  if (POS_dvCart.length === 0) { alert('Vui lòng thêm ít nhất 1 giao dịch!'); return; }
+
+  const btn = document.getElementById('btnChotDichVu');
   btn.disabled = true; btn.innerHTML = 'ĐANG XỬ LÝ...';
-  
-  const payload = { action: 'luuDichVuTien', token: SESSION_TOKEN, payload: { loai: loai, goc: goc, phi: phi, thongTin: thongTin } };
+
+  const payload = { action: 'luuDichVuTien', token: SESSION_TOKEN, payload: POS_dvCart };
+
   try {
     const res = await POS_fetchJson(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+
+    let items = [];
+    let totalThu = 0;
+    let totalChi = 0;
+
+    // Phân rã dữ liệu In bill
+    POS_dvCart.forEach((p, idx) => {
+       let typeName = p.loai === 'CHUYEN_KHOAN_HO' ? 'CK: ' : 'RÚT: ';
+       items.push({ name: typeName + p.thongTin, qty: 1, price: p.goc, total: p.goc });
+       if (p.phi > 0) items.push({ name: 'Phí GD ' + (idx+1), qty: 1, price: p.phi, total: p.phi });
+       
+       if (p.loai === 'CHUYEN_KHOAN_HO') totalThu += (p.goc + p.phi);
+       else totalChi += (p.goc - p.phi);
+    });
+
     const printPayload = {
-      storeName: POS_CONFIG.STORE_NAME, address: POS_CONFIG.ADDRESS, phone: POS_CONFIG.PHONE, customerPhone: thongTin, orderId: res.data.maGD, date: new Date().toLocaleString('vi-VN'),
-      items: [ { name: res.data.loai === 'CHUYEN_KHOAN_HO' ? 'Số tiền chuyển đi' : 'Số tiền nhận CK', qty: 1, price: goc, total: goc }, { name: 'Phí dịch vụ', qty: 1, price: phi, total: phi } ],
-      subtotal: goc, discount: 0, total: res.data.thucGiaoNhan, qrData: '',
-      footer: "------------------------\n" + (res.data.loai === 'CHUYEN_KHOAN_HO' ? `TONG THU TIEN MAT: ${POS_money(res.data.thucGiaoNhan)} d` : `THUC GIAO TIEN MAT: ${POS_money(res.data.thucGiaoNhan)} d`) + "\n------------------------\nCam on quy khach!"
+      storeName: POS_CONFIG.STORE_NAME, address: POS_CONFIG.ADDRESS, phone: POS_CONFIG.PHONE,
+      customerPhone: '', orderId: res.data.maGD, date: new Date().toLocaleString('vi-VN'),
+      items: items, subtotal: 0, discount: 0, total: 0, qrData: '',
+      footer: "------------------------\n" +
+              (totalThu > 0 ? `TỔNG THU TIỀN MẶT: ${POS_money(totalThu)} d\n` : '') +
+              (totalChi > 0 ? `TỔNG CHI TIỀN MẶT: ${POS_money(totalChi)} d\n` : '') +
+              "------------------------\nCam on quy khach!"
     };
+
     await POS_executePrint(printPayload);
     if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(document.getElementById('modalDichVuTien'))?.hide();
-    alert('Thành công! Giao dịch: ' + res.data.maGD);
-  } catch (err) { alert('Lỗi: ' + err.message); } finally { btn.disabled = false; btn.innerHTML = 'CHỐT & IN BILL'; }
+    alert('Thành công! Đã gộp các giao dịch vào mã lô: ' + res.data.maGD);
+  } catch (err) { alert('Lỗi: ' + err.message); } 
+  finally { btn.disabled = false; btn.innerHTML = 'CHỐT TỔNG & IN BILL'; }
 }
 
 // ============================================================
