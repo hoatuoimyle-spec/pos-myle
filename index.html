@@ -27,80 +27,137 @@
       --myle-shadow:0 8px 24px rgba(32,36,44,.08); --myle-radius:12px;
     }
     *{box-sizing:border-box}
-    body{background:var(--myle-ivory);color:var(--myle-ink);font-family:Inter,system-ui,-apple-system,sans-serif;letter-spacing:-.01em;overflow-x:hidden;}
-    .pos-shell{max-width:1600px;margin:auto}
-    .pos-card{background:var(--myle-paper);border:1px solid var(--myle-line)!important;border-radius:var(--myle-radius);box-shadow:var(--myle-shadow)!important}
-    .pos-header{background:var(--myle-paper);border-top:4px solid var(--myle-cobalt);overflow:hidden}
-    .brand-lockup{display:flex;align-items:center;gap:10px}
     
-    /* ĐÃ TỐI ƯU KÍCH THƯỚC HEADER (BRAND) NHỎ LẠI */
+    /* Hình nền có dải gradient nhẹ để hiệu ứng kính mờ (Glassmorphism) phát huy tác dụng thị giác */
+    body{background: linear-gradient(135deg, #e4e0d7 0%, #f4f0e6 100%); color:var(--myle-ink);font-family:Inter,system-ui,-apple-system,sans-serif;letter-spacing:-.01em;overflow-x:hidden;}
+    .pos-shell{max-width:1600px;margin:auto}
+    
+    /* ══════════════════════════════════════════════
+       LIQUID GLASS DESIGN SYSTEM (SELECTIVE)
+       ══════════════════════════════════════════════ */
+    .pos-card { 
+      background: rgba(255,253,247,0.55); 
+      backdrop-filter: blur(14px) saturate(140%); 
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border: 1px solid rgba(255,255,255,0.8) !important; 
+      border-radius: var(--myle-radius); 
+      box-shadow: 0 8px 32px rgba(31, 41, 55, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important; 
+    }
+    .pos-header { 
+      background: rgba(255,253,247,0.7); 
+      border-top: 4px solid var(--myle-cobalt); 
+      overflow:hidden; 
+    }
+    
+    .brand-lockup{display:flex;align-items:center;gap:10px}
     .brand-mark{width:34px;height:34px;border-radius:8px;background:var(--myle-cobalt);color:#fff;display:grid;place-items:center;font-size:18px;font-weight:900;box-shadow:3px 3px 0 var(--myle-lime)}
     .brand-title{font-weight:900;letter-spacing:-.04em;line-height:1}
     .brand-title .brand-main{font-size:1.1rem}.brand-title .brand-sub{font-size:.65rem;color:var(--myle-muted);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
     .retail-code{font-size:.65rem;font-weight:800;letter-spacing:.1em;color:var(--myle-muted);text-transform:uppercase}
     
-    .bridge-status{font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--myle-line);white-space:nowrap}
-    .status-checking{background:#eeeae1;color:#777}.status-android{background:#eef5ce;color:#4c6410;border-color:#cddf76}.status-pc-online{background:#e9efff;color:var(--myle-cobalt);border-color:#b8c7fa}.status-pc-offline{background:#fff0e8;color:#a33d1e;border-color:#f4bda1}
-    .status-net-offline{background:#ffcccc;color:#d32f2f;border-color:#d32f2f;margin-left:8px;}
+    .bridge-status{font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--myle-line);white-space:nowrap; background: rgba(255,255,255,0.7); backdrop-filter: blur(5px);}
+    .status-checking{color:#777}.status-android{color:#4c6410;border-color:#cddf76}.status-pc-online{color:var(--myle-cobalt);border-color:#b8c7fa}.status-pc-offline{color:#a33d1e;border-color:#f4bda1}
+    .status-net-offline{color:#d32f2f;border-color:#d32f2f;margin-left:8px;}
     .offline-badge{background:var(--myle-orange)!important;border:0!important;color:#fff!important}
     
     .section-kicker{font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--myle-muted)}
     .section-title{font-size:15px;font-weight:900;letter-spacing:.02em;margin:0}
-    .panel-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--myle-line)}
-    .client-input{border:2px solid var(--myle-chrome)!important;background:#fff!important;border-radius:9px!important;font-weight:700}
-    .client-input:focus,.scan-input:focus{border-color:var(--myle-cobalt)!important;box-shadow:0 0 0 3px rgba(49,85,217,.12)!important}
-    .scan-input{border:2px solid var(--myle-cobalt)!important;border-right:0!important;border-radius:10px 0 0 10px!important;font-size:1.08rem!important;font-weight:800!important;height:52px}
-    .scan-action{height:52px;border-radius:0 10px 10px 0!important;background:var(--myle-ink)!important;color:#fff!important;border:0!important;font-weight:900}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid rgba(228, 224, 215, 0.5)}
+    
+    .client-input{border:2px solid rgba(255,255,255,0.8)!important; background:rgba(255,255,255,0.6)!important; backdrop-filter:blur(10px); border-radius:999px!important; font-weight:700; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);}
+    .client-input:focus,.scan-input:focus{border-color:var(--myle-cobalt)!important;box-shadow:0 0 0 3px rgba(49,85,217,.12), inset 0 2px 4px rgba(0,0,0,0.02)!important; background:#fff!important;}
+    
+    /* Ô tìm kiếm kính hóa */
+    .scan-input{border:2px solid var(--myle-cobalt)!important;border-right:0!important;border-radius:999px 0 0 999px!important;font-size:1.08rem!important;font-weight:800!important;height:52px; background: rgba(255,255,255,0.65)!important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);}
+    .scan-action{height:52px;border-radius:0 999px 999px 0!important;background:var(--myle-ink)!important;color:#fff!important;border:0!important;font-weight:900; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
     .scan-action:hover{background:#000!important}
     .touch-btn{min-height:46px}
-    .tool-btn{border:1px solid var(--myle-chrome)!important;background:var(--myle-paper-2)!important;color:var(--myle-ink)!important;font-weight:900!important;border-radius:9px!important}
-    .tool-btn:hover{border-color:var(--myle-cobalt)!important;color:var(--myle-cobalt)!important;background:#fff!important}
-    .primary-btn{background:var(--myle-cobalt)!important;border-color:var(--myle-cobalt)!important;color:#fff!important;font-weight:900!important;border-radius:9px!important;box-shadow:3px 3px 0 #c5d25f}
-    .primary-btn:hover{background:var(--myle-cobalt-dark)!important}
-    .danger-btn{border-color:#e5b7b2!important;color:var(--myle-red)!important;background:#fff8f7!important;font-weight:900!important;border-radius:9px!important}
+    
+    /* Nút phụ kính hóa hình viên thuốc */
+    .tool-btn{
+      background: rgba(248,245,236,0.55) !important;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.8) !important;
+      border-radius: 999px !important;
+      color: var(--myle-ink) !important;
+      font-weight: 900 !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .tool-btn:hover{border-color:var(--myle-cobalt)!important;color:var(--myle-cobalt)!important;background:rgba(255,255,255,0.9)!important}
+    
+    /* Nút chính SOLID + Bóng gương */
+    .primary-btn{
+      background: linear-gradient(180deg, #3f68f0, var(--myle-cobalt)) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 6px 18px rgba(49,85,217,0.35) !important;
+      border-radius: 999px !important;
+      border: none !important;
+      color: #fff !important;
+      font-weight: 900 !important;
+    }
+    .danger-btn{border-color:rgba(229,183,178,0.5)!important;color:var(--myle-red)!important;background:rgba(255,248,247,0.7)!important;backdrop-filter:blur(5px);font-weight:900!important;border-radius:999px!important}
     
     .search-wrap{position:relative}
-    #productSuggestions{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:1050;background:#fff;border:1px solid var(--myle-chrome);border-radius:10px;box-shadow:0 14px 30px rgba(32,36,44,.16);max-height:330px;overflow:auto;display:none}
-    .product-option{padding:13px 14px;border-bottom:1px solid #eeeae1;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px}
-    .product-option:hover,.product-option:active{background:#f0f4ff}.product-option .name{font-weight:800}.product-option .meta{font-size:12px;color:var(--myle-muted)}.product-option .price{font-weight:900;color:var(--myle-cobalt);white-space:nowrap}
+    #productSuggestions{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:1050;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px); border:1px solid var(--myle-chrome);border-radius:16px;box-shadow:0 14px 30px rgba(32,36,44,.16);max-height:330px;overflow:auto;display:none}
+    .product-option{padding:13px 14px;border-bottom:1px solid rgba(238,234,225,0.5);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px}
+    .product-option:hover,.product-option:active{background:rgba(240,244,255,0.8)}.product-option .name{font-weight:800}.product-option .meta{font-size:12px;color:var(--myle-muted)}.product-option .price{font-weight:900;color:var(--myle-cobalt);white-space:nowrap}
     
     .cart-tabs{overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
-    .cart-tab{transition:.15s;white-space:nowrap}.cart-tab .btn{border-radius:8px!important;font-weight:900}
-    .cart-active{background:var(--myle-cobalt)!important;color:#fff!important;border-color:var(--myle-cobalt)!important}
-    .cart-new{background:#f2f5ff!important;color:var(--myle-cobalt)!important;border:1px dashed #aebcf1!important}
+    .cart-tab{transition:.15s;white-space:nowrap}.cart-tab .btn{border-radius:999px!important;font-weight:900;min-height:44px;min-width:44px; background:rgba(255,255,255,0.5); backdrop-filter:blur(5px);}
+    .cart-active{background:var(--myle-cobalt)!important;color:#fff!important;border-color:var(--myle-cobalt)!important; backdrop-filter:none;}
+    .cart-new{background:rgba(242,245,255,0.6)!important;color:var(--myle-cobalt)!important;border:1px dashed #aebcf1!important; border-radius:999px!important;}
     
-    .cart-table thead th{background:var(--myle-ink);color:#fff;border:0;font-size:12px;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0;z-index:5}
-    .cart-table tbody tr{border-bottom:1px solid var(--myle-line)}
-    .cart-table tbody tr:hover{background:#fbfaf4}.cart-name{font-weight:800;color:var(--myle-ink)}
-    .qty-input,.price-input{min-width:60px;border:1px solid var(--myle-chrome)!important;border-radius:7px!important}.price-input{color:var(--myle-red)}.price-input.gia-da-sua{background:#fff6d8;border-color:#e7c657!important}
+    .cart-table thead th{background:transparent;color:var(--myle-muted);border-bottom:2px solid rgba(228,224,215,0.5);font-size:12px;letter-spacing:.04em;text-transform:uppercase;position:sticky;top:0;z-index:5}
+    .cart-table tbody tr{border-bottom:1px solid rgba(228,224,215,0.5); transition: background 0.2s;}
+    .cart-table tbody tr:hover{background:rgba(255,255,255,0.4)}.cart-name{font-weight:800;color:var(--myle-ink)}
+    
+    /* TUYỆT ĐỐI GIỮ SOLID CHO GIÁ TIỀN */
+    .qty-input{min-width:60px;border:1px solid rgba(255,255,255,0.8)!important; background:rgba(255,255,255,0.7)!important; border-radius:7px!important; font-weight:bold;}
+    .price-input{min-width:60px;border:1px solid var(--myle-chrome)!important; background:#fff!important; border-radius:7px!important; color:var(--myle-red)!important; font-weight:900;}
+    .price-input.gia-da-sua{background:#fff6d8!important;border-color:#e7c657!important}
     .money{font-variant-numeric:tabular-nums}
     
-    .summary-box{background:#f7f4ea;border:1px solid var(--myle-line);border-radius:10px;padding:12px}
-    .total-box{background:var(--myle-ink);color:#fff;border-radius:10px;padding:12px 16px;text-align:right}
-    .total-box .label{font-size:11px;letter-spacing:.12em;font-weight:900;color:#d8dbe0}.total-box .value{font-size:clamp(1.65rem,3vw,2.35rem);font-weight:950;line-height:1.05;color:#fff}
-    .discount-input{border:1px solid var(--myle-chrome)!important;border-radius:8px!important;font-weight:800}
+    .summary-box{background:rgba(247,244,234,0.6); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.5);border-radius:16px;padding:12px}
     
-    .quick-status{display:flex;gap:6px;flex-wrap:wrap}.quick-status span{font-size:10px;font-weight:900;letter-spacing:.06em;padding:5px 8px;border-radius:999px;background:#f0eee7;color:var(--myle-muted);border:1px solid var(--myle-line)}
-    .modal-content{border:1px solid var(--myle-line)!important;border-radius:14px!important;overflow:hidden;box-shadow:0 20px 50px rgba(32,36,44,.2)!important}.myle-modal-head{background:var(--myle-ink);color:#fff;border:0!important}.myle-modal-head.cobalt{background:var(--myle-cobalt)}.myle-modal-head.orange{background:var(--myle-orange);color:#fff}.myle-modal-head.lime{background:var(--myle-lime);color:var(--myle-ink)}
-    .payment-total{background:var(--myle-ink);color:#fff;border-radius:10px;padding:16px}.payment-total .amount{font-size:2.2rem;font-weight:950}
-    .payment-method{border:1px solid var(--myle-chrome)!important;border-radius:9px!important;font-weight:900!important;color:var(--myle-ink)!important;background:#fff!important}.btn-check:checked+.payment-method{background:var(--myle-cobalt)!important;color:#fff!important;border-color:var(--myle-cobalt)!important}
-    .cash-box{background:#f7f4ea!important;border:1px solid var(--myle-line)!important;border-radius:10px!important}.cash-input{border:2px solid var(--myle-lime)!important;border-radius:8px!important}
-    .modal-footer{border-top:1px solid var(--myle-line)!important;background:#f8f6ef!important}
-    .secondary-btn{border:1px solid var(--myle-chrome)!important;background:#fff!important;color:var(--myle-ink)!important;font-weight:900!important;border-radius:9px!important}.warning-btn{background:var(--myle-orange)!important;border-color:var(--myle-orange)!important;color:#fff!important;font-weight:900!important;border-radius:9px!important}
-    .price-check-active{background:#fff1d9!important;border-color:var(--myle-orange)!important;color:#9a4b12!important}
+    /* TỔNG TIỀN: SOLID BLACK CHỐNG LÓA NẮNG */
+    .total-box{background:var(--myle-ink)!important; color:#fff!important; border-radius:16px;padding:12px 16px;text-align:right; box-shadow:0 10px 25px rgba(0,0,0,0.15);}
+    .total-box .label{font-size:11px;letter-spacing:.12em;font-weight:900;color:#d8dbe0}.total-box .value{font-size:clamp(1.65rem,3vw,2.35rem);font-weight:950;line-height:1.05;color:#fff}
+    
+    .discount-input{border:1px solid rgba(255,255,255,0.8)!important; background:rgba(255,255,255,0.8)!important; border-radius:999px!important; font-weight:800}
+    .quick-status{display:flex;gap:6px;flex-wrap:wrap}.quick-status span{font-size:10px;font-weight:900;letter-spacing:.06em;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,0.6);color:var(--myle-muted);border:1px solid rgba(255,255,255,0.5)}
+    
+    /* MODAL LIQUID GLASS */
+    .modal-content{background: rgba(255,253,247,0.85) !important; backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); border: 1px solid rgba(255,255,255,0.6) !important; border-radius:24px!important;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.15)!important}
+    .myle-modal-head{background:transparent; color:var(--myle-ink); border-bottom:1px solid rgba(0,0,0,0.05)!important; padding-top:20px;}
+    .myle-modal-head.cobalt .modal-title { color: var(--myle-cobalt); }
+    .myle-modal-head.orange .modal-title { color: var(--myle-orange); }
+    .myle-modal-head.lime .modal-title { color: var(--myle-lime); }
+    .btn-close-white { filter: invert(1) grayscale(100%) brightness(0); }
+    
+    .payment-total{background:var(--myle-ink)!important; color:#fff!important; border-radius:16px;padding:16px; box-shadow:inset 0 2px 0 rgba(255,255,255,0.1)}
+    .payment-total .amount{font-size:2.2rem;font-weight:950}
+    .payment-method{border:1px solid rgba(255,255,255,0.8)!important; border-radius:12px!important;font-weight:900!important;color:var(--myle-ink)!important;background:rgba(255,255,255,0.6)!important; backdrop-filter:blur(5px)}.btn-check:checked+.payment-method{background:var(--myle-cobalt)!important;color:#fff!important;border-color:var(--myle-cobalt)!important; box-shadow:0 4px 12px rgba(49,85,217,0.3)}
+    .cash-box{background:rgba(247,244,234,0.5)!important;border:1px solid rgba(255,255,255,0.5)!important;border-radius:16px!important}.cash-input{border:2px solid var(--myle-lime)!important;border-radius:12px!important; background:#fff!important;}
+    .modal-footer{border-top:1px solid rgba(0,0,0,0.05)!important;background:transparent!important}
+    
+    .secondary-btn{border:1px solid rgba(255,255,255,0.8)!important;background:rgba(255,255,255,0.6)!important; backdrop-filter:blur(5px); color:var(--myle-ink)!important;font-weight:900!important;border-radius:999px!important}
+    .warning-btn{background:var(--myle-orange)!important;border-color:var(--myle-orange)!important;color:#fff!important;font-weight:900!important;border-radius:999px!important; box-shadow:0 4px 12px rgba(255,138,61,0.3)}
+    .price-check-active{background:rgba(255,241,217,0.8)!important;border-color:var(--myle-orange)!important;color:#9a4b12!important}
     .empty-state{padding:58px 20px!important;color:#858b94}.empty-icon{font-size:34px;color:#c8c5bc;margin-bottom:8px}
 
-    /* --- MÀN HÌNH KHÓA (PIN) --- */
+    /* Fallback cho máy yếu */
+    @supports not (backdrop-filter: blur(1px)) {
+      .pos-card, .tool-btn, .modal-content, .scan-input { background: rgba(255,253,247,0.95) !important; }
+    }
+
     #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--myle-cobalt-dark), var(--myle-cobalt)); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-    .pin-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; width: 320px; max-width: 90%; }
-    .pin-input { width: 100%; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: bold; border: 2px solid var(--myle-cobalt); border-radius: 8px; padding: 10px; margin-bottom: 20px; color: var(--myle-ink); }
-    .pin-input:focus { outline: none; border-color: var(--myle-cobalt-dark); box-shadow: 0 0 8px rgba(49,85,217, 0.5); }
+    .pin-box { background: rgba(255,255,255,0.1); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.2); padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; width: 320px; max-width: 90%; }
+    .pin-input { width: 100%; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: bold; border: 2px solid rgba(255,255,255,0.5); background:rgba(255,255,255,0.9); border-radius: 12px; padding: 10px; margin-bottom: 20px; color: var(--myle-ink); }
+    .pin-input:focus { outline: none; border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255, 0.5); }
     
-    /* --- LỚP PHỦ CAMERA TỐI ƯU MOBILE --- */
     #camera-wrapper { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9000; flex-direction: column; align-items: center; justify-content: center; }
-    #camera-container { position: relative; width: 92%; max-width: 450px; background: #000; border-radius: 12px; border: 3px solid var(--myle-lime); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+    #camera-container { position: relative; width: 92%; max-width: 450px; background: #000; border-radius: 16px; border: 3px solid var(--myle-lime); overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
     #reader { width: 100%; }
-    .cam-close-btn { position: absolute; top: 10px; right: 10px; z-index: 9050; background: var(--myle-red); color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+    .cam-close-btn { position: absolute; top: 10px; right: 10px; z-index: 9050; background: rgba(217,74,61,0.8); backdrop-filter:blur(5px); color: #fff; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; width: 40px; height: 40px; font-weight: bold; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
     
     @media(max-width:991px){
       .container-fluid{padding:8px!important}.pos-header .card-body{padding:8px 12px} 
@@ -116,15 +173,13 @@
       .bridge-status{padding:6px 8px}.quick-status{display:none}.payment-total .amount{font-size:1.9rem}
     }
 
-    /* ══════════════════════════════════════════════════
-       ANDROID UX PATCH — Tối ưu thao tác 1 tay
-       ══════════════════════════════════════════════════ */
+    /* TỐI ƯU THAO TÁC 1 TAY ANDROID */
     html { overscroll-behavior-y: contain; }
     body { overscroll-behavior-y: contain; touch-action: pan-y; }
     .pos-shell { min-height: 100dvh; }
     @media (max-width: 991px) {
       body { padding-bottom: 84px; } 
-      .sticky-checkout-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1040; background: var(--myle-paper); border-top: 1px solid var(--myle-line); box-shadow: 0 -8px 24px rgba(32,36,44,.12); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px; }
+      .sticky-checkout-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1040; background: rgba(255,253,247,0.85); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-top: 1px solid rgba(255,255,255,0.5); box-shadow: 0 -8px 24px rgba(32,36,44,.12); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px; }
       .sticky-checkout-bar .mini-total { flex: 1; line-height: 1.1; }
       .sticky-checkout-bar .mini-total .label { font-size: 10px; font-weight:900; color: var(--myle-muted); letter-spacing:.08em; }
       .sticky-checkout-bar .mini-total .value { font-size: 1.25rem; font-weight: 950; color: var(--myle-ink); }
@@ -132,26 +187,23 @@
       .total-box { display: none; }
     }
     @media (max-width: 767px) {
-      #modalThanhToan .modal-dialog, #modalDichVuTien .modal-dialog, #modalSanPhamMo .modal-dialog, #modalTaoMaNhanh .modal-dialog { margin: 0; max-width: 100%; min-height: 100dvh; display: flex; align-items: flex-end; }
-      #modalThanhToan .modal-content, #modalDichVuTien .modal-content, #modalSanPhamMo .modal-content, #modalTaoMaNhanh .modal-content { width: 100%; border-radius: 18px 18px 0 0 !important; max-height: 92dvh; overflow-y: auto; }
+      .modal-dialog { margin: 0; max-width: 100%; min-height: 100dvh; display: flex; align-items: flex-end; }
+      .modal-content { width: 100%; border-radius: 24px 24px 0 0 !important; max-height: 92dvh; overflow-y: auto; }
       .modal.fade .modal-dialog { transform: translateY(30px); }
       .modal.show .modal-dialog { transform: translateY(0); }
     }
 
-    /* BẢN VÁ: Tái cấu trúc Layout Giỏ Hàng cho Mobile bằng CSS Grid siêu gọn */
+    /* GRID GIỎ HÀNG MOBILE */
     @media (max-width: 575px) {
       .cart-table thead { display: none; }
       .cart-table, .cart-table tbody, .cart-table tr, .cart-table td { display: block; width: 100%; }
       .cart-table tr {
-        background: #fff; border: 1px solid var(--myle-line); border-radius: 10px;
-        margin-bottom: 8px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,.02);
+        background: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.8); border-radius: 16px;
+        margin-bottom: 10px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.03);
         display: grid !important;
         grid-template-columns: auto 1fr auto;
-        grid-template-areas:
-          "name name del"
-          "qty price total";
-        gap: 8px 10px;
-        align-items: center;
+        grid-template-areas: "name name del" "qty price total";
+        gap: 10px 10px; align-items: center;
       }
       .cart-table td { border: none !important; padding: 0 !important; text-align: left !important; display: block !important; margin: 0 !important; width: auto !important; }
       .cart-table td:nth-child(1) { display: none !important; }
@@ -161,15 +213,17 @@
       .cart-table td:nth-child(5) { grid-area: total; text-align: right !important; }
       .cart-table td:nth-child(6) { grid-area: del; text-align: right !important; float: none; }
       
-      .cart-table .cart-name { font-size: 14px; margin-bottom: 0; line-height: 1.3; }
-      .cart-table .input-group { width: 100px !important; flex-wrap: nowrap !important; margin: 0 !important; }
-      .cart-table .qty-input { min-width: 0; height: 36px; font-size: 14px; padding: 0 4px; }
-      .cart-table .btn-outline-secondary { min-width: 32px; min-height: 36px; height: 36px; padding: 0; }
-      .cart-table .price-input { min-width: 75px; height: 36px; font-size: 14px; padding: 0 6px; width: 100%; }
-      .cart-table .btn-outline-danger { min-width: 36px; min-height: 36px; height: 36px; width: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; margin-left: auto; }
+      .cart-table .cart-name { font-size: 14.5px; margin-bottom: 0; line-height: 1.3; }
+      .cart-table .input-group { width: 100px !important; flex-wrap: nowrap !important; margin: 0 !important; background:rgba(255,255,255,0.5); border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.8);}
+      .cart-table .qty-input { min-width: 0; height: 38px; font-size: 15px; padding: 0 4px; border:none!important; background:transparent!important;}
+      .cart-table .btn-outline-secondary { min-width: 32px; min-height: 38px; height: 38px; padding: 0; border:none!important; background:transparent!important; color:var(--myle-ink); font-weight:900;}
+      .cart-table .price-input { min-width: 80px; height: 38px; font-size: 15px; padding: 0 8px; width: 100%; border-radius:999px!important;}
+      .cart-table .btn-outline-danger { min-width: 38px; min-height: 38px; height: 38px; width: 38px; padding: 0; display: inline-flex; align-items: center; justify-content: center; margin-left: auto; border-radius:50%; background:rgba(217,74,61,0.1); border:none; color:var(--myle-red);}
     }
     .cart-tab .btn, .cart-table .btn-outline-danger, #productSuggestions .product-option { min-height: 44px; min-width: 44px; }
-    .btn:active, .product-option:active, .cart-tab .btn:active { transform: scale(0.97); transition: transform .08s ease; }
+    
+    /* HIỆU ỨNG PHẢN HỒI NÚT BẤM (HAPTIC & VISUAL) */
+    .btn:active, .product-option:active, .cart-tab .btn:active { transform: scale(0.96); transition: transform .05s ease; }
     input:focus, textarea:focus { scroll-margin-bottom: 220px; }
   </style>
 </head>
@@ -177,13 +231,13 @@
 <!-- MÀN HÌNH KHÓA BẢO MẬT -->
 <div id="lock-screen" style="display: none;">
   <div class="pin-box">
-    <h3 class="fw-bold mb-1" style="color:var(--myle-cobalt)">✦ MỸ LỆ POS</h3>
-    <p class="text-muted small fw-bold mb-4">Vui lòng nhập mã PIN bảo mật</p>
+    <h3 class="fw-bold mb-1 text-white">✦ MỸ LỆ POS</h3>
+    <p class="small fw-bold mb-4" style="color:rgba(255,255,255,0.7)">Vui lòng nhập mã PIN bảo mật</p>
     <input type="password" id="pinCode" class="pin-input" inputmode="numeric" maxlength="6" placeholder="******" onkeydown="if(event.key === 'Enter') POS_unlockSystem()">
-    <button class="btn primary-btn w-100 fw-bold py-2 fs-5" id="btnUnlock" onclick="POS_unlockSystem()">
+    <button class="btn primary-btn w-100 fw-bold py-3 fs-5" id="btnUnlock" onclick="POS_unlockSystem()">
       <i class="bi bi-unlock-fill"></i> MỞ KHÓA
     </button>
-    <div id="pinError" class="text-danger small fw-bold mt-3" style="display: none;">Mã PIN không hợp lệ!</div>
+    <div id="pinError" class="text-warning small fw-bold mt-3" style="display: none;">Mã PIN không hợp lệ!</div>
   </div>
 </div>
 
@@ -238,9 +292,9 @@
           <div class="d-grid gap-2 action-grid" id="action-buttons">
             <div class="d-flex gap-2">
               <button type="button" class="btn tool-btn touch-btn w-50" id="btnTraGia" onclick="POS_togglePriceCheck()"><i class="bi bi-search"></i> TRA GIÁ <small>F3</small></button>
-              <button type="button" class="btn tool-btn touch-btn w-50" onclick="POS_moFormSanPhamMo()"><i class="bi bi-plus-circle"></i> HÀNG TỰ DO <small>F4</small></button>
+              <button type="button" class="btn tool-btn touch-btn w-50" onclick="POS_moFormSanPhamMo()"><i class="bi bi-plus-circle"></i> TỰ DO <small>F4</small></button>
             </div>
-            <button type="button" class="btn tool-btn touch-btn w-100 text-primary" onclick="POS_moDichVuTien()"><i class="bi bi-bank"></i> DỊCH VỤ CHUYỂN / RÚT TIỀN</button>
+            <button type="button" class="btn tool-btn touch-btn w-100" style="color: var(--myle-cobalt)!important;" onclick="POS_moDichVuTien()"><i class="bi bi-bank"></i> DỊCH VỤ CHUYỂN / RÚT TIỀN</button>
             
             <div class="d-flex gap-2 mt-2">
               <button type="button" class="btn tool-btn touch-btn w-25" onclick="POS_inLaiHoaDonQuay()" title="In lại hóa đơn gần nhất"><i class="bi bi-printer"></i> IN</button>
@@ -248,13 +302,13 @@
             </div>
             
             <!-- Ô NHẬP KHÁCH HÀNG ĐƯỢC DI CHUYỂN XUỐNG ĐÂY ĐỂ VỪA TẦM NGÓN CÁI ANDROID -->
-            <div class="mt-2 p-2 rounded" style="background: var(--myle-paper-2); border: 1px solid var(--myle-chrome);">
-               <label class="fw-bold mb-1" style="font-size: 0.85rem;"><i class="bi bi-person-badge"></i> Khách hàng (Tích điểm / Ghi nợ)</label>
-               <input type="tel" inputmode="numeric" id="sdtKhachInput" class="form-control client-input" list="dsKhachQuen" placeholder="SĐT Khách..." autocomplete="off" autocapitalize="words" style="min-height: 44px; font-size: 0.95rem;">
+            <div class="mt-2 p-2 rounded" style="background: rgba(248,245,236,0.5); backdrop-filter:blur(5px); border: 1px solid rgba(255,255,255,0.6); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);">
+               <label class="fw-bold mb-1" style="font-size: 0.85rem; color:var(--myle-ink)"><i class="bi bi-person-badge"></i> Khách hàng (Tích điểm / Ghi nợ)</label>
+               <input type="tel" inputmode="numeric" id="sdtKhachInput" class="form-control client-input" list="dsKhachQuen" placeholder="SĐT Khách..." autocomplete="off" autocapitalize="words" style="min-height: 48px; font-size: 1rem;">
                <datalist id="dsKhachQuen"></datalist>
             </div>
 
-            <button type="button" class="btn danger-btn touch-btn" onclick="POS_huyDon()"><i class="bi bi-trash3"></i> HỦY ĐƠN <small>ESC</small></button>
+            <button type="button" class="btn danger-btn touch-btn mt-2" onclick="POS_huyDon()"><i class="bi bi-trash3"></i> HỦY ĐƠN <small>ESC</small></button>
           </div>
         </div>
       </div>
@@ -265,22 +319,24 @@
       <div class="card pos-card cart-card h-100">
         <div class="card-body">
           <div class="panel-head mb-2"><div><div class="section-kicker">ACTIVE CART</div><h5 class="section-title">ĐƠN HÀNG</h5></div><div class="section-kicker">MAX 5 CARTS</div></div>
-          <div id="cartTabs" class="d-flex gap-2 mb-3 pb-2 cart-tabs" style="border-bottom:1px solid var(--myle-line)"></div>
+          <div id="cartTabs" class="d-flex gap-2 mb-3 pb-2 cart-tabs" style="border-bottom:1px solid rgba(228, 224, 215, 0.5)"></div>
           <div class="table-responsive" style="max-height:58vh;overflow-y:auto">
             <table class="table table-hover align-middle mb-0 cart-table">
               <thead><tr><th>#</th><th>Sản phẩm</th><th class="text-center" style="width:130px">Số lượng</th><th class="text-end" style="width:120px">Đơn giá</th><th class="text-end">Thành tiền</th><th></th></tr></thead>
               <tbody id="gioHang"><tr><td colspan="6" class="text-center empty-state"><div class="empty-icon">▱</div><div class="fw-bold">CHƯA CÓ SẢN PHẨM</div><div class="small">Quét barcode hoặc tìm tên sản phẩm để bắt đầu</div></td></tr></tbody>
             </table>
           </div>
-          <div class="mt-3 pt-3 border-top">
+          <div class="mt-3 pt-3 border-top" style="border-top-color:rgba(228, 224, 215, 0.5)!important">
             <div class="row g-3 align-items-stretch">
               <div class="col-md-6">
                 <div class="summary-box h-100">
                   <div class="section-kicker mb-2">DISCOUNT</div>
                   <label class="fw-bold mb-2">Chiết khấu / Giảm giá chung</label>
                   <div class="input-group">
-                    <span class="input-group-text fw-bold">%</span><input type="number" id="inputGiamGiaPT" class="form-control discount-input text-center fs-5" min="0" max="100" value="0" inputmode="decimal" oninput="POS_tinhGiamGia('PT')">
-                    <span class="input-group-text fw-bold">VNĐ</span><input type="number" id="inputGiamGiaVND" class="form-control discount-input text-end fs-5" min="0" value="0" inputmode="numeric" oninput="POS_tinhGiamGia('VND')">
+                    <span class="input-group-text fw-bold" style="background:rgba(255,255,255,0.5); border-color:rgba(255,255,255,0.8)">%</span>
+                    <input type="number" id="inputGiamGiaPT" class="form-control discount-input text-center fs-5" min="0" max="100" value="0" inputmode="decimal" oninput="POS_tinhGiamGia('PT')">
+                    <span class="input-group-text fw-bold" style="background:rgba(255,255,255,0.5); border-color:rgba(255,255,255,0.8)">VNĐ</span>
+                    <input type="number" id="inputGiamGiaVND" class="form-control discount-input text-end fs-5" min="0" value="0" inputmode="numeric" oninput="POS_tinhGiamGia('VND')">
                   </div>
                 </div>
               </div>
@@ -316,36 +372,30 @@
 <div class="modal fade" id="modalChonDonVi" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content">
-      <div class="modal-header myle-modal-head cobalt py-2">
+      <div class="modal-header myle-modal-head cobalt py-3">
         <h6 class="modal-title fw-bold" id="cdu_title">Chọn đơn vị</h6>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body p-2" id="cdu_body"></div>
+      <div class="modal-body p-3" id="cdu_body"></div>
     </div>
   </div>
 </div>
 <!-- MODAL DỊCH VỤ TIỀN -->
-<div class="modal fade" id="modalDichVuTien" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-bank"></i> DỊCH VỤ LUÂN CHUYỂN TIỀN</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex gap-2 mb-3"><input type="radio" class="btn-check" name="loaiDV" id="dv_chuyenKhoan" value="CHUYEN_KHOAN_HO" checked onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_chuyenKhoan"><i class="bi bi-send"></i> CHUYỂN KHOẢN HỘ</label><input type="radio" class="btn-check" name="loaiDV" id="dv_rutTien" value="RUT_TIEN" onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_rutTien"><i class="bi bi-cash-stack"></i> RÚT TIỀN MẶT</label></div><div class="mb-3"><label class="fw-bold mb-1">Số tiền GỐC (VNĐ)</label><input type="number" id="dv_tienGoc" class="form-control form-control-lg fw-bold fs-4 text-end" style="color:var(--myle-cobalt)" placeholder="0" min="0" oninput="POS_tinhPhiDichVu()"></div><div class="card bg-light border-0 mb-3"><div class="card-body p-3"><div class="d-flex justify-content-between mb-2"><span class="text-muted fw-bold">Phí dịch vụ tự động:</span> <span id="dv_tienPhi" class="text-danger fw-bold fs-5">0 đ</span></div><hr class="my-2"><div class="d-flex justify-content-between align-items-center"><span id="dv_txtHanhDong" class="fw-bold fs-5">Tổng thu khách:</span> <span id="dv_thucGiaoNhan" class="fw-bold fs-2 text-success">0 đ</span></div></div></div><div class="mb-2"><label class="fw-bold mb-1">Thông tin TK / Ghi chú</label><input type="text" id="dv_thongTin" class="form-control" placeholder="Tên NH, Số TK, Người nhận..."></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY</button><button type="button" class="btn primary-btn px-4" id="btnChotDichVu" onclick="POS_chotDichVuTien()">CHỐT & IN BILL</button></div></div></div></div>
+<div class="modal fade" id="modalDichVuTien" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-bank"></i> DỊCH VỤ LUÂN CHUYỂN TIỀN</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="d-flex gap-2 mb-3"><input type="radio" class="btn-check" name="loaiDV" id="dv_chuyenKhoan" value="CHUYEN_KHOAN_HO" checked onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_chuyenKhoan"><i class="bi bi-send"></i> CHUYỂN KHOẢN HỘ</label><input type="radio" class="btn-check" name="loaiDV" id="dv_rutTien" value="RUT_TIEN" onchange="POS_tinhPhiDichVu()"><label class="btn payment-method w-100" for="dv_rutTien"><i class="bi bi-cash-stack"></i> RÚT TIỀN MẶT</label></div><div class="mb-3"><label class="fw-bold mb-1">Số tiền GỐC (VNĐ)</label><input type="number" id="dv_tienGoc" class="form-control form-control-lg fw-bold fs-4 text-end" style="color:var(--myle-cobalt); border:2px solid var(--myle-chrome); border-radius:12px;" placeholder="0" min="0" oninput="POS_tinhPhiDichVu()"></div><div class="card bg-light border-0 mb-3" style="background:rgba(255,255,255,0.5)!important; backdrop-filter:blur(5px); border-radius:12px;"><div class="card-body p-3"><div class="d-flex justify-content-between mb-2"><span class="text-muted fw-bold">Phí dịch vụ tự động:</span> <span id="dv_tienPhi" class="text-danger fw-bold fs-5">0 đ</span></div><hr class="my-2" style="border-color:rgba(0,0,0,0.1)"><div class="d-flex justify-content-between align-items-center"><span id="dv_txtHanhDong" class="fw-bold fs-5">Tổng thu khách:</span> <span id="dv_thucGiaoNhan" class="fw-bold fs-2 text-success">0 đ</span></div></div></div><div class="mb-2"><label class="fw-bold mb-1">Thông tin TK / Ghi chú</label><input type="text" id="dv_thongTin" class="form-control client-input" placeholder="Tên NH, Số TK, Người nhận..."></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY</button><button type="button" class="btn primary-btn px-4" id="btnChotDichVu" onclick="POS_chotDichVuTien()">CHỐT & IN BILL</button></div></div></div></div>
 <!-- MODAL TRA CỨU GIÁ -->
 <div class="modal fade" id="modalTraGia" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-search"></i> KẾT QUẢ TRA GIÁ</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-5"><div class="section-kicker mb-2">PRODUCT LOOKUP</div><h3 class="fw-bold mb-3" id="tg_tenSP">Tên sản phẩm</h3><div class="display-3 fw-bold mb-4" style="color:var(--myle-cobalt)" id="tg_giaBan">0 đ</div><div class="text-muted fw-bold fs-5">Tồn kho hiện tại: <span id="tg_tonKho" class="text-dark">0</span></div></div></div></div></div>
-<!-- MODAL TẠO MÃ BẢN VÁ -->
-<div class="modal fade" id="modalTaoMaNhanh" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head orange"><h5 class="modal-title fw-bold"><i class="bi bi-upc-scan"></i> TẠO MÃ SẢN PHẨM MỚI</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formTaoMaNhanh" onsubmit="POS_xuLyTaoMaNhanh(event)"><div class="modal-body"><div class="alert alert-warning py-2 mb-3 fw-bold small">Mã chưa tồn tại! Phải tạo dữ liệu kho trước khi bán.</div><div class="mb-2"><label class="fw-bold text-muted small">MÃ VẠCH GỐC</label>
-<div class="input-group">
-  <input id="tmn_ma" class="form-control fw-bold" placeholder="Nhập hoặc quét mã...">
-  <button class="btn btn-dark fw-bold px-3" type="button" onclick="POS_toggleCamera('tmn_ma')" style="z-index: 10;"><i class="bi bi-camera-video-fill"></i> CAM</button>
-  <button class="btn tool-btn fw-bold" type="button" onclick="document.getElementById('tmn_ma').value = 'ML' + Date.now().toString().slice(-9);"><i class="bi bi-magic"></i> AUTO</button>
-</div>
-</div><div class="mb-3"><label class="fw-bold">Tên sản phẩm <span class="text-danger">*</span></label><input id="tmn_ten" class="form-control" required autocomplete="off"></div><div class="row g-2"><div class="col-4"><label class="fw-bold">SL <span class="text-danger">*</span></label><input id="tmn_sl" type="number" class="form-control fw-bold text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div><div class="col-4"><label class="fw-bold">Giá vốn <span class="text-danger">*</span></label><input id="tmn_von" type="number" class="form-control fw-bold" required min="0" step="100"></div><div class="col-4"><label class="fw-bold">Giá bán <span class="text-danger">*</span></label><input id="tmn_ban" type="number" class="form-control fw-bold" required min="0" step="100"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY BỎ</button><button type="submit" class="btn warning-btn" id="btnLuuMaNhanh">LƯU KHO & BÁN</button></div></form></div></div></div>
+<!-- MODAL TẠO MÃ -->
+<div class="modal fade" id="modalTaoMaNhanh" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head orange"><h5 class="modal-title fw-bold"><i class="bi bi-upc-scan"></i> TẠO MÃ SẢN PHẨM MỚI</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formTaoMaNhanh" onsubmit="POS_xuLyTaoMaNhanh(event)"><div class="modal-body"><div class="alert alert-warning py-2 mb-3 fw-bold small border-0" style="background:rgba(255,193,7,.2)">Mã chưa tồn tại! Phải tạo dữ liệu kho trước khi bán.</div><div class="mb-2"><label class="fw-bold text-muted small">MÃ VẠCH GỐC</label><div class="input-group" style="background:rgba(255,255,255,0.5); border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.8);"><input id="tmn_ma" class="form-control fw-bold border-0 bg-transparent" placeholder="Nhập hoặc quét mã..."><button class="btn btn-dark fw-bold px-3 border-0" type="button" onclick="POS_toggleCamera('tmn_ma')" style="z-index: 10;"><i class="bi bi-camera-video-fill"></i> CAM</button><button class="btn tool-btn fw-bold border-0" type="button" onclick="document.getElementById('tmn_ma').value = 'ML' + Date.now().toString().slice(-9);"><i class="bi bi-magic"></i> AUTO</button></div></div><div class="mb-3"><label class="fw-bold">Tên sản phẩm <span class="text-danger">*</span></label><input id="tmn_ten" class="form-control client-input" required autocomplete="off"></div><div class="row g-2"><div class="col-4"><label class="fw-bold">SL <span class="text-danger">*</span></label><input id="tmn_sl" type="number" class="form-control client-input text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div><div class="col-4"><label class="fw-bold">Giá vốn <span class="text-danger">*</span></label><input id="tmn_von" type="number" class="form-control client-input" required min="0" step="100"></div><div class="col-4"><label class="fw-bold">Giá bán <span class="text-danger">*</span></label><input id="tmn_ban" type="number" class="form-control client-input" required min="0" step="100"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY BỎ</button><button type="submit" class="btn warning-btn" id="btnLuuMaNhanh">LƯU KHO & BÁN</button></div></form></div></div></div>
 <!-- MODAL HÀNG TỰ DO -->
-<div class="modal fade" id="modalSanPhamMo" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-box-seam"></i> THÊM HÀNG TỰ DO</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formSanPhamMo" onsubmit="POS_themSanPhamMo(event)"><div class="modal-body"><div class="mb-3"><label class="fw-bold">Tên mặt hàng / Dịch vụ</label><input id="spm_ten" class="form-control form-control-lg" required></div><div class="row g-2"><div class="col-6"><label class="fw-bold">Đơn giá (VNĐ)</label><input id="spm_gia" type="number" class="form-control form-control-lg fw-bold" required min="0" step="100" inputmode="numeric"></div><div class="col-6"><label class="fw-bold">Số lượng</label><input id="spm_sl" type="number" class="form-control form-control-lg fw-bold text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY</button><button type="submit" class="btn primary-btn fw-bold">THÊM VÀO GIỎ</button></div></form></div></div></div>
+<div class="modal fade" id="modalSanPhamMo" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-box-seam"></i> THÊM HÀNG TỰ DO</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="formSanPhamMo" onsubmit="POS_themSanPhamMo(event)"><div class="modal-body"><div class="mb-3"><label class="fw-bold">Tên mặt hàng / Dịch vụ</label><input id="spm_ten" class="form-control form-control-lg client-input" required></div><div class="row g-2"><div class="col-6"><label class="fw-bold">Đơn giá (VNĐ)</label><input id="spm_gia" type="number" class="form-control form-control-lg client-input" required min="0" step="100" inputmode="numeric"></div><div class="col-6"><label class="fw-bold">Số lượng</label><input id="spm_sl" type="number" class="form-control form-control-lg client-input text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn" data-bs-dismiss="modal">HỦY</button><button type="submit" class="btn primary-btn fw-bold">THÊM VÀO GIỎ</button></div></form></div></div></div>
 <!-- MODAL THANH TOÁN -->
-<div class="modal fade" id="modalThanhToan" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head lime"><h5 class="modal-title fw-bold"><i class="bi bi-receipt"></i> XÁC NHẬN THANH TOÁN</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body py-4"><div class="payment-total text-center mb-4"><div class="section-kicker" style="color:#bfc4cc">CUSTOMER TO PAY</div><div class="amount" id="tt_tongTien">0 đ</div><div class="small" style="color:#c9cdd4">Tạm tính: <b id="tt_tamTinh">0</b> đ <span id="tt_giamWrap" style="display:none"> · Giảm: <b><span id="tt_giam">0</span></b> đ</span></div></div><div class="mb-3"><label class="fw-bold mb-2">Phương thức thanh toán</label><div class="d-flex gap-2"><input type="radio" class="btn-check" name="phuongThuc" id="pt_tienMat" value="TIEN_MAT" checked onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100" for="pt_tienMat"><i class="bi bi-cash"></i> TIỀN MẶT</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_chuyenKhoan" value="CHUYEN_KHOAN" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100" for="pt_chuyenKhoan"><i class="bi bi-qr-code-scan"></i> VIETQR</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_ghiNo" value="GHI_NO" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100" for="pt_ghiNo"><i class="bi bi-journal-text"></i> GHI NỢ</label></div></div><div id="vungTienMat" class="cash-box text-start mb-3 p-3"><label class="fw-bold mb-1">Tiền khách đưa (VNĐ)</label><input type="number" id="inputKhachDua" class="form-control form-control-lg fw-bold text-end fs-4 cash-input mb-2" min="0" oninput="POS_tinhTienThoi()" onfocus="this.select()"><div class="d-flex flex-wrap gap-2 justify-content-end mb-2"><button type="button" class="btn btn-sm tool-btn flex-grow-1" onclick="POS_quickCash('ALL')">Vừa đủ</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(50000)">50k</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(100000)">100k</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(200000)">200k</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(500000)">500k</button></div><div class="d-flex justify-content-between mt-2 fs-5 border-top pt-2"><span class="fw-bold">Tiền thối</span><span class="fw-bold" style="color:var(--myle-cobalt)" id="txtTienThoi">0 đ</span></div></div><div id="vungChuyenKhoan" class="p-2 bg-light rounded border d-inline-block" style="display:none!important"><img id="imgVietQR" src="" alt="VietQR" class="img-fluid rounded" style="width:220px;height:220px;object-fit:contain"></div></div><div class="modal-footer d-flex justify-content-between"><button type="button" class="btn secondary-btn fw-bold" data-bs-dismiss="modal">QUAY LẠI (ESC)</button><div class="d-flex gap-2"><button type="button" class="btn warning-btn" id="btnChotKhongIn" onclick="POS_chotDonHang(false)"><i class="bi bi-receipt-cutoff"></i> KHÔNG IN</button><button type="button" class="btn primary-btn px-4 fs-5" id="btnChotDon" onclick="POS_chotDonHang(true)">CHỐT & IN ↵</button></div></div></div></div></div>
+<div class="modal fade" id="modalThanhToan" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head lime"><h5 class="modal-title fw-bold"><i class="bi bi-receipt"></i> XÁC NHẬN THANH TOÁN</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body py-4"><div class="payment-total text-center mb-4"><div class="section-kicker" style="color:#bfc4cc">CUSTOMER TO PAY</div><div class="amount" id="tt_tongTien">0 đ</div><div class="small" style="color:#c9cdd4">Tạm tính: <b id="tt_tamTinh">0</b> đ <span id="tt_giamWrap" style="display:none"> · Giảm: <b><span id="tt_giam">0</span></b> đ</span></div></div><div class="mb-3"><label class="fw-bold mb-2">Phương thức thanh toán</label><div class="d-flex gap-2"><input type="radio" class="btn-check" name="phuongThuc" id="pt_tienMat" value="TIEN_MAT" checked onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100" for="pt_tienMat"><i class="bi bi-cash"></i> TIỀN MẶT</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_chuyenKhoan" value="CHUYEN_KHOAN" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100" for="pt_chuyenKhoan"><i class="bi bi-qr-code-scan"></i> VIETQR</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_ghiNo" value="GHI_NO" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100" for="pt_ghiNo"><i class="bi bi-journal-text"></i> GHI NỢ</label></div></div><div id="vungTienMat" class="cash-box text-start mb-3 p-3"><label class="fw-bold mb-1">Tiền khách đưa (VNĐ)</label><input type="number" id="inputKhachDua" class="form-control form-control-lg fw-bold text-end fs-4 cash-input mb-2" min="0" oninput="POS_tinhTienThoi()" onfocus="this.select()"><div class="d-flex flex-wrap gap-2 justify-content-end mb-2"><button type="button" class="btn btn-sm tool-btn flex-grow-1" onclick="POS_quickCash('ALL')">Vừa đủ</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(50000)">50k</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(100000)">100k</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(200000)">200k</button><button type="button" class="btn btn-sm tool-btn" onclick="POS_quickCash(500000)">500k</button></div><div class="d-flex justify-content-between mt-2 fs-5 border-top pt-2" style="border-color:rgba(0,0,0,0.1)!important"><span class="fw-bold">Tiền thối</span><span class="fw-bold" style="color:var(--myle-cobalt)" id="txtTienThoi">0 đ</span></div></div><div id="vungChuyenKhoan" class="p-2 bg-light rounded border d-inline-block" style="display:none!important; background:rgba(255,255,255,0.5)!important; backdrop-filter:blur(5px);"><img id="imgVietQR" src="" alt="VietQR" class="img-fluid rounded" style="width:220px;height:220px;object-fit:contain"></div></div><div class="modal-footer d-flex justify-content-between"><button type="button" class="btn secondary-btn fw-bold" data-bs-dismiss="modal">QUAY LẠI (ESC)</button><div class="d-flex gap-2"><button type="button" class="btn warning-btn" id="btnChotKhongIn" onclick="POS_chotDonHang(false)"><i class="bi bi-receipt-cutoff"></i> KHÔNG IN</button><button type="button" class="btn primary-btn px-4 fs-5" id="btnChotDon" onclick="POS_chotDonHang(true)">CHỐT & IN ↵</button></div></div></div></div></div>
 
 <script>
 // ============================================================
 // 1. BIẾN TOÀN CỤC & CẤU HÌNH API
 // ============================================================
-const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec"; 
+const API_URL = "URL_API_CUA_BAN_TAI_DAY"; 
 let SESSION_TOKEN = sessionStorage.getItem("MYLE_SESSION_TOKEN") || "";
 var POS_CONFIG = {
   NGAN_HANG: 'MB', STK: '1108199309999', CHU_TAI_KHOAN: 'LIEU QUANG THONG',
@@ -364,6 +414,8 @@ function POS_num(val) { var n = Number(val); return isNaN(n) ? 0 : n; }
 function POS_money(val) { return Math.round(POS_num(val)).toLocaleString('vi-VN'); }
 function POS_esc(val) { return String(val || '').replace(/[&<>'"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'}[c])); }
 function POS_focus() { setTimeout(() => { var inp = document.getElementById('maVachInput'); if(inp){ inp.focus(); inp.select(); } }, 50); }
+
+// HỆ THỐNG ÂM THANH & PHẢN HỒI (HAPTIC)
 function POS_beep() {
   try{
     if(!POS_audioCtx) POS_audioCtx = new(window.AudioContext || window.webkitAudioContext)();
@@ -374,6 +426,27 @@ function POS_beep() {
     osc.start(); osc.stop(POS_audioCtx.currentTime + 0.08);
   } catch(e){}
 }
+
+function POS_clickSound() {
+  try {
+    if(!POS_audioCtx) POS_audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+    if(POS_audioCtx.state === 'suspended') POS_audioCtx.resume();
+    var osc = POS_audioCtx.createOscillator(), gain = POS_audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(400, POS_audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.05, POS_audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, POS_audioCtx.currentTime + 0.05);
+    osc.connect(gain); gain.connect(POS_audioCtx.destination);
+    osc.start(); osc.stop(POS_audioCtx.currentTime + 0.05);
+  } catch(e){}
+}
+
+// Bắt sự kiện chạm vật lý cho mọi nút bấm
+document.addEventListener('pointerdown', (e) => {
+  if (e.target.closest('button, .btn, .product-option, .cart-tab')) {
+    POS_clickSound();
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+});
 
 // ============================================================
 // 2. BẢO MẬT ZERO-TRUST & MẠNG LƯỚI
@@ -674,9 +747,7 @@ function POS_addProductWithUnit(unitIndex) {
 
 function POS_addProduct(product) {
   if(!product) return;
-  // Fallback in case unit data is somehow missing
   if(!product.donViQuyDoi || product.donViQuyDoi.length === 0) product.donViQuyDoi = [{tenDonVi:'Cơ bản', heSoQuyDoi:1, giaBan:product.giaBan}];
-  
   if (product.donViQuyDoi.length > 1) {
     POS_showChonDonVi(product);
   } else {
@@ -1083,9 +1154,9 @@ window.addEventListener('load', async () => {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js', { scope: './' }).then(reg => reg.update()).catch(err => console.error('SW Error:', err));
 });
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // ANDROID UX PATCH — Lắng nghe sự kiện hệ thống
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 (function() {
   let modalOpenState = false;
   const modalIds = ['modalThanhToan', 'modalSanPhamMo', 'modalTaoMaNhanh', 'modalTraGia', 'modalDichVuTien', 'modalChonDonVi'];
