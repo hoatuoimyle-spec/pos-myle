@@ -207,7 +207,7 @@
       <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
         <div class="brand-lockup">
           <div class="brand-mark">✦</div>
-          <div class="brand-title"><div class="brand-main">TẠP HÓA MỸ LỆ</div><div class="brand-sub">MYLE RETAIL POS · LONG PHÚ</div></div>
+          <div class="brand-title"><div class="brand-main">TẠP HÓA MỸ LỆ</div><div class="brand-sub">THÔNG ĐẸP TRAI SIÊU CẤP</div></div>
         </div>
         <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
           <div class="retail-code">RETAIL SYSTEM // 01</div>
@@ -251,12 +251,13 @@
               <button type="button" class="btn primary-btn btn-lg touch-btn w-75" id="btnThanhToan" onclick="POS_thanhToan()"><i class="bi bi-cash-coin"></i> THANH TOÁN <small>F12</small></button>
             </div>
             
+            <!-- Ô NHẬP KHÁCH HÀNG (Dưới cùng) -->
             <div class="mt-2 p-3 rounded" style="background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.6);">
-               <label class="fw-bold mb-1" style="font-size: 0.85rem; color:var(--myle-ink)"><i class="bi bi-person-badge"></i> Khách hàng (Tích điểm / Ghi nợ)</label>
-               <input type="tel" inputmode="numeric" id="sdtKhachInput" class="form-control client-input" list="dsKhachQuen" placeholder="SĐT Khách..." autocomplete="off" autocapitalize="words" style="min-height: 48px; font-size: 1rem;">
-               <datalist id="dsKhachQuen"></datalist>
+              <label class="fw-bold mb-1" style="font-size: 0.85rem; color:var(--myle-ink)"><i class="bi bi-person-badge"></i> Khách hàng (Tích điểm / Ghi nợ)</label>
+            <!-- ĐÃ XÓA type="tel" và inputmode="numeric", CHUYỂN THÀNH type="text" -->
+              <input type="text" id="sdtKhachInput" class="form-control client-input" list="dsKhachQuen" placeholder="Nhập Tên hoặc SĐT..." autocomplete="off" autocapitalize="words" style="min-height: 48px; font-size: 1rem;">
+              <datalist id="dsKhachQuen"></datalist>
             </div>
-
             <!-- TÁCH RIÊNG CÔNG NỢ RA MÀN HÌNH MỚI -->
             <div class="d-flex gap-2 mt-2">
               <button type="button" class="btn tool-btn touch-btn w-50" style="color: var(--myle-orange)!important;" onclick="POS_switchView('debt')"><i class="bi bi-journal-check"></i> CÔNG NỢ</button>
