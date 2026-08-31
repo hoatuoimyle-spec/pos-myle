@@ -1,4 +1,4 @@
-const CACHE_NAME = 'myle-pos-cache-v12'; // Đã tăng phiên bản để ép trình duyệt cập nhật
+const CACHE_NAME = 'myle-pos-cache-v13'; // Đã tăng phiên bản để ép trình duyệt cập nhật
 const API_URL = "https://script.google.com/macros/s/AKfycbxz7SzvgAEcbWjl2qng1VlP9xG29VDyJmLCtOXzUHKs9zpqbH490G98kkBg2LdPhQv1Ug/exec";
 
 // Cài đặt Service Worker
