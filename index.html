@@ -678,7 +678,7 @@ async function POS_xuLyTaoMaNhanh(e) {
   var payload = { action: 'luuPhieuNhapKho', token: SESSION_TOKEN, maVach: maVachMoi, tenSP: document.getElementById('tmn_ten').value.trim(), soLuong: document.getElementById('tmn_sl').value, giaVon: giaVonNum, giaBan: giaBanNum, ncc: 'Tạo Nhanh Tại Quầy POS' }; 
   try { 
     const res = await POS_fetchJson(API_URL, { method: 'POST', body: JSON.stringify(payload) }); 
-    var spMoi = { maSP: payload.maVach, tenSP: payload.tenSP, giaBan: giaBanNum, tonKho: POS_num(payload.soLuong), donViQuyDoi: [{tenDonVi:'Cơ bản', heSoQuyDoi:1, giaBan:giaBanNum}] }; 
+    var spMoi = { maSP: payload.maVach, tenSP: payload.tenSP, giaVon: giaVonNum, giaBan: giaBanNum, tonKho: POS_num(payload.soLuong), donViQuyDoi: [{tenDonVi:'Cơ bản', heSoQuyDoi:1, giaBan:giaBanNum}] }; 
     POS_products.push(spMoi); POS_addProduct(spMoi); 
     if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(document.getElementById('modalTaoMaNhanh')).hide(); 
     e.target.reset(); POS_focus(); 
