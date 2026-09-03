@@ -430,7 +430,11 @@
 </div>
 
 <!-- MODAL TRA CỨU GIÁ -->
-<div class="modal fade" id="modalTraGia" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-search"></i> KẾT QUẢ TRA GIÁ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-4"><div class="section-kicker mb-2">PRODUCT LOOKUP</div><h3 class="fw-bold mb-3" id="tg_tenSP">Tên sản phẩm</h3><div class="display-3 fw-bold mb-4" style="color:var(--myle-cobalt)" id="tg_giaBan">0 đ</div><div class="text-muted fw-bold fs-5">Tồn kho hiện tại: <span id="tg_tonKho" class="text-dark">0</span></div></div>
+<div class="modal fade" id="modalTraGia" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-search"></i> KẾT QUẢ TRA GIÁ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-4"><div class="section-kicker mb-2">PRODUCT LOOKUP</div><h3 class="fw-bold mb-3" id="tg_tenSP">Tên sản phẩm</h3>
+<div class="display-3 fw-bold mb-3" style="color:var(--myle-cobalt)" id="tg_giaBan">0 đ</div>
+<div class="text-muted fw-bold fs-6 mb-2">Giá vốn: <span id="tg_giaVon" class="text-danger">0 đ</span></div>
+<div class="text-muted fw-bold fs-5">Tồn kho hiện tại: <span id="tg_tonKho" class="text-dark">0</span></div>
+</div>
 <div class="modal-footer justify-content-center border-top-0 pt-0"><button type="button" class="btn warning-btn touch-btn px-4 w-100 fs-5" onclick="POS_moFormSuaSanPham()"><i class="bi bi-pencil-square"></i> CHỈNH SỬA THÔNG TIN (F5)</button></div>
 </div></div></div>
 
@@ -722,10 +726,11 @@ function POS_togglePriceCheck() {
   POS_focus();
 }
 function POS_showPriceModal(sp) { 
-  POS_tempProduct = sp; // Lưu vết sản phẩm đang xem
+  POS_tempProduct = sp; 
   POS_beep(); 
   document.getElementById('tg_tenSP').innerText = sp.tenSP; 
   document.getElementById('tg_giaBan').innerText = POS_money(sp.giaBan) + ' đ'; 
+  document.getElementById('tg_giaVon').innerText = POS_money(sp.giaVon || 0) + ' đ'; 
   document.getElementById('tg_tonKho').innerText = sp.tonKho !== undefined ? sp.tonKho : 'Không rõ'; 
   if(typeof bootstrap !== 'undefined') { var mEl = document.getElementById('modalTraGia'); bootstrap.Modal.getOrCreateInstance(mEl).show(); mEl.addEventListener('hidden.bs.modal', function () { POS_focus(); }, {once: true}); } 
 }
