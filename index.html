@@ -2,10 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>POS Tạp Hóa Mỹ Lệ</title>
   
   <link rel="manifest" href="manifest.json">
@@ -14,10 +11,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
   
   <style>
     :root{
@@ -28,7 +26,7 @@
       --glass-border: rgba(255, 255, 255, 0.7);
       --glass-blur: blur(10px);
     }
-    *{box-sizing:border-box}
+    *{box-sizing:border-box; touch-action: manipulation;}
     
     body{
       background-color: #f0f4ff;
@@ -60,9 +58,8 @@
     .status-android{color:#3f6212;} .status-pc-online{color:var(--myle-cobalt);} .status-pc-offline{color:#991b1b;}
     .offline-badge{background: linear-gradient(135deg, var(--myle-orange), #f97316) !important;border:0!important;color:#fff!important;}
     
-    .section-kicker{font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--myle-muted)}
-    .section-title{font-size:16px;font-weight:900;color: var(--myle-ink); margin:0;}
-    .panel-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.5)}
+    .section-kicker{font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--myle-muted)}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.5)}
     
     .client-input, .scan-input, .discount-input, .cash-input {
       background: rgba(255, 255, 255, 0.6) !important; border: 1px solid rgba(255,255,255,0.8) !important;
@@ -76,18 +73,19 @@
     
     .input-price-mode { border-color: var(--myle-orange) !important; background: rgba(255, 138, 61, 0.15) !important; box-shadow: 0 0 15px rgba(255, 138, 61, 0.3) !important; color: #9a4b12 !important; }
     .action-price-mode { background: var(--myle-orange) !important; }
+    .price-check-active { background: var(--myle-orange) !important; color: #fff !important; border-color: transparent !important; }
 
     .touch-btn{min-height:46px; transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s; transform: translateZ(0);}
     .tool-btn{ background: rgba(255, 255, 255, 0.5) !important; border: 1px solid rgba(255,255,255,0.8) !important; color: var(--myle-ink) !important; font-weight:900!important; border-radius:10px!important; box-shadow: 0 4px 0 rgba(203, 213, 225, 0.5), 0 4px 6px rgba(0,0,0,0.05); }
     .tool-btn:active { box-shadow: 0 0 0 rgba(203, 213, 225, 0), 0 2px 2px rgba(0,0,0,0.05); transform: translateY(4px) translateZ(0); }
     .primary-btn{ background: linear-gradient(135deg, var(--myle-cobalt), var(--myle-cobalt-dark)) !important; border: 1px solid rgba(255,255,255,0.2) !important; color:#fff!important;font-weight:900!important;border-radius:10px!important; box-shadow: 0 4px 0 #1e3a8a, 0 6px 10px rgba(49, 85, 217, 0.3); }
     .primary-btn:active { transform: translateY(4px) translateZ(0); box-shadow: 0 0 0 #1e3a8a, 0 2px 4px rgba(49, 85, 217, 0.3); }
-    .danger-btn{ border: 1px solid rgba(239, 68, 68, 0.4) !important; color: #b91c1c !important; background: rgba(239, 68, 68, 0.1) !important; font-weight:900!important;border-radius:10px!important; box-shadow: 0 4px 0 rgba(239, 68, 68, 0.2), 0 4px 6px rgba(0,0,0,0.02); }
+    .danger-btn{ border: 1px solid rgba(239, 68, 68, 0.4) !important; color: #991b1b !important; background: rgba(239, 68, 68, 0.1) !important; font-weight:900!important;border-radius:10px!important; box-shadow: 0 4px 0 rgba(239, 68, 68, 0.2), 0 4px 6px rgba(0,0,0,0.02); }
     .danger-btn:active { transform: translateY(4px) translateZ(0); box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
     
     .search-wrap{position:relative}
-    #productSuggestions{ position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:1050; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius:12px; box-shadow: 0 10px 20px rgba(0,0,0,.1); max-height:330px;overflow:auto;display:none; }
-    .product-option{padding:13px 14px;border-bottom:1px solid rgba(0,0,0,0.05);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px}
+    #productSuggestions, #khachSuggestions{ position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:1050; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius:12px; box-shadow: 0 10px 20px rgba(0,0,0,.1); max-height:330px;overflow:auto;display:none; }
+    .product-option{padding:13px 14px;border-bottom:1px solid rgba(0,0,0,0.05);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:48px}
     .product-option:active{background:rgba(79, 124, 255, 0.1); transform: scale(0.98);}
     .product-option .name{font-weight:800; color: var(--myle-ink)} .product-option .meta{font-size:12px;color:var(--myle-muted)} .product-option .price{font-weight:900;color:var(--myle-cobalt);white-space:nowrap}
     
@@ -109,9 +107,8 @@
     .summary-box{background:rgba(255, 255, 255, 0.4); border:1px solid rgba(255,255,255,0.6);border-radius:12px;padding:14px}
     .total-box{ background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color:#fff;border-radius:12px;padding:14px 18px;text-align:right; }
     .total-box .label{font-size:11px;letter-spacing:.12em;font-weight:900;color:rgba(255,255,255,0.8)} .total-box .value{font-size:clamp(1.65rem,3vw,2.35rem);font-weight:950;line-height:1.05;color:#fff}
-    .quick-status span{font-size:10px;font-weight:900;letter-spacing:.06em;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,0.5);color:var(--myle-muted);border:1px solid rgba(255,255,255,0.6)}
     
-    .modal-content{ background: rgba(255, 255, 255, 0.8) !important; backdrop-filter: var(--glass-blur) !important; -webkit-backdrop-filter: var(--glass-blur) !important; border: 1px solid var(--glass-border) !important; border-radius:18px !important; overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,.15) !important; }
+    .modal-content{ background: rgba(255, 255, 255, 0.85) !important; backdrop-filter: var(--glass-blur) !important; -webkit-backdrop-filter: var(--glass-blur) !important; border: 1px solid var(--glass-border) !important; border-radius:18px !important; overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,.15) !important; }
     .modal-backdrop.show { opacity: 0.4; }
     .myle-modal-head{background:transparent !important;color:var(--myle-ink);border-bottom: 1px solid rgba(0,0,0,0.05)!important;padding: 16px 20px;}
     .myle-modal-head.cobalt .modal-title { color: var(--myle-cobalt); } .myle-modal-head.orange .modal-title { color: var(--myle-orange); } .myle-modal-head.lime .modal-title { color: var(--myle-lime); }
@@ -130,14 +127,22 @@
 
     @supports not (backdrop-filter: blur(1px)) { .pos-card, .tool-btn, .modal-content, .scan-input { background: rgba(240, 244, 255, 0.98) !important; } }
 
+    #global-progress {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--myle-cobalt), var(--myle-lime));
+      width: 0; z-index: 99999; transition: width 0.3s;
+    }
+
     #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #3155d9; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
     .pin-box { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 32px; border-radius: 20px; text-align: center; width: 360px; max-width: 90%; }
-    .pin-input { width: 100%; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: bold; background: #fff; border-radius: 10px; padding: 10px; margin-bottom: 20px; color: var(--myle-ink); }
+    .pin-input { width: 100%; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: bold; background: #fff; border-radius: 10px; padding: 10px; margin-bottom: 20px; color: var(--myle-ink); -webkit-text-security: disc; text-security: disc; font-family: monospace; }
     
     #camera-wrapper { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9000; flex-direction: column; align-items: center; justify-content: center; }
     #camera-container { position: relative; width: 92%; max-width: 450px; background: #000; border-radius: 16px; border: 2px solid var(--myle-lime); overflow: hidden; }
     #reader { width: 100%; }
-    .cam-close-btn { position: absolute; top: 12px; right: 12px; z-index: 9050; background: var(--myle-red); color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-weight: bold; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+    .cam-close-btn { position: absolute; top: 12px; right: 12px; z-index: 9050; background: var(--myle-red); color: #fff; border: none; border-radius: 50%; width: 44px; height: 44px; font-weight: bold; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+    .cam-flash-btn { position: absolute; top: 12px; left: 12px; z-index: 9050; background: rgba(255,255,255,0.9); color: #1e293b; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .cam-flash-btn.active { background: var(--myle-lime); color: #000; }
     
     /* SPA VIEW ROUTING CLASSES */
     .view-hidden { display: none !important; }
@@ -145,127 +150,155 @@
     @media(max-width:991px){
       .container-fluid{padding:8px!important}.pos-header .card-body{padding:8px 12px} 
       .brand-title .brand-main{font-size:1.05rem}.retail-code{display:none}
-      .table{font-size:13px}.cart-table th:nth-child(1),.cart-table td:nth-child(1){display:none}
-      .product-option{padding:14px 12px}.bridge-status{font-size:10px}
+      .table{font-size:14px}.cart-table th:nth-child(1),.cart-table td:nth-child(1){display:none}
+      .product-option{padding:14px 12px}.bridge-status{font-size:11px}
       .control-panel{order:1}.cart-panel{order:2}.scan-input{font-size:1rem!important}
-      body { padding-bottom: 90px; } .total-box { display: none; }
+      body { padding-bottom: 96px; } .total-box { display: none; }
       
       .sticky-checkout-bar { 
-        position: fixed; left: 0; right: 0; bottom: 0; z-index: 1040; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.8); 
-        box-shadow: 0 -4px 16px rgba(0,0,0,.05); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px; transform: translateZ(0);
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 1040; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.8); 
+        box-shadow: 0 -4px 16px rgba(0,0,0,.08); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 8px; transform: translateZ(0);
       }
-      .sticky-checkout-bar .mini-total .label { color: var(--myle-muted); font-size: 10px; font-weight:900; letter-spacing:.08em;}
-      .sticky-checkout-bar .mini-total .value { color: var(--myle-ink); font-weight: 950; font-size: 1.25rem;}
+      .sticky-checkout-bar .mini-total { flex: 1; min-width: 0; }
+      .sticky-checkout-bar .mini-total .label { color: var(--myle-muted); font-size: 10px; font-weight:900; letter-spacing:.06em;}
+      .sticky-checkout-bar .mini-total .value { color: var(--myle-ink); font-weight: 950; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;}
+      .sticky-checkout-bar .btn { min-height: 48px; padding: 0 14px; font-weight: 900; }
+
+      /* Touch target 44px minimum */
+      .cart-table .qty-input,
+      .cart-table .price-input { height: 44px; font-size: 16px; }
+      .cart-table .btn-outline-secondary,
+      .cart-table .btn-outline-danger { min-width: 44px; min-height: 44px; }
+      
+      /* Sticky footer modal */
+      .modal-footer {
+        position: sticky; bottom: 0; z-index: 10;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(10px);
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      }
+      .payment-total { padding: 14px; }
+      .payment-total .amount { font-size: 2rem; }
     }
     @media(max-width:575px){
       .brand-mark{width:34px;height:34px;font-size:16px;} .brand-title .brand-main{font-size:0.95rem}.brand-title .brand-sub{font-size:0.6rem;margin-top:0}
-      .bridge-status{padding:6px 8px}.quick-status{display:none}.payment-total .amount{font-size:2rem}
+      .bridge-status{padding:6px 8px}.payment-total .amount{font-size:1.9rem}
       .cart-table thead { display: none; }
       .cart-table, .cart-table tbody, .cart-table tr, .cart-table td { display: block; width: 100%; }
-      .cart-table tr { background: rgba(255, 255, 255, 0.6) !important; border: 1px solid rgba(255,255,255,0.8); border-radius: 12px; margin-bottom: 10px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.02); display: grid !important; grid-template-columns: auto 1fr auto; grid-template-areas: "name name del" "qty price total"; gap: 10px 12px; align-items: center; }
+      .cart-table tr { background: rgba(255, 255, 255, 0.7) !important; border: 1px solid rgba(255,255,255,0.8); border-radius: 12px; margin-bottom: 10px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.03); display: grid !important; grid-template-columns: auto 1fr auto; grid-template-areas: "name name del" "qty price total"; gap: 10px 12px; align-items: center; }
       .cart-table td { border: none !important; padding: 0 !important; text-align: left !important; display: block !important; margin: 0 !important; width: auto !important; }
-      .cart-table td:nth-child(1) { display: none !important; } .cart-table td:nth-child(2) { grid-area: name; } .cart-table td:nth-child(3) { grid-area: qty; } .cart-table td:nth-child(4) { grid-area: price; } .cart-table td:nth-child(5) { grid-area: total; text-align: right !important; } .cart-table td:nth-child(6) { grid-area: del; text-align: right !important; float: none; }
-      .cart-table .cart-name { font-size: 15px; margin-bottom: 0; line-height: 1.3; } .cart-table .input-group { width: 110px !important; flex-wrap: nowrap !important; margin: 0 !important; background:rgba(255,255,255,0.7); border-radius:8px; border:1px solid rgba(255,255,255,0.8);}
-      .cart-table .qty-input { min-width: 0; height: 36px; font-size: 14px; padding: 0 4px; border:none!important; background:transparent!important;}
-      .cart-table .btn-outline-secondary { min-width: 36px; min-height: 36px; height: 36px; padding: 0; border:none!important; background:transparent!important; color:var(--myle-ink); font-weight:900;}
-      .cart-table .price-input { min-width: 80px; height: 36px; font-size: 14px; padding: 0 6px; width: 100%; border-radius:8px!important;}
-      .cart-table .btn-outline-danger { min-width: 36px; min-height: 36px; height: 36px; width: 36px; padding: 0; display: inline-flex; align-items: center; justify-content: center; margin-left: auto; border-radius:50%; background:rgba(239, 68, 68, 0.1); border:none; color:var(--myle-red);}
+      .cart-table td:nth-child(1) { display: none !important; } 
+      .cart-table td:nth-child(2) { grid-area: name; } 
+      .cart-table td:nth-child(3) { grid-area: qty; } 
+      .cart-table td:nth-child(4) { grid-area: price; } 
+      .cart-table td:nth-child(5) { grid-area: total; text-align: right !important; } 
+      .cart-table td:nth-child(6) { grid-area: del; text-align: right !important; float: none; }
+      .cart-table .cart-name { font-size: 15px; margin-bottom: 0; line-height: 1.3; } 
+      .cart-table .input-group { width: 130px !important; flex-wrap: nowrap !important; margin: 0 !important; background:rgba(255,255,255,0.9); border-radius:8px; border:1px solid rgba(0,0,0,0.05);}
+      .cart-table .qty-input { min-width: 0; height: 44px; font-size: 16px; padding: 0 4px; border:none!important; background:transparent!important;}
+      .cart-table .btn-outline-secondary { min-width: 44px; min-height: 44px; height: 44px; padding: 0; border:none!important; background:transparent!important; color:var(--myle-ink); font-weight:900; font-size: 18px;}
+      .cart-table .price-input { min-width: 100px; height: 44px; font-size: 16px; padding: 0 8px; width: 100%; border-radius:8px!important;}
+      .cart-table .btn-outline-danger { min-width: 44px; min-height: 44px; height: 44px; width: 44px; padding: 0; display: inline-flex; align-items: center; justify-content: center; margin-left: auto; border-radius:50%; background:rgba(239, 68, 68, 0.1); border:none; color:var(--myle-red); font-size: 16px;}
     }
-    @media (max-width: 767px) { .modal-dialog { margin: 0; max-width: 100%; min-height: 100dvh; display: flex; align-items: flex-end; } .modal-content { width: 100%; border-radius: 20px 20px 0 0 !important; max-height: 92dvh; overflow-y: auto; } .modal.fade .modal-dialog { transform: translateY(30px); } .modal.show .modal-dialog { transform: translateY(0); } }
-    html { overscroll-behavior-y: contain; } body { overscroll-behavior-y: contain; touch-action: pan-y; } input:focus, textarea:focus { scroll-margin-bottom: 220px; }
+    @media (max-width: 767px) { 
+      .modal-dialog { margin: 0; max-width: 100%; min-height: 100dvh; display: flex; align-items: flex-end; } 
+      .modal-content { width: 100%; border-radius: 20px 20px 0 0 !important; max-height: 92dvh; overflow-y: auto; } 
+      .modal.fade .modal-dialog { transform: translateY(30px); } 
+      .modal.show .modal-dialog { transform: translateY(0); } 
+    }
+    html { overscroll-behavior-y: contain; } 
+    body { overscroll-behavior-y: contain; }
+    .scan-input, .cart-table { touch-action: pan-y; }
+    input:focus, textarea:focus { scroll-margin-bottom: 240px; }
   </style>
 </head>
 <body>
+
+<div id="global-progress"></div>
 
 <div id="lock-screen" style="display: none;">
   <div class="pin-box">
     <h3 class="fw-bold mb-1 text-white">✦ MỸ LỆ POS</h3>
     <p class="small fw-bold mb-4" style="color:rgba(255,255,255,0.8)">Vui lòng nhập mã PIN bảo mật</p>
-    <input type="password" id="pinCode" class="pin-input" inputmode="numeric" maxlength="6" placeholder="******" onkeydown="if(event.key === 'Enter') POS_unlockSystem()">
-    <button class="btn primary-btn w-100 fw-bold py-3 fs-5 touch-btn" id="btnUnlock" onclick="POS_unlockSystem()"> <i class="bi bi-unlock-fill"></i> MỞ KHÓA </button>
+    <input type="tel" id="pinCode" class="pin-input" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" autocomplete="one-time-code" aria-label="Nhập mã PIN">
+    <button class="btn primary-btn w-100 fw-bold py-3 fs-5 touch-btn" id="btnUnlock" onclick="POS_unlockSystem()" aria-label="Mở khóa hệ thống"> <i class="bi bi-unlock-fill"></i> MỞ KHÓA </button>
     <div id="pinError" class="text-warning small fw-bold mt-3" style="display: none;">Mã PIN không hợp lệ!</div>
   </div>
 </div>
 
-<div id="camera-wrapper">
+<div id="camera-wrapper" aria-hidden="true">
   <div id="camera-container">
-    <button class="cam-close-btn touch-btn" onclick="POS_toggleCamera()"><i class="bi bi-x"></i></button>
+    <button class="cam-close-btn touch-btn" id="btnCamClose" onclick="POS_toggleCamera()" aria-label="Đóng Camera"><i class="bi bi-x"></i></button>
+    <button class="cam-flash-btn touch-btn" id="btnCamFlash" onclick="POS_toggleTorch()" title="Đèn Flash" aria-label="Bật/Tắt Flash"><i class="bi bi-lightning-fill"></i></button>
     <div id="reader"></div>
     <div class="text-center text-warning py-2 fw-bold small bg-dark" style="letter-spacing: 1px;">ĐƯA MÃ VẠCH VÀO KHE NGẮM</div>
   </div>
 </div>
 
-<div class="container-fluid py-3 pos-shell">
-  <div class="card pos-card pos-header mb-3">
+<main class="container-fluid py-3 pos-shell">
+  <header class="card pos-card pos-header mb-3">
     <div class="card-body py-2">
       <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
         <div class="brand-lockup">
           <div class="brand-mark">✦</div>
-          <div class="brand-title"><div class="brand-main">TẠP HÓA MỸ LỆ</div><div class="brand-sub">MYLE RETAIL POS · LONG PHÚ</div></div>
+          <div class="brand-title"><div class="brand-main">TẠP HÓA MỸ LỆ</div><div class="brand-sub">LONG PHÚ · CẦN THƠ</div></div>
         </div>
         <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
-          <div class="retail-code">RETAIL SYSTEM // 01</div>
-          <button id="offlineBadge" class="btn btn-sm offline-badge fw-bold shadow-sm touch-btn" style="display:none" onclick="POS_syncOfflineOrders()"><i class="bi bi-cloud-arrow-up-fill"></i> ĐỒNG BỘ (<span id="offlineCount">0</span>)</button>
-          <div id="bridgeStatus" class="bridge-status status-checking"><i class="bi bi-arrow-repeat"></i> Bridge...</div>
-          <div id="networkStatus" class="bridge-status status-net-offline" style="display:none;"><i class="bi bi-wifi-off"></i> Offline</div>
+          <button id="offlineBadge" class="btn btn-sm offline-badge fw-bold shadow-sm touch-btn" style="display:none" onclick="POS_syncOfflineOrders()" aria-label="Đồng bộ dữ liệu ngoại tuyến"><i class="bi bi-cloud-arrow-up-fill"></i> ĐỒNG BỘ (<span id="offlineCount">0</span>)</button>
+          <div id="bridgeStatus" class="bridge-status"><i class="bi bi-arrow-repeat"></i> Bridge...</div>
+          <div id="networkStatus" class="bridge-status status-pc-offline" style="display:none;"><i class="bi bi-wifi-off"></i> Offline</div>
         </div>
       </div>
     </div>
-  </div>
+  </header>
   
   <!-- VIEW 1: MÀN HÌNH BÁN HÀNG CHÍNH (POS VIEW) -->
-  <div class="row g-3" id="view-pos">
-    <div class="col-lg-4 control-panel">
+  <section class="row g-3" id="view-pos">
+    <aside class="col-lg-4 control-panel">
       <div class="card pos-card h-100">
         <div class="card-body">
-          <div class="panel-head"><div><div class="section-kicker">OPERATIONS</div><h5 class="section-title">BẢNG ĐIỀU KHIỂN</h5></div><div class="quick-status"><span>F2 QUÉT</span><span>F12 PAY</span></div></div>
           
-          <label class="section-kicker mb-2 d-block">SCAN PRODUCT / F2</label>
+          <label for="maVachInput" class="section-kicker mb-2 d-block"><i class="bi bi-upc-scan"></i> QUÉT SẢN PHẨM</label>
           <div class="search-wrap">
             <div class="d-flex">
-              <input type="text" id="maVachInput" class="form-control scan-input" placeholder="Quét hoặc gõ tên..." autocomplete="off" autocapitalize="off" spellcheck="false" 
-                     oninput="POS_renderSuggestions(this.value)" 
-                     onfocus="if(this.value.trim().length > 0) POS_renderSuggestions(this.value.trim())" 
-                     onkeydown="if(event.key === 'Enter'){ event.preventDefault(); var val=this.value.trim(); POS_hideSuggestions(); if(val) POS_xuLyMaVach(val); }">
-              <button class="btn scan-action touch-btn text-nowrap" id="btnToggleCamera" type="button" onclick="POS_toggleCamera()"><i class="bi bi-camera-video-fill"></i> CAM</button>
+              <input type="text" id="maVachInput" class="form-control scan-input" placeholder="Quét hoặc gõ tên..." autocomplete="off" autocapitalize="off" spellcheck="false" aria-autocomplete="list" aria-controls="productSuggestions">
+              <button class="btn scan-action touch-btn text-nowrap" id="btnToggleCamera" type="button" onclick="POS_toggleCamera()" aria-label="Mở Camera"><i class="bi bi-camera-video-fill"></i> CAM</button>
             </div>
-            <div id="productSuggestions"></div>
+            <div id="productSuggestions" role="listbox"></div>
+          </div>
+
+          <!-- TRA GIÁ: đặt ngay dưới scan vì dùng nhiều -->
+          <button type="button" class="btn tool-btn touch-btn w-100 mt-2" id="btnTraGia" onclick="POS_togglePriceCheck()">
+            <i class="bi bi-search"></i> TRA GIÁ SẢN PHẨM
+          </button>
+          
+          <div class="d-flex gap-2 mt-2">
+            <button type="button" class="btn tool-btn touch-btn w-50" onclick="POS_moFormSanPhamMo()"><i class="bi bi-plus-circle"></i> HÀNG TỰ DO</button>
+            <button type="button" class="btn tool-btn touch-btn w-50" style="color: var(--myle-cobalt)!important;" onclick="POS_moDichVuTien()"><i class="bi bi-bank"></i> DỊCH VỤ TIỀN</button>
           </div>
           
-          <div class="section-kicker mt-4 mb-2">TOOLS</div>
-          <div class="d-grid gap-2 action-grid" id="action-buttons">
-            <div class="d-flex gap-2">
-              <button type="button" class="btn tool-btn touch-btn w-50" id="btnTraGia" onclick="POS_togglePriceCheck()"><i class="bi bi-search"></i> TRA GIÁ <small>F3</small></button>
-              <button type="button" class="btn tool-btn touch-btn w-50" onclick="POS_moFormSanPhamMo()"><i class="bi bi-plus-circle"></i> TỰ DO <small>F4</small></button>
-            </div>
-            <button type="button" class="btn tool-btn touch-btn w-100" style="color: var(--myle-cobalt)!important;" onclick="POS_moDichVuTien()"><i class="bi bi-bank"></i> DỊCH VỤ CHUYỂN / RÚT TIỀN</button>
-            
-            <div class="d-flex gap-2 mt-2">
-              <button type="button" class="btn tool-btn touch-btn w-25" onclick="POS_inLaiHoaDonQuay()" title="In lại hóa đơn gần nhất"><i class="bi bi-printer"></i> IN</button>
-              <button type="button" class="btn primary-btn btn-lg touch-btn w-75" id="btnThanhToan" onclick="POS_thanhToan()"><i class="bi bi-cash-coin"></i> THANH TOÁN <small>F12</small></button>
-            </div>
-            
-            <div class="mt-2 p-3 rounded" style="background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.6);">
-               <label class="fw-bold mb-1" style="font-size: 0.85rem; color:var(--myle-ink)"><i class="bi bi-person-badge"></i> Khách hàng (Tích điểm / Ghi nợ)</label>
-               <!-- BẢN VÁ: Đổi sang type="text" để cho phép gõ chữ -->
-               <input type="text" id="sdtKhachInput" class="form-control client-input" list="dsKhachQuen" placeholder="Nhập Tên hoặc SĐT..." autocomplete="off" autocapitalize="words" style="min-height: 48px; font-size: 1rem;">
-               <datalist id="dsKhachQuen"></datalist>
-            </div>
-
-            <!-- TÁCH RIÊNG CÔNG NỢ RA MÀN HÌNH MỚI -->
-            <div class="d-flex gap-2 mt-2">
-              <button type="button" class="btn tool-btn touch-btn w-50" style="color: var(--myle-orange)!important;" onclick="POS_switchView('debt')"><i class="bi bi-journal-check"></i> CÔNG NỢ</button>
-              <button type="button" class="btn danger-btn touch-btn w-50" onclick="POS_huyDon()"><i class="bi bi-trash3"></i> HỦY ĐƠN</button>
-            </div>
+          <div class="d-flex gap-2 mt-2">
+            <button type="button" class="btn tool-btn touch-btn w-50" onclick="POS_inLaiHoaDonQuay()"><i class="bi bi-printer"></i> IN LẠI</button>
+            <button type="button" class="btn tool-btn touch-btn w-50" style="color: var(--myle-orange)!important;" onclick="POS_switchView('debt')"><i class="bi bi-journal-check"></i> CÔNG NỢ</button>
           </div>
+
+          <div class="mt-3 p-3 rounded" style="background: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.6);">
+             <label class="fw-bold mb-1" style="font-size: 0.85rem; color:var(--myle-ink)"><i class="bi bi-person-badge"></i> Khách hàng (Tích điểm / Ghi nợ)</label>
+             <div class="search-wrap">
+               <input type="text" id="sdtKhachInput" class="form-control client-input" placeholder="Nhập Tên hoặc SĐT..." autocomplete="off" autocapitalize="words">
+               <div id="khachSuggestions"></div>
+             </div>
+          </div>
+
+          <button type="button" class="btn danger-btn touch-btn w-100 mt-2" onclick="POS_huyDon()"><i class="bi bi-trash3"></i> HỦY ĐƠN</button>
         </div>
       </div>
-    </div>
+    </aside>
     
     <div class="col-lg-8 cart-panel">
       <div class="card pos-card cart-card h-100">
         <div class="card-body">
-          <div class="panel-head mb-2"><div><div class="section-kicker">ACTIVE CART</div><h5 class="section-title">ĐƠN HÀNG</h5></div><div class="section-kicker">MAX 5 CARTS</div></div>
+          <div class="panel-head mb-2"><h5 class="fw-bold m-0" style="color:var(--myle-ink)">ĐƠN HÀNG</h5></div>
           <div id="cartTabs" class="d-flex gap-2 mb-3 pb-2 cart-tabs" style="border-bottom:1px solid rgba(255,255,255,0.6)"></div>
           <div class="table-responsive" style="max-height:58vh;overflow-y:auto">
             <table class="table table-hover align-middle mb-0 cart-table">
@@ -277,7 +310,6 @@
             <div class="row g-3 align-items-stretch">
               <div class="col-md-6">
                 <div class="summary-box h-100">
-                  <div class="section-kicker mb-2">DISCOUNT</div>
                   <label class="fw-bold mb-2">Chiết khấu / Giảm giá chung</label>
                   <div class="input-group">
                     <span class="input-group-text fw-bold" style="background:rgba(255,255,255,0.6); border-color:rgba(255,255,255,0.8)">%</span>
@@ -300,18 +332,15 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- VIEW 2: MÀN HÌNH QUẢN LÝ CÔNG NỢ (DEBT VIEW - Ẩn mặc định) -->
-  <div class="row justify-content-center view-hidden" id="view-debt">
+  <section class="row justify-content-center view-hidden" id="view-debt">
     <div class="col-lg-8">
       <div class="card pos-card">
         <div class="card-body p-4">
           <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.6)!important;">
-            <div>
-               <div class="section-kicker">LEDGER SYSTEM</div>
-               <h4 class="fw-bold m-0" style="color:var(--myle-cobalt)"><i class="bi bi-journal-check"></i> QUẢN LÝ CÔNG NỢ</h4>
-            </div>
+            <h4 class="fw-bold m-0" style="color:var(--myle-cobalt)"><i class="bi bi-journal-check"></i> QUẢN LÝ CÔNG NỢ</h4>
             <button class="btn secondary-btn touch-btn fw-bold" onclick="POS_switchView('pos')"><i class="bi bi-arrow-left"></i> QUAY LẠI POS</button>
           </div>
 
@@ -327,7 +356,6 @@
                   </div>
                   <div class="mb-3">
                      <label class="fw-bold small text-muted mb-1">Tên khách hàng</label>
-                     <!-- Đã đổi inputmode để cho phép gõ chữ -->
                      <input type="text" id="cn_khachHang" class="form-control client-input form-control-lg" placeholder="Nhập tên..." autocomplete="off" required oninput="POS_filterDebtList(this.value)">
                   </div>
                   <div class="mb-3">
@@ -356,18 +384,17 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
   
   <div class="sticky-checkout-bar d-lg-none" id="mobile-checkout-bar">
     <div class="mini-total">
       <div class="label">KHÁCH CẦN TRẢ</div>
       <div class="value money"><span id="mtTongTien">0</span> đ</div>
     </div>
-    <button type="button" class="btn primary-btn touch-btn px-4" onclick="POS_thanhToan()">
-      <i class="bi bi-cash-coin"></i> THANH TOÁN
-    </button>
+    <button type="button" class="btn tool-btn touch-btn" onclick="POS_inLaiHoaDonQuay()" aria-label="In lại hóa đơn"><i class="bi bi-printer"></i></button>
+    <button type="button" class="btn primary-btn touch-btn px-4" onclick="POS_thanhToan()" aria-label="Thanh toán"><i class="bi bi-cash-coin"></i> TRẢ</button>
   </div>
-</div>
+</main>
 
 <!-- MODAL CHỌN ĐƠN VỊ TÍNH -->
 <div class="modal fade" id="modalChonDonVi" tabindex="-1">
@@ -430,7 +457,7 @@
 </div>
 
 <!-- MODAL TRA CỨU GIÁ -->
-<div class="modal fade" id="modalTraGia" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-search"></i> KẾT QUẢ TRA GIÁ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-4"><div class="section-kicker mb-2">PRODUCT LOOKUP</div><h3 class="fw-bold mb-3" id="tg_tenSP">Tên sản phẩm</h3>
+<div class="modal fade" id="modalTraGia" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-search"></i> KẾT QUẢ TRA GIÁ</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body text-center py-4"><h3 class="fw-bold mb-3" id="tg_tenSP">Tên sản phẩm</h3>
 <div class="display-3 fw-bold mb-3" style="color:var(--myle-cobalt)" id="tg_giaBan">0 đ</div>
 <div class="text-muted fw-bold fs-6 mb-2">Giá vốn: <span id="tg_giaVon" class="text-danger">0 đ</span></div>
 <div class="text-muted fw-bold fs-5">Tồn kho hiện tại: <span id="tg_tonKho" class="text-dark">0</span></div>
@@ -444,17 +471,16 @@
 <div class="mb-3"><label class="fw-bold">Tên sản phẩm <span class="text-danger">*</span></label><input id="ssp_ten" class="form-control client-input" required autocomplete="off"></div>
 <div class="row g-2"><div class="col-4"><label class="fw-bold">Tồn kho <span class="text-danger">*</span></label><input id="ssp_sl" type="number" class="form-control client-input text-center" required></div><div class="col-4"><label class="fw-bold">Giá vốn <span class="text-danger">*</span></label><input id="ssp_von" type="number" class="form-control client-input" required min="0" step="1"></div><div class="col-4"><label class="fw-bold">Giá bán <span class="text-danger">*</span></label><input id="ssp_ban" type="number" class="form-control client-input" required min="0" step="1"></div></div>
 </div><div class="modal-footer"><button type="button" class="btn secondary-btn touch-btn" data-bs-dismiss="modal">HỦY BỎ</button><button type="submit" class="btn primary-btn touch-btn" id="btnLuuSuaSP">CẬP NHẬT LÊN MÁY CHỦ</button></div></form></div></div></div>
+
 <!-- MODAL TẠO MÃ -->
 <div class="modal fade" id="modalTaoMaNhanh" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head orange"><h5 class="modal-title fw-bold"><i class="bi bi-upc-scan"></i> TẠO MÃ SẢN PHẨM MỚI</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="formTaoMaNhanh" onsubmit="POS_xuLyTaoMaNhanh(event)"><div class="modal-body"><div class="alert alert-warning py-2 mb-3 fw-bold small border-0">Mã chưa tồn tại! Phải tạo dữ liệu kho trước khi bán.</div>
           <div class="mb-2">
             <label class="fw-bold text-muted small">MÃ VẠCH GỐC</label>
             <div class="input-group" style="background:rgba(255,255,255,0.6); border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.8);">
-              <!-- BẢN VÁ: Gắn sự kiện oninput kiểm tra Real-time -->
               <input id="tmn_ma" class="form-control fw-bold border-0 bg-transparent" placeholder="Nhập hoặc quét mã..." oninput="POS_kiemTraTrungMaNhanh()">
               <button class="btn btn-dark fw-bold px-3 border-0 touch-btn" type="button" onclick="POS_toggleCamera('tmn_ma')" style="z-index: 10;"><i class="bi bi-camera-video-fill"></i> CAM</button>
               <button class="btn tool-btn fw-bold border-0 touch-btn" style="box-shadow:none" type="button" onclick="document.getElementById('tmn_ma').value = 'ML' + Date.now().toString().slice(-9); POS_kiemTraTrungMaNhanh();"><i class="bi bi-magic"></i> AUTO</button>
             </div>
-            <!-- KHUNG CẢNH BÁO TRÙNG MÃ -->
             <div id="tmn_canhBaoTrung" class="text-danger small fw-bold mt-1" style="display:none;"></div>
           </div>
 <div class="mb-3"><label class="fw-bold">Tên sản phẩm <span class="text-danger">*</span></label><input id="tmn_ten" class="form-control client-input" required autocomplete="off"></div><div class="row g-2"><div class="col-4"><label class="fw-bold">SL <span class="text-danger">*</span></label><input id="tmn_sl" type="number" class="form-control client-input text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div><div class="col-4"><label class="fw-bold">Giá vốn <span class="text-danger">*</span></label><input id="tmn_von" type="number" class="form-control client-input" required min="0" step="1"></div><div class="col-4"><label class="fw-bold">Giá bán <span class="text-danger">*</span></label><input id="tmn_ban" type="number" class="form-control client-input" required min="0" step="1"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn touch-btn" data-bs-dismiss="modal">HỦY BỎ</button><button type="submit" class="btn warning-btn touch-btn" id="btnLuuMaNhanh">LƯU KHO & BÁN</button></div></form></div></div></div>
@@ -463,7 +489,7 @@
 <div class="modal fade" id="modalSanPhamMo" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head cobalt"><h5 class="modal-title fw-bold"><i class="bi bi-box-seam"></i> THÊM HÀNG TỰ DO</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><form id="formSanPhamMo" onsubmit="POS_themSanPhamMo(event)"><div class="modal-body"><div class="mb-3"><label class="fw-bold">Tên mặt hàng / Dịch vụ</label><input id="spm_ten" class="form-control form-control-lg client-input" required></div><div class="row g-2"><div class="col-6"><label class="fw-bold">Đơn giá (VNĐ)</label><input id="spm_gia" type="number" class="form-control form-control-lg client-input" required min="0" step="1" inputmode="numeric"></div><div class="col-6"><label class="fw-bold">Số lượng</label><input id="spm_sl" type="number" class="form-control form-control-lg client-input text-center" required min="0.01" step="0.01" value="1" inputmode="decimal"></div></div></div><div class="modal-footer"><button type="button" class="btn secondary-btn touch-btn" data-bs-dismiss="modal">HỦY</button><button type="submit" class="btn primary-btn fw-bold touch-btn">THÊM VÀO GIỎ</button></div></form></div></div></div>
 
 <!-- MODAL THANH TOÁN -->
-<div class="modal fade" id="modalThanhToan" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head lime"><h5 class="modal-title fw-bold"><i class="bi bi-receipt"></i> XÁC NHẬN THANH TOÁN</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body py-4"><div class="payment-total text-center mb-4"><div class="section-kicker" style="color:rgba(255,255,255,0.6)">CUSTOMER TO PAY</div><div class="amount" id="tt_tongTien">0 đ</div><div class="small" style="color:rgba(255,255,255,0.7)">Tạm tính: <b id="tt_tamTinh">0</b> đ <span id="tt_giamWrap" style="display:none"> · Giảm: <b><span id="tt_giam">0</span></b> đ</span></div></div><div class="mb-3"><label class="fw-bold mb-2">Phương thức thanh toán</label><div class="d-flex gap-2"><input type="radio" class="btn-check" name="phuongThuc" id="pt_tienMat" value="TIEN_MAT" checked onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100 touch-btn" for="pt_tienMat"><i class="bi bi-cash"></i> TIỀN MẶT</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_chuyenKhoan" value="CHUYEN_KHOAN" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100 touch-btn" for="pt_chuyenKhoan"><i class="bi bi-qr-code-scan"></i> VIETQR</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_ghiNo" value="GHI_NO" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100 touch-btn" for="pt_ghiNo"><i class="bi bi-journal-text"></i> GHI NỢ</label></div></div><div id="vungTienMat" class="cash-box text-start mb-3 p-3"><label class="fw-bold mb-1">Tiền khách đưa (VNĐ)</label><input type="number" id="inputKhachDua" class="form-control form-control-lg fw-bold text-end fs-4 cash-input mb-2" min="0" oninput="POS_tinhTienThoi()" onfocus="this.select()"><div class="d-flex flex-wrap gap-2 justify-content-end mb-2"><button type="button" class="btn btn-sm tool-btn touch-btn flex-grow-1" onclick="POS_quickCash('ALL')">Vừa đủ</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(50000)">50k</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(100000)">100k</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(200000)">200k</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(500000)">500k</button></div><div class="d-flex justify-content-between mt-2 fs-5 border-top pt-2" style="border-color:rgba(0,0,0,0.1)!important"><span class="fw-bold">Tiền thối</span><span class="fw-bold" style="color:var(--myle-cobalt)" id="txtTienThoi">0 đ</span></div></div><div id="vungChuyenKhoan" class="p-2 bg-light rounded border d-inline-block" style="display:none!important; background:rgba(255,255,255,0.5)!important;"><img id="imgVietQR" src="" alt="VietQR" class="img-fluid rounded" style="width:220px;height:220px;object-fit:contain"></div></div><div class="modal-footer d-flex justify-content-between"><button type="button" class="btn secondary-btn touch-btn fw-bold" data-bs-dismiss="modal">QUAY LẠI (ESC)</button><div class="d-flex gap-2"><button type="button" class="btn warning-btn touch-btn" id="btnChotKhongIn" onclick="POS_chotDonHang(false)"><i class="bi bi-receipt-cutoff"></i> KHÔNG IN</button><button type="button" class="btn primary-btn px-4 fs-5 touch-btn" id="btnChotDon" onclick="POS_chotDonHang(true)">CHỐT & IN ↵</button></div></div></div></div></div>
+<div class="modal fade" id="modalThanhToan" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header myle-modal-head lime"><h5 class="modal-title fw-bold"><i class="bi bi-receipt"></i> XÁC NHẬN THANH TOÁN</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body py-4"><div class="payment-total text-center mb-4"><div class="amount" id="tt_tongTien">0 đ</div><div class="small" style="color:rgba(255,255,255,0.7)">Tạm tính: <b id="tt_tamTinh">0</b> đ <span id="tt_giamWrap" style="display:none"> · Giảm: <b><span id="tt_giam">0</span></b> đ</span></div></div><div class="mb-3"><label class="fw-bold mb-2">Phương thức thanh toán</label><div class="d-flex gap-2"><input type="radio" class="btn-check" name="phuongThuc" id="pt_tienMat" value="TIEN_MAT" checked onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100 touch-btn" for="pt_tienMat"><i class="bi bi-cash"></i> TIỀN MẶT</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_chuyenKhoan" value="CHUYEN_KHOAN" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100 touch-btn" for="pt_chuyenKhoan"><i class="bi bi-qr-code-scan"></i> VIETQR</label><input type="radio" class="btn-check" name="phuongThuc" id="pt_ghiNo" value="GHI_NO" onchange="POS_togglePhuongThuc()"><label class="btn payment-method w-100 touch-btn" for="pt_ghiNo"><i class="bi bi-journal-text"></i> GHI NỢ</label></div></div><div id="vungTienMat" class="cash-box text-start mb-3 p-3"><label class="fw-bold mb-1">Tiền khách đưa (VNĐ)</label><input type="number" id="inputKhachDua" class="form-control form-control-lg fw-bold text-end fs-4 cash-input mb-2" min="0" oninput="POS_tinhTienThoi()" onfocus="this.select()"><div class="d-flex flex-wrap gap-2 justify-content-end mb-2"><button type="button" class="btn btn-sm tool-btn touch-btn flex-grow-1" onclick="POS_quickCash('ALL')">Vừa đủ</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(50000)">50k</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(100000)">100k</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(200000)">200k</button><button type="button" class="btn btn-sm tool-btn touch-btn" onclick="POS_quickCash(500000)">500k</button></div><div class="d-flex justify-content-between mt-2 fs-5 border-top pt-2" style="border-color:rgba(0,0,0,0.1)!important"><span class="fw-bold">Tiền thối</span><span class="fw-bold" style="color:var(--myle-cobalt)" id="txtTienThoi">0 đ</span></div></div><div id="vungChuyenKhoan" class="p-2 bg-light rounded border d-inline-block" style="display:none!important; background:rgba(255,255,255,0.5)!important;"><img id="imgVietQR" src="" alt="VietQR" class="img-fluid rounded" style="width:220px;height:220px;object-fit:contain"></div></div><div class="modal-footer d-flex justify-content-between"><button type="button" class="btn secondary-btn touch-btn fw-bold" data-bs-dismiss="modal">QUAY LẠI (ESC)</button><div class="d-flex gap-2"><button type="button" class="btn warning-btn touch-btn" id="btnChotKhongIn" onclick="POS_chotDonHang(false)"><i class="bi bi-receipt-cutoff"></i> KHÔNG IN</button><button type="button" class="btn primary-btn px-4 fs-5 touch-btn" id="btnChotDon" onclick="POS_chotDonHang(true)">CHỐT & IN ↵</button></div></div></div></div></div>
 
 <script>
 // ============================================================
@@ -478,12 +504,19 @@ var POS_scanner = null, POS_isCamOn = false, POS_scanLocked = false, POS_printin
 var POS_tamTinh = 0, POS_giamGia = 0, POS_tongTienThanhToan = 0;
 var POS_audioCtx = null, POS_currentOrderId = null;
 var POS_debtData = []; 
+var POS_camTarget = null;
+var _qrLibPromise = null;
 
 function POS_newOrderId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('MYLE-' + Date.now() + '-' + Math.random().toString(16).slice(2)); }
 function POS_num(val) { var n = Number(val); return isNaN(n) ? 0 : n; }
 function POS_money(val) { return Math.round(POS_num(val)).toLocaleString('vi-VN'); }
 function POS_esc(val) { return String(val || '').replace(/[&<>'"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'}[c])); }
 function POS_focus() { setTimeout(() => { var inp = document.getElementById('maVachInput'); if(inp){ inp.focus(); inp.select(); } }, 50); }
+function POS_vibrate(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
+
+// Global progress bar
+function POS_showProgress() { const el = document.getElementById('global-progress'); if (el) { el.style.width = '30%'; setTimeout(() => el.style.width = '70%', 200); } }
+function POS_hideProgress() { const el = document.getElementById('global-progress'); if (el) { el.style.width = '100%'; setTimeout(() => { el.style.width = '0'; }, 300); } }
 
 function POS_beep() {
   try{ if(!POS_audioCtx) POS_audioCtx = new(window.AudioContext || window.webkitAudioContext)(); if(POS_audioCtx.state === 'suspended') POS_audioCtx.resume(); var osc = POS_audioCtx.createOscillator(), gain = POS_audioCtx.createGain(); osc.type = 'sine'; osc.frequency.value = 880; gain.gain.value = 0.08; osc.connect(gain); gain.connect(POS_audioCtx.destination); osc.start(); osc.stop(POS_audioCtx.currentTime + 0.08); } catch(e){}
@@ -491,13 +524,13 @@ function POS_beep() {
 function POS_clickSound() {
   try { if(!POS_audioCtx) POS_audioCtx = new(window.AudioContext || window.webkitAudioContext)(); if(POS_audioCtx.state === 'suspended') POS_audioCtx.resume(); var osc = POS_audioCtx.createOscillator(), gain = POS_audioCtx.createGain(); osc.type = 'triangle'; osc.frequency.setValueAtTime(400, POS_audioCtx.currentTime); gain.gain.setValueAtTime(0.05, POS_audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, POS_audioCtx.currentTime + 0.05); osc.connect(gain); gain.connect(POS_audioCtx.destination); osc.start(); osc.stop(POS_audioCtx.currentTime + 0.05); } catch(e){}
 }
-document.addEventListener('pointerdown', (e) => { if (e.target.closest('button, .btn, .product-option, .cart-tab, .touch-btn')) { POS_clickSound(); if (navigator.vibrate) navigator.vibrate(15); } });
+document.addEventListener('pointerdown', (e) => { if (e.target.closest('button, .btn, .product-option, .cart-tab, .touch-btn')) { POS_clickSound(); POS_vibrate(15); } });
 
 // ============================================================
 // 2. BẢO MẬT ZERO-TRUST & MẠNG LƯỚI
 // ============================================================
 function POS_lockSystemExp() { SESSION_TOKEN = ""; sessionStorage.removeItem("MYLE_SESSION_TOKEN"); document.getElementById('lock-screen').style.display = 'flex'; const err = document.getElementById('pinError'); err.style.display = 'block'; err.innerText = 'Phiên đăng nhập hết hạn. Vui lòng nhập lại PIN!'; document.getElementById('pinCode').value = ''; setTimeout(() => document.getElementById('pinCode').focus(), 100); }
-async function POS_fetchJson(url, options = {}) { const res = await fetch(url, { cache: 'no-store', ...options }); if(!res.ok) throw new Error(`HTTP ${res.status}`); const data = await res.json(); if(data && data.status === 'error') { const msg = data.message || ''; if (msg.includes('401') || msg.includes('hết hạn')) { POS_lockSystemExp(); throw new Error('SESSION_EXPIRED'); } throw new Error(msg || 'API error'); } return data; }
+async function POS_fetchJson(url, options = {}) { POS_showProgress(); try { const res = await fetch(url, { cache: 'no-store', ...options }); if(!res.ok) throw new Error(`HTTP ${res.status}`); const data = await res.json(); if(data && data.status === 'error') { const msg = data.message || ''; if (msg.includes('401') || msg.includes('hết hạn')) { POS_lockSystemExp(); throw new Error('SESSION_EXPIRED'); } throw new Error(msg || 'API error'); } return data; } finally { POS_hideProgress(); } }
 async function POS_unlockSystem() { const pin = document.getElementById('pinCode').value.trim(); const btn = document.getElementById('btnUnlock'), err = document.getElementById('pinError'); if (!pin) return; btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> ĐANG XÁC THỰC...'; err.style.display = 'none'; try { const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ action: 'xacThucPIN', pin: pin }) }); const result = await res.json(); if (result.status === 'success' && result.data && result.data.token) { SESSION_TOKEN = result.data.token; sessionStorage.setItem("MYLE_SESSION_TOKEN", SESSION_TOKEN); document.getElementById('lock-screen').style.display = 'none'; document.getElementById('pinCode').value = ''; POS_loadProducts(); } else throw new Error(result.message || 'Xác thực thất bại'); } catch (error) { err.style.display = 'block'; err.innerText = "Lỗi: " + error.message; document.getElementById('pinCode').value = ''; } finally { btn.disabled = false; btn.innerHTML = '<i class="bi bi-unlock-fill"></i> MỞ KHÓA'; } }
 function POS_checkSecurityLock() { if (SESSION_TOKEN) { document.getElementById('lock-screen').style.display = 'none'; POS_loadProducts(); } else { document.getElementById('lock-screen').style.display = 'flex'; setTimeout(() => document.getElementById('pinCode').focus(), 100); } }
 function POS_updateNetworkStatus() { const netEl = document.getElementById('networkStatus'); if (navigator.onLine) { netEl.style.display = 'none'; POS_dongBoDonHangOffline_Fallback(); } else netEl.style.display = 'inline-flex'; }
@@ -607,7 +640,26 @@ function POS_renderSuggestions(query) { var box = document.getElementById('produ
 function POS_hideSuggestions() { var box = document.getElementById('productSuggestions'); if(box){ box.style.display = 'none'; box.innerHTML = ''; } }
 function POS_chonGoiY(index, event) { event.preventDefault(); POS_hideSuggestions(); var q = document.getElementById('maVachInput').value.trim().toLowerCase(); var matches = POS_products.filter(p => String(p.tenSP || '').toLowerCase().includes(q) || String(p.maSP || '').toLowerCase().includes(q)); if(matches[index]) { if (POS_isPriceCheckMode) POS_showPriceModal(matches[index]); else POS_addProduct(matches[index]); } document.getElementById('maVachInput').value = ''; if(!POS_isPriceCheckMode) POS_focus(); }
 
-// BẢN VÁ: Gỡ bỏ khóa Camera Lock, giải phóng Modal
+// Khách hàng suggestions (thay thế datalist)
+function POS_renderKhachSuggestions(q) {
+  const box = document.getElementById('khachSuggestions');
+  const kw = String(q || '').trim().toLowerCase();
+  if (!kw) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const matches = (POS_debtData || []).filter(k => String(k.ten || '').toLowerCase().includes(kw)).slice(0, 8);
+  if (matches.length === 0) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.innerHTML = matches.map(k => `<div class="product-option" onclick="POS_chonKhach('${POS_esc(k.ten).replace(/'/g, "\\'")}')"><div><div class="name">${POS_esc(k.ten)}</div><div class="meta">${POS_esc(k.nhom || 'Khách hàng')}</div></div><div class="price" style="color:var(--myle-red)">${POS_money(k.duNo)} đ</div></div>`).join('');
+  box.style.display = 'block';
+}
+function POS_chonKhach(ten) {
+  document.getElementById('sdtKhachInput').value = ten;
+  document.getElementById('khachSuggestions').style.display = 'none';
+  POS_focus();
+}
+function POS_hideKhachSuggestions() {
+  const box = document.getElementById('khachSuggestions');
+  if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+}
+
 async function POS_xuLyMaVach(val) { 
   var v = String(val || '').trim(); if(!v) return; 
   POS_hideSuggestions(); 
@@ -616,7 +668,7 @@ async function POS_xuLyMaVach(val) {
   if(found){ 
     if (POS_isPriceCheckMode) POS_showPriceModal(found); else POS_addProduct(found); 
   } else { 
-    if(!POS_scanLocked) POS_beep(); // Tách độc lập lệnh Beep để không khóa cụm lệnh bên dưới
+    if(!POS_scanLocked) POS_beep();
     
     if (POS_isPriceCheckMode) {
       alert('Mã [' + v + '] chưa có trong dữ liệu!');
@@ -627,7 +679,7 @@ async function POS_xuLyMaVach(val) {
       document.getElementById('tmn_von').value = ''; 
       document.getElementById('tmn_ban').value = ''; 
       
-      POS_kiemTraTrungMaNhanh(); // BẢN VÁ: Kích hoạt kiểm tra trùng lặp ngay
+      POS_kiemTraTrungMaNhanh();
       
       if(typeof bootstrap !== 'undefined') bootstrap.Modal.getOrCreateInstance(document.getElementById('modalTaoMaNhanh')).show();
       setTimeout(() => { document.getElementById('tmn_ten').focus(); }, 400);
@@ -637,7 +689,6 @@ async function POS_xuLyMaVach(val) {
   if (found) { if (!POS_isPriceCheckMode) POS_focus(); } else if (POS_isPriceCheckMode) POS_focus(); 
 }
 
-// BẢN VÁ: Bắt lỗi trùng mã theo thời gian thực (Real-time)
 function POS_kiemTraTrungMaNhanh() {
   var maVachMoi = document.getElementById('tmn_ma').value.trim();
   var canhBao = document.getElementById('tmn_canhBaoTrung');
@@ -653,15 +704,14 @@ function POS_kiemTraTrungMaNhanh() {
   if (trungMa) {
     canhBao.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Mã này đã thuộc về: ' + POS_esc(trungMa.tenSP);
     canhBao.style.display = 'block';
-    btnLuu.disabled = true; // Khóa cứng nút LƯU
-    POS_beep(); // Phát âm cảnh báo
+    btnLuu.disabled = true;
+    POS_beep();
   } else {
     canhBao.style.display = 'none';
-    btnLuu.disabled = false; // Mở khóa
+    btnLuu.disabled = false;
   }
 }
 
-// BẢN VÁ HÀM TẠO MÃ: Chốt chặn an toàn cuối cùng khi submit
 async function POS_xuLyTaoMaNhanh(e) {
   e.preventDefault();
   var maVachMoi = document.getElementById('tmn_ma').value.trim();
@@ -697,7 +747,13 @@ function POS_addProduct(product) { if(!product) return; if(!product.donViQuyDoi 
 
 function POS_suaSL(index, value) { var qty = parseFloat(POS_num(value)); if(qty > 0){ var item = POS_gioHang[index]; var quyDoiTong = qty * (item.heSoQuyDoi || 1); if (item.tonKhoGoc !== undefined && quyDoiTong > item.tonKhoGoc) { if (!confirm(`⚠️ CẢNH BÁO TỒN KHO\nHệ thống chỉ còn ${item.tonKhoGoc} gốc. Xác nhận bán âm kho?`)) return; } item.soLuong = qty; item.thanhTien = qty * item.donGia; POS_capNhatUI(); POS_renderTabs(); } }
 function POS_suaGia(index, value) { var item = POS_gioHang[index]; var newPrice = Math.max(0, Math.round(POS_num(value))); if (item.donGiaGoc === undefined) item.donGiaGoc = item.donGia; if (newPrice === item.donGiaGoc) { item.donGia = newPrice; item.thanhTien = item.soLuong * newPrice; item.giaDaSua = false; item.lyDoSuaGia = ''; POS_capNhatUI(); return; } var lyDo = prompt('Sửa giá "' + item.tenSP + '"\nGiá gốc: ' + POS_money(item.donGiaGoc) + ' đ → Giá mới: ' + POS_money(newPrice) + ' đ\nNhập lý do:', item.lyDoSuaGia || ''); if (lyDo === null || !lyDo.trim()) { alert('Đã hủy thay đổi giá.'); POS_capNhatUI(); return; } item.donGia = newPrice; item.thanhTien = item.soLuong * newPrice; item.giaDaSua = true; item.lyDoSuaGia = lyDo.trim(); POS_capNhatUI(); }
-function POS_xoaSP(index) { POS_gioHang.splice(index, 1); POS_capNhatUI(); POS_renderTabs(); }
+function POS_xoaSP(index) { 
+  if (window.innerWidth < 992) {
+    const item = POS_gioHang[index];
+    if (item && !confirm(`Xóa "${item.tenSP}" khỏi giỏ?`)) return;
+  }
+  POS_gioHang.splice(index, 1); POS_capNhatUI(); POS_renderTabs(); 
+}
 
 function POS_capNhatUI() {
   var tbody = document.getElementById('gioHang'); POS_tamTinh = 0; for(var i=0; i<POS_gioHang.length; i++) POS_tamTinh += POS_num(POS_gioHang[i].thanhTien); 
@@ -711,16 +767,16 @@ function POS_renderTong() { document.getElementById('txtTamTinh').textContent = 
 
 function POS_moFormSanPhamMo() { if(typeof bootstrap !== 'undefined') bootstrap.Modal.getOrCreateInstance(document.getElementById('modalSanPhamMo')).show(); }
 function POS_themSanPhamMo(event) { event.preventDefault(); var ten = document.getElementById('spm_ten').value.trim(), gia = Math.max(0, Math.floor(POS_num(document.getElementById('spm_gia').value))), sl = Math.max(0.01, parseFloat(POS_num(document.getElementById('spm_sl').value))); if(!ten) return; POS_gioHang.push({ maSP: 'SPM-' + Date.now(), tenSP: '[Tự do] ' + ten, donGia: gia, donGiaGoc: gia, soLuong: sl, thanhTien: gia * sl }); POS_capNhatUI(); POS_renderTabs(); if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(document.getElementById('modalSanPhamMo'))?.hide(); event.target.reset(); POS_focus(); }
-function POS_huyDon() { if(POS_gioHang.length === 0) return; if(!confirm('Xác nhận hủy đơn hiện tại?')) return; POS_carts[POS_activeCartIndex] = []; POS_gioHang = POS_carts[POS_activeCartIndex]; document.getElementById('sdtKhachInput').value = ''; document.getElementById('inputGiamGiaPT').value = 0; document.getElementById('inputGiamGiaVND').value = 0; POS_capNhatUI(); POS_renderTabs(); POS_focus(); }
+function POS_huyDon() { if(POS_gioHang.length === 0) return; if(!confirm('Xác nhận hủy đơn hiện tại?')) return; POS_vibrate([100, 50, 100]); POS_carts[POS_activeCartIndex] = []; POS_gioHang = POS_carts[POS_activeCartIndex]; document.getElementById('sdtKhachInput').value = ''; document.getElementById('inputGiamGiaPT').value = 0; document.getElementById('inputGiamGiaVND').value = 0; POS_capNhatUI(); POS_renderTabs(); POS_focus(); }
 
 function POS_togglePriceCheck() {
   POS_isPriceCheckMode = !POS_isPriceCheckMode;
   var btn = document.getElementById('btnTraGia'), inp = document.getElementById('maVachInput'), camBtn = document.getElementById('btnToggleCamera');
   if (POS_isPriceCheckMode) { 
-     btn.classList.add('price-check-active'); btn.innerHTML = '<i class="bi bi-search"></i> ĐANG TRA GIÁ <small>F3</small>'; 
+     btn.classList.add('price-check-active'); btn.innerHTML = '<i class="bi bi-search"></i> ĐANG TRA GIÁ'; 
      inp.classList.add('input-price-mode'); camBtn.classList.add('action-price-mode');
   } else { 
-     btn.classList.remove('price-check-active'); btn.innerHTML = '<i class="bi bi-search"></i> TRA GIÁ <small>F3</small>'; 
+     btn.classList.remove('price-check-active'); btn.innerHTML = '<i class="bi bi-search"></i> TRA GIÁ SẢN PHẨM'; 
      inp.classList.remove('input-price-mode'); camBtn.classList.remove('action-price-mode');
   }
   POS_focus();
@@ -806,13 +862,104 @@ async function POS_printPCLocal(payloadObj) { try { const res = await fetch(POS_
 async function POS_executePrint(payloadObj) { POS_lastReceiptPayload = payloadObj; if (/Android/i.test(navigator.userAgent)) return POS_printAndroid(payloadObj); else return POS_printPCLocal(payloadObj); }
 function POS_inLaiHoaDonQuay() { if (!POS_lastReceiptPayload) { alert('Chưa có hóa đơn nào được chốt trong phiên này!'); return; } POS_executePrint(POS_lastReceiptPayload); }
 
-async function POS_chotDonHang(coInBill) { if (typeof coInBill === 'undefined') coInBill = true; if (POS_printing || POS_gioHang.length === 0) return; if (!POS_currentOrderId) POS_currentOrderId = POS_newOrderId(); var thongTinKhach_Goc = document.getElementById('sdtKhachInput').value.trim(); var pt = document.querySelector('input[name="phuongThuc"]:checked').value; var total = POS_tongTienThanhToan; var khachDua = pt === 'TIEN_MAT' ? POS_num(document.getElementById('inputKhachDua').value) : (pt === 'CHUYEN_KHOAN' ? total : 0); var tienNo = 0; if (pt === 'GHI_NO') { if (!thongTinKhach_Goc) { alert('⚠️ YÊU CẦU: Khách mua nợ, bắt buộc nhập Tên (hoặc SĐT)!'); document.getElementById('sdtKhachInput').focus(); return; } tienNo = total; khachDua = 0; } if (pt === 'TIEN_MAT' && khachDua < total) { tienNo = total - khachDua; if (!thongTinKhach_Goc) { alert('⚠️ YÊU CẦU: Khách thanh toán thiếu. Bắt buộc nhập Tên!'); document.getElementById('sdtKhachInput').focus(); return; } pt = 'TIEN_MAT_GHI_NO'; } var btnIn = document.getElementById('btnChotDon'), btnKhongIn = document.getElementById('btnChotKhongIn'); POS_printing = true; if(btnIn){btnIn.disabled=true; btnIn.innerHTML='ĐANG XỬ LÝ...';} if(btnKhongIn) btnKhongIn.disabled=true; var snapshot = JSON.parse(JSON.stringify(POS_gioHang)); var auditLog = []; for (var i = 0; i < snapshot.length; i++) { if (snapshot[i].donGiaGoc !== undefined && snapshot[i].donGia !== snapshot[i].donGiaGoc) { var lyDo = snapshot[i].lyDoSuaGia ? (' [' + snapshot[i].lyDoSuaGia + ']') : ''; auditLog.push(snapshot[i].tenSP + ' (' + POS_money(snapshot[i].donGiaGoc) + '->' + POS_money(snapshot[i].donGia) + ')' + lyDo); } } var thongTinKhach_Luu = thongTinKhach_Goc; if (auditLog.length > 0) { thongTinKhach_Luu = thongTinKhach_Luu ? thongTinKhach_Luu + ' | ' : ''; thongTinKhach_Luu += '[SỬA GIÁ: ' + auditLog.join(', ') + ']'; } function hoanTatGiaoDien(msg) { POS_carts[POS_activeCartIndex] = []; POS_gioHang = POS_carts[POS_activeCartIndex]; document.getElementById('sdtKhachInput').value = ''; document.getElementById('inputGiamGiaPT').value = 0; document.getElementById('inputGiamGiaVND').value = 0; POS_capNhatUI(); POS_renderTabs(); if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(document.getElementById('modalThanhToan'))?.hide(); POS_loadProducts(); POS_currentOrderId = null; POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; POS_focus(); if (msg) alert(msg); } var actionPayload = { action: 'luuDonHang', clientOrderId: POS_currentOrderId, token: SESSION_TOKEN, gioHang: snapshot, tongTien: total, sdtKhach: thongTinKhach_Luu, phuongThuc: pt, khachDua: khachDua, tienNo: tienNo }; if (!navigator.onLine) { const offId = 'OFF-' + Date.now() + '-' + Math.random().toString(36).slice(2,7); await localDb.saveOfflineOrder({ id: offId, payload: actionPayload }); if(coInBill) await POS_executePrint(POS_buildReceiptPayload(offId, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo)); if('serviceWorker' in navigator && 'SyncManager' in window) { try { const reg = await navigator.serviceWorker.ready; await reg.sync.register('sync-orders'); } catch(e) {} } hoanTatGiaoDien('ĐÃ LƯU NGOẠI TUYẾN.' + (coInBill ? '' : ' (Không in bill)')); return; } try { const json = await POS_fetchJson(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body:JSON.stringify(actionPayload) }); const parts = String(json.data || '').split('\n'); const maDH = parts[0].split('Mã hóa đơn: ')[1] || parts[0].trim(); if(coInBill) { const pr = await POS_executePrint(POS_buildReceiptPayload(maDH, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo)); hoanTatGiaoDien(pr.mode === 'ANDROID' ? 'Đã gửi hóa đơn sang MylePrint Bridge.' : (parts.length > 1 && parts[1] ? parts[1] : '')); } else { POS_lastReceiptPayload = POS_buildReceiptPayload(maDH, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo); hoanTatGiaoDien(parts.length > 1 && parts[1] ? parts[1] + '\n(Không in bill)' : 'Chốt đơn thành công (Không in bill)'); } } catch (err) { if (err.message === 'SESSION_EXPIRED') { POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; bootstrap.Modal.getInstance(document.getElementById('modalThanhToan'))?.hide(); return; } if(!navigator.onLine || /Failed to fetch|NetworkError|Load failed|network/i.test(String(err.message || err))) { try { const offId = 'OFF-' + Date.now() + '-' + Math.random().toString(36).slice(2,7); await localDb.saveOfflineOrder({ id: offId, payload: actionPayload }); if(coInBill) await POS_executePrint(POS_buildReceiptPayload(offId, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo)); if('serviceWorker' in navigator && 'SyncManager' in window) navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(()=>{}); hoanTatGiaoDien('Mạng lỗi. Đã lưu tạm offline.'); } catch(saveErr) { POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; alert('Không thể lưu đơn offline: ' + saveErr.message); } } else { POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; alert('Lỗi hệ thống máy chủ: ' + err.message); } } }
+async function POS_chotDonHang(coInBill) { if (typeof coInBill === 'undefined') coInBill = true; if (POS_printing || POS_gioHang.length === 0) return; if (!POS_currentOrderId) POS_currentOrderId = POS_newOrderId(); var thongTinKhach_Goc = document.getElementById('sdtKhachInput').value.trim(); var pt = document.querySelector('input[name="phuongThuc"]:checked').value; var total = POS_tongTienThanhToan; var khachDua = pt === 'TIEN_MAT' ? POS_num(document.getElementById('inputKhachDua').value) : (pt === 'CHUYEN_KHOAN' ? total : 0); var tienNo = 0; if (pt === 'GHI_NO') { if (!thongTinKhach_Goc) { alert('⚠️ YÊU CẦU: Khách mua nợ, bắt buộc nhập Tên (hoặc SĐT)!'); document.getElementById('sdtKhachInput').focus(); return; } tienNo = total; khachDua = 0; } if (pt === 'TIEN_MAT' && khachDua < total) { tienNo = total - khachDua; if (!thongTinKhach_Goc) { alert('⚠️ YÊU CẦU: Khách thanh toán thiếu. Bắt buộc nhập Tên!'); document.getElementById('sdtKhachInput').focus(); return; } pt = 'TIEN_MAT_GHI_NO'; } var btnIn = document.getElementById('btnChotDon'), btnKhongIn = document.getElementById('btnChotKhongIn'); POS_printing = true; if(btnIn){btnIn.disabled=true; btnIn.innerHTML='ĐANG XỬ LÝ...';} if(btnKhongIn) btnKhongIn.disabled=true; var snapshot = JSON.parse(JSON.stringify(POS_gioHang)); var auditLog = []; for (var i = 0; i < snapshot.length; i++) { if (snapshot[i].donGiaGoc !== undefined && snapshot[i].donGia !== snapshot[i].donGiaGoc) { var lyDo = snapshot[i].lyDoSuaGia ? (' [' + snapshot[i].lyDoSuaGia + ']') : ''; auditLog.push(snapshot[i].tenSP + ' (' + POS_money(snapshot[i].donGiaGoc) + '->' + POS_money(snapshot[i].donGia) + ')' + lyDo); } } var thongTinKhach_Luu = thongTinKhach_Goc; if (auditLog.length > 0) { thongTinKhach_Luu = thongTinKhach_Luu ? thongTinKhach_Luu + ' | ' : ''; thongTinKhach_Luu += '[SỬA GIÁ: ' + auditLog.join(', ') + ']'; } function hoanTatGiaoDien(msg) { POS_carts[POS_activeCartIndex] = []; POS_gioHang = POS_carts[POS_activeCartIndex]; document.getElementById('sdtKhachInput').value = ''; document.getElementById('inputGiamGiaPT').value = 0; document.getElementById('inputGiamGiaVND').value = 0; POS_capNhatUI(); POS_renderTabs(); if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(document.getElementById('modalThanhToan'))?.hide(); POS_loadProducts(); POS_currentOrderId = null; POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; POS_vibrate([50, 30, 50]); POS_focus(); if (msg) alert(msg); } var actionPayload = { action: 'luuDonHang', clientOrderId: POS_currentOrderId, token: SESSION_TOKEN, gioHang: snapshot, tongTien: total, sdtKhach: thongTinKhach_Luu, phuongThuc: pt, khachDua: khachDua, tienNo: tienNo }; if (!navigator.onLine) { const offId = 'OFF-' + Date.now() + '-' + Math.random().toString(36).slice(2,7); await localDb.saveOfflineOrder({ id: offId, payload: actionPayload }); if(coInBill) await POS_executePrint(POS_buildReceiptPayload(offId, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo)); if('serviceWorker' in navigator && 'SyncManager' in window) { try { const reg = await navigator.serviceWorker.ready; await reg.sync.register('sync-orders'); } catch(e) {} } hoanTatGiaoDien('ĐÃ LƯU NGOẠI TUYẾN.' + (coInBill ? '' : ' (Không in bill)')); return; } try { const json = await POS_fetchJson(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=UTF-8' }, body:JSON.stringify(actionPayload) }); const parts = String(json.data || '').split('\n'); const maDH = parts[0].split('Mã hóa đơn: ')[1] || parts[0].trim(); if(coInBill) { const pr = await POS_executePrint(POS_buildReceiptPayload(maDH, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo)); hoanTatGiaoDien(pr.mode === 'ANDROID' ? 'Đã gửi hóa đơn sang MylePrint Bridge.' : (parts.length > 1 && parts[1] ? parts[1] : '')); } else { POS_lastReceiptPayload = POS_buildReceiptPayload(maDH, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo); hoanTatGiaoDien(parts.length > 1 && parts[1] ? parts[1] + '\n(Không in bill)' : 'Chốt đơn thành công (Không in bill)'); } } catch (err) { if (err.message === 'SESSION_EXPIRED') { POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; bootstrap.Modal.getInstance(document.getElementById('modalThanhToan'))?.hide(); return; } if(!navigator.onLine || /Failed to fetch|NetworkError|Load failed|network/i.test(String(err.message || err))) { try { const offId = 'OFF-' + Date.now() + '-' + Math.random().toString(36).slice(2,7); await localDb.saveOfflineOrder({ id: offId, payload: actionPayload }); if(coInBill) await POS_executePrint(POS_buildReceiptPayload(offId, snapshot, thongTinKhach_Goc, pt, khachDua, tienNo)); if('serviceWorker' in navigator && 'SyncManager' in window) navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(()=>{}); hoanTatGiaoDien('Mạng lỗi. Đã lưu tạm offline.'); } catch(saveErr) { POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; alert('Không thể lưu đơn offline: ' + saveErr.message); } } else { POS_printing = false; if(btnIn){btnIn.disabled=false; btnIn.innerHTML='CHỐT & IN ↵';} if(btnKhongIn) btnKhongIn.disabled=false; alert('Lỗi hệ thống máy chủ: ' + err.message); } } }
 
 // ============================================================
 // 10. CAMERA OVERLAY & KHỞI ĐỘNG (NÂNG CẤP ĐA MỤC TIÊU)
 // ============================================================
-let POS_camTarget = null;
-async function POS_toggleCamera(targetInputId) { if(typeof Html5Qrcode === 'undefined'){ alert('Thư viện chưa tải xong!'); return; } if(!window.isSecureContext){ alert('Camera yêu cầu HTTPS.'); return; } var btn = document.getElementById('btnToggleCamera'), wrapper = document.getElementById('camera-wrapper'); POS_camTarget = (typeof targetInputId === 'string') ? targetInputId : null; if(POS_isCamOn){ try { if(POS_scanner) await POS_scanner.stop(); } catch(e) {} try { if(POS_scanner) POS_scanner.clear(); } catch(e) {} POS_scanner = null; POS_isCamOn = false; wrapper.style.display = 'none'; if(btn) { btn.className='btn scan-action touch-btn text-nowrap ' + (POS_isPriceCheckMode ? 'action-price-mode' : ''); btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM'; btn.disabled=false; } if(!POS_camTarget) POS_focus(); return; } wrapper.style.display='flex'; if(!POS_camTarget && btn) { btn.disabled = true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span>...'; } try { POS_scanner = new Html5Qrcode('reader'); await POS_scanner.start( { facingMode: 'environment' }, { fps: 10, qrbox: (viewfinderWidth, viewfinderHeight) => ({ width: Math.min(viewfinderWidth * 0.85, 300), height: 120 }), aspectRatio: 1.0 }, text => { if(POS_scanLocked) return; POS_scanLocked = true; POS_beep(); if(navigator.vibrate) navigator.vibrate(80); if(POS_camTarget) { document.getElementById(POS_camTarget).value = text; POS_toggleCamera(); POS_scanLocked = false; } else { POS_xuLyMaVach(text); setTimeout(() => { POS_scanLocked = false; }, 1200); } }, () => {} ); POS_isCamOn = true; if(!POS_camTarget && btn) { btn.disabled = false; btn.className='btn btn-danger fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT'; } } catch(err) { try { if(POS_scanner) POS_scanner.clear(); } catch(e) {} POS_scanner = null; POS_isCamOn = false; wrapper.style.display='none'; if(!POS_camTarget && btn) { btn.disabled=false; btn.className='btn scan-action touch-btn text-nowrap ' + (POS_isPriceCheckMode ? 'action-price-mode' : ''); btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM'; } const msg = String(err?.message || err || ''); if(/permission|denied|notallowed/i.test(msg)) alert('Camera bị từ chối.'); else alert('Lỗi Camera: ' + msg); } }
+// Lazy-load html5-qrcode
+function POS_loadQrLib() {
+  if (window.Html5Qrcode) return Promise.resolve();
+  if (_qrLibPromise) return _qrLibPromise;
+  _qrLibPromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://unpkg.com/html5-qrcode';
+    s.onload = resolve;
+    s.onerror = () => { _qrLibPromise = null; reject(new Error('Không tải được thư viện quét mã')); };
+    document.head.appendChild(s);
+  });
+  return _qrLibPromise;
+}
+
+async function POS_toggleCamera(targetInputId) { 
+  if(!window.isSecureContext){ alert('Camera yêu cầu HTTPS.'); return; } 
+  var btn = document.getElementById('btnToggleCamera'), wrapper = document.getElementById('camera-wrapper'); 
+  POS_camTarget = (typeof targetInputId === 'string') ? targetInputId : null; 
+  
+  if(POS_isCamOn){ 
+    try { if(POS_scanner) await POS_scanner.stop(); } catch(e) {} 
+    try { if(POS_scanner) POS_scanner.clear(); } catch(e) {} 
+    POS_scanner = null; POS_isCamOn = false; wrapper.style.display = 'none'; 
+    if(btn) { btn.className='btn scan-action touch-btn text-nowrap ' + (POS_isPriceCheckMode ? 'action-price-mode' : ''); btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM'; btn.disabled=false; } 
+    if(!POS_camTarget) POS_focus(); 
+    return; 
+  } 
+  
+  // Lazy load nếu chưa có
+  if (!window.Html5Qrcode) {
+    if(btn) { btn.disabled = true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span>'; }
+    try {
+      await POS_loadQrLib();
+    } catch (e) {
+      alert('Lỗi tải thư viện camera: ' + e.message);
+      if(btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-camera-video-fill"></i> CAM'; }
+      return;
+    }
+    if(btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-camera-video-fill"></i> CAM'; }
+  }
+  
+  wrapper.style.display='flex'; 
+  if(!POS_camTarget && btn) { btn.disabled = true; btn.innerHTML='<span class="spinner-border spinner-border-sm"></span>...'; } 
+  try { 
+    POS_scanner = new Html5Qrcode('reader'); 
+    await POS_scanner.start( 
+      { facingMode: 'environment' }, 
+      { fps: 10, qrbox: (viewfinderWidth, viewfinderHeight) => ({ width: Math.min(viewfinderWidth * 0.85, 300), height: 120 }), aspectRatio: 1.0 }, 
+      text => { 
+        if(POS_scanLocked) return; 
+        POS_scanLocked = true; 
+        POS_beep(); 
+        POS_vibrate(80); 
+        if(POS_camTarget) { 
+          document.getElementById(POS_camTarget).value = text; 
+          POS_toggleCamera(); 
+          POS_scanLocked = false; 
+        } else { 
+          POS_xuLyMaVach(text); 
+          setTimeout(() => { POS_scanLocked = false; }, 1200); 
+        } 
+      }, 
+      () => {} 
+    ); 
+    POS_isCamOn = true; 
+    if(!POS_camTarget && btn) { btn.disabled = false; btn.className='btn btn-danger fw-bold touch-btn text-nowrap'; btn.innerHTML='<i class="bi bi-stop-circle-fill"></i> TẮT'; } 
+  } catch(err) { 
+    try { if(POS_scanner) POS_scanner.clear(); } catch(e) {} 
+    POS_scanner = null; POS_isCamOn = false; wrapper.style.display='none'; 
+    if(!POS_camTarget && btn) { btn.disabled=false; btn.className='btn scan-action touch-btn text-nowrap ' + (POS_isPriceCheckMode ? 'action-price-mode' : ''); btn.innerHTML='<i class="bi bi-camera-video-fill"></i> CAM'; } 
+    const msg = String(err?.message || err || ''); 
+    if(/permission|denied|notallowed/i.test(msg)) alert('Camera bị từ chối.'); 
+    else alert('Lỗi Camera: ' + msg); 
+  } 
+}
+
+async function POS_toggleTorch() {
+  try {
+    const video = document.querySelector('#reader video');
+    if (!video || !video.srcObject) { alert('Camera chưa bật.'); return; }
+    const track = video.srcObject.getVideoTracks()[0];
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    if (caps.torch) {
+      const btn = document.querySelector('.cam-flash-btn');
+      const newState = !btn.classList.contains('active');
+      await track.applyConstraints({ advanced: [{ torch: newState }] });
+      btn.classList.toggle('active', newState);
+    } else {
+      alert('Thiết bị không hỗ trợ đèn Flash.');
+    }
+  } catch(e) { console.warn('Torch error:', e); alert('Không thể bật đèn Flash.'); }
+}
+
 function POS_kiemTraBridge() { var el = document.getElementById('bridgeStatus'); if(!el) return; if(/Android/i.test(navigator.userAgent)){ el.className = 'bridge-status status-android'; el.innerHTML = '<i class="bi bi-phone"></i> ANDROID BRIDGE'; return; } fetch(POS_CONFIG.PC_HEALTH_URL, { method:'GET', cache:'no-store' }).then(res => { if(res.ok){ el.className = 'bridge-status status-pc-online'; el.innerHTML = '<i class="bi bi-printer-fill"></i> PC BRIDGE: ONLINE'; } else throw new Error(); }).catch(() => { el.className = 'bridge-status status-pc-offline'; el.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> PC BRIDGE: OFFLINE'; }); }
 
 window.addEventListener('load', async () => {
@@ -821,9 +968,60 @@ window.addEventListener('load', async () => {
   if(/Android/i.test(navigator.userAgent) || window.innerWidth < 992) { var btnBlock = document.getElementById('action-buttons'), tContainer = document.getElementById('mobile-button-container'); if(btnBlock && tContainer) tContainer.appendChild(btnBlock); }
   window.addEventListener('online', POS_updateNetworkStatus); window.addEventListener('offline', POS_updateNetworkStatus);
   localDb.getOfflineOrders().then(o => { if(o.length) { POS_checkOfflineOrders(); if ('serviceWorker' in navigator && 'SyncManager' in window) navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-orders')).catch(POS_dongBoDonHangOffline_Fallback); else POS_dongBoDonHangOffline_Fallback(); } }).catch(console.error);
-  document.addEventListener('pointerdown', e => { if(!e.target.closest('.search-wrap')) POS_hideSuggestions(); });
-  document.addEventListener('keydown', e => { if(e.key === 'F12'){ e.preventDefault(); POS_thanhToan(); } else if(e.key === 'F2'){ e.preventDefault(); POS_focus(); } else if(e.key === 'F3'){ e.preventDefault(); POS_togglePriceCheck(); } else if(e.key === 'F4'){ e.preventDefault(); POS_moFormSanPhamMo(); } else if(e.key === 'F5'){ var mTraGia = document.getElementById('modalTraGia'); if(mTraGia && mTraGia.classList.contains('show')){ e.preventDefault(); POS_moFormSuaSanPham(); } } else if(e.key === 'Escape'){ var m = document.getElementById('modalThanhToan'); if(m && m.classList.contains('show')){ if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(m)?.hide(); } else { POS_huyDon(); } } else if(e.key === 'Enter'){ var mt = document.getElementById('modalThanhToan'); if(mt && mt.classList.contains('show')){ e.preventDefault(); POS_chotDonHang(true); } } });
+  
+  // Input listeners — tách khỏi inline HTML
+  const maVachEl = document.getElementById('maVachInput');
+  if (maVachEl) {
+    maVachEl.addEventListener('input', e => POS_renderSuggestions(e.target.value));
+    maVachEl.addEventListener('focus', e => { if (e.target.value.trim()) POS_renderSuggestions(e.target.value.trim()); });
+    maVachEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        POS_hideSuggestions();
+        if (val) POS_xuLyMaVach(val);
+      }
+    });
+  }
+  const pinEl = document.getElementById('pinCode');
+  if (pinEl) pinEl.addEventListener('keydown', e => { if (e.key === 'Enter') POS_unlockSystem(); });
+  
+  const khachEl = document.getElementById('sdtKhachInput');
+  if (khachEl) {
+    khachEl.addEventListener('input', e => POS_renderKhachSuggestions(e.target.value));
+    khachEl.addEventListener('focus', e => { if (e.target.value.trim()) POS_renderKhachSuggestions(e.target.value.trim()); });
+  }
+  
+  document.addEventListener('pointerdown', e => { 
+    if(!e.target.closest('.search-wrap')) { POS_hideSuggestions(); POS_hideKhachSuggestions(); }
+  });
+  
+  document.addEventListener('keydown', e => { 
+    if(e.key === 'F12'){ e.preventDefault(); POS_thanhToan(); } 
+    else if(e.key === 'F2'){ e.preventDefault(); POS_focus(); } 
+    else if(e.key === 'F3'){ e.preventDefault(); POS_togglePriceCheck(); } 
+    else if(e.key === 'F4'){ e.preventDefault(); POS_moFormSanPhamMo(); } 
+    else if(e.key === 'F5'){ var mTraGia = document.getElementById('modalTraGia'); if(mTraGia && mTraGia.classList.contains('show')){ e.preventDefault(); POS_moFormSuaSanPham(); } } 
+    else if(e.key === 'Escape'){ var m = document.getElementById('modalThanhToan'); if(m && m.classList.contains('show')){ if(typeof bootstrap !== 'undefined') bootstrap.Modal.getInstance(m)?.hide(); } else { POS_huyDon(); } } 
+    else if(e.key === 'Enter'){ var mt = document.getElementById('modalThanhToan'); if(mt && mt.classList.contains('show')){ e.preventDefault(); POS_chotDonHang(true); } } 
+  });
+  
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js', { scope: './' }).then(reg => reg.update()).catch(err => console.error('SW Error:', err));
+  
+  // VisualViewport keyboard handling
+  if (window.visualViewport) {
+    const vv = window.visualViewport;
+    vv.addEventListener('resize', () => {
+      const focused = document.activeElement;
+      if (focused && /INPUT|TEXTAREA/.test(focused.tagName)) {
+        const rect = focused.getBoundingClientRect();
+        const bottomGap = vv.height - rect.bottom;
+        if (bottomGap < 20) {
+          focused.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    });
+  }
 });
 
 (function() {
@@ -832,6 +1030,7 @@ window.addEventListener('load', async () => {
   modalIds.forEach(id => { const el = document.getElementById(id); if (!el) return; el.addEventListener('shown.bs.modal', () => { if (!modalOpenState) { history.pushState({ myleModal: true }, ''); modalOpenState = true; } }); el.addEventListener('hidden.bs.modal', () => { if (modalOpenState) { modalOpenState = false; if (history.state && history.state.myleModal) history.back(); } }); });
   window.addEventListener('popstate', () => { if (modalOpenState) { modalIds.forEach(id => { const el = document.getElementById(id); if (el && el.classList.contains('show')) bootstrap.Modal.getInstance(el)?.hide(); }); } else { if(!document.getElementById('view-debt').classList.contains('view-hidden')) { POS_switchView('pos'); } } });
 })();
+
 document.addEventListener('focusin', (e) => { if (e.target.matches('input, textarea')) { setTimeout(() => { e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300); } });
 </script>
 </body>
